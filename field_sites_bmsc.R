@@ -12,7 +12,6 @@ library(raster)
 library(rgeos)
 library(MetBrewer)
 
-
 #### Map prep work ####
 
 ## setting projections at outset
@@ -20,10 +19,10 @@ proj <- st_crs(3005) # ESPG code for BC Albers projection
 latlong <- "+proj=longlat +datum=WGS84 +no_defs" # identifying the coordinate system being used for the corner values
 
 ## seting map extent for Bamfield 
-ymax <- 48.95
-ymin <- 48.77
-xmax <- -125.0
-xmin <- -125.3
+ymax <- 48.92
+ymin <- 48.78
+xmax <- -125.05
+xmin <- -125.26
 
 ## making corners for the area of interest 
 corners <- st_multipoint(matrix(c(xmax,xmin,ymax,ymin),ncol=2)) %>% 
@@ -53,7 +52,7 @@ land <- land %>%
 
 #### Site prep work ####
 
-## Joanne Lessard survey sites
+## Joanne Lessard survey sites ##
 
 library(foreign)
 
@@ -73,7 +72,7 @@ jlsf <- jlsf %>%
   st_crop(st_bbox(corners))
 
 
-## CN/SS & JMS survey sites
+## CN/SS & JMS survey sites ##
 rec <- read.csv("./MSc_data/Data_sourced/Fieldedits_Kelp_site_suggestions_2022.csv") %>%
   mutate(Lat = as.numeric(Lat), Lon = as.numeric(Lon))
 
@@ -91,7 +90,7 @@ recsf <- recsf %>%
   st_crop(st_bbox(corners))
 
 
-## Our finalized survey sites!
+## Our finalized survey sites! ##
 sites <- read.csv("./MSc_data/Data_new/Field_sites_2022.csv") %>%
   mutate_all(na_if, "") %>%
   mutate(Lat = as.numeric(Lat), Lon = as.numeric(Lon), Estimated_dens=factor(Estimated_dens, levels=c("High", "Med", "Low", "None"))) %>%
@@ -100,7 +99,7 @@ sites <- read.csv("./MSc_data/Data_new/Field_sites_2022.csv") %>%
 #converting location data to sf object
 sitessf <- sites %>%
   drop_na(Lat) %>%
-  dplyr::select(c(SiteName_general, Lat, Lon, Estimated_dens, Composition, Deploy)) %>%
+  dplyr::select(c(SiteName, Lat, Lon, Estimated_dens, Composition, Deploy)) %>%
   st_as_sf(coords = c(3,2))
 
 st_crs(sitessf) = latlong
@@ -111,7 +110,27 @@ sitessf <- sitessf %>%
   st_crop(st_bbox(corners))
 
 
-#### Making the map ####
+## Our kelp density data ##
+# Will add this as a value column to the site mapping data above
+dens <- read.csv("./MSc_data/Data_new/kelp_density_2022_KDC_CMA.csv") %>%
+  mutate(Macro = (Macro_5m2/5), Nereo=(Nereo_5m2/5)) %>% # Changing units to /m2 area
+  rowwise() %>%
+  mutate(Kelp = sum(Macro,Nereo)) %>% # Sum macro and nereo to get total kelp dens / transect
+  ungroup()
+
+densgrp <- dens %>%
+  group_by(SiteName) %>% # Averaging to site
+  summarise(KelpM = mean(Kelp), KelpSD = sd(Kelp))
+
+# ggplot(densgrp, aes(x=SiteName, y=KelpM)) +
+#   geom_pointrange(size=1, aes(ymin=KelpM-KelpSD, ymax=KelpM+KelpSD)) +
+#   theme()
+
+# Adding the density data to the mapping data
+sitessf <- merge(sitessf, densgrp, by = "SiteName", all = TRUE)
+
+
+#### Making the maps ####
 
 ## plotting the map (discrete fill)
 data_map <- ggplot(land)+
@@ -137,5 +156,27 @@ data_map <- ggplot(land)+
                dist = 2,
                dist_unit = "km",
                model = 'NAD83')
+data_map
 
+
+## plotting the map (continuous fill)
+data_map <- ggplot(land)+
+  geom_sf(fill = "grey53", color = NA) + #color = NA will remove country border
+  theme_minimal(base_size = 16) +
+  geom_sf(data = sitessf, size=3, shape=23, color="black", aes(fill=KelpM)) +
+  geom_sf_text(mapping=aes(), data=sitessf, label=sitessf$SiteName, stat="sf_coordinates", inherit.aes=T, size=2.5, nudge_y=100, nudge_x=-1200) +
+  scale_fill_gradientn(colors=met.brewer("VanGogh3"), name="", limits=c(0,15)) +
+  theme(panel.grid.major = element_line(colour = "transparent"), #hiding graticules
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank()) + 
+  north(land, symbol=12, location="topleft") +
+  ggsn::scalebar(land,
+                 location = "bottomright",
+                 transform = F,
+                 st.bottom = F,
+                 st.size = 4,
+                 height = 0.01,
+                 dist = 2,
+                 dist_unit = "km",
+                 model = 'NAD83')
 data_map
