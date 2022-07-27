@@ -19,8 +19,8 @@ proj <- st_crs(3005) # ESPG code for BC Albers projection
 latlong <- "+proj=longlat +datum=WGS84 +no_defs" # identifying the coordinate system being used for the corner values
 
 ## seting map extent for Bamfield 
-ymax <- 48.92
-ymin <- 48.78
+ymax <- 48.922
+ymin <- 48.80
 xmax <- -125.05
 xmin <- -125.26
 
@@ -91,7 +91,7 @@ recsf <- recsf %>%
 
 
 ## Our finalized survey sites! ##
-sites <- read.csv("./MSc_data/Data_new/Field_sites_2022.csv") %>%
+sites <- read.csv("./MSc_data/Data_new/Final_site_list_2022.csv") %>%
   mutate_all(na_if, "") %>%
   mutate(Lat = as.numeric(Lat), Lon = as.numeric(Lon), Estimated_dens=factor(Estimated_dens, levels=c("High", "Med", "Low", "None"))) %>%
   mutate(Deploy = as.factor(ifelse(!is.na(Temp_logger), "YES", "NO")))
@@ -121,10 +121,6 @@ dens <- read.csv("./MSc_data/Data_new/kelp_density_2022_KDC_CMA.csv") %>%
 densgrp <- dens %>%
   group_by(SiteName) %>% # Averaging to site
   summarise(KelpM = mean(Kelp), KelpSD = sd(Kelp))
-
-# ggplot(densgrp, aes(x=SiteName, y=KelpM)) +
-#   geom_pointrange(size=1, aes(ymin=KelpM-KelpSD, ymax=KelpM+KelpSD)) +
-#   theme()
 
 # Adding the density data to the mapping data
 sitessf <- merge(sitessf, densgrp, by = "SiteName", all = TRUE)
@@ -165,7 +161,7 @@ data_map <- ggplot(land)+
   theme_minimal(base_size = 16) +
   geom_sf(data = sitessf, size=3, shape=23, color="black", aes(fill=KelpM)) +
   geom_sf_text(mapping=aes(), data=sitessf, label=sitessf$SiteName, stat="sf_coordinates", inherit.aes=T, size=2.5, nudge_y=100, nudge_x=-1200) +
-  scale_fill_gradientn(colors=met.brewer("VanGogh3"), name="", limits=c(0,15)) +
+  scale_fill_gradientn(colors=met.brewer("VanGogh3"), name="Density (/m2)", limits=c(0,16)) +
   theme(panel.grid.major = element_line(colour = "transparent"), #hiding graticules
         axis.title.x = element_blank(),
         axis.title.y = element_blank()) + 
@@ -180,3 +176,14 @@ data_map <- ggplot(land)+
                  dist_unit = "km",
                  model = 'NAD83')
 data_map
+
+#### Preliminary data plots ----
+
+# Site specific densities (summed Macro & Nereo)
+ggplot(densgrp, aes(x=reorder(SiteName,KelpM), y=KelpM)) + # Ordering by increasing density
+  geom_pointrange(size=1, aes(ymin=KelpM-KelpSD, ymax=KelpM+KelpSD)) +
+  theme_classic() +
+  theme(axis.text.x = element_text(color="black", size="12", angle=45, vjust=0.9, hjust=0.9),
+        axis.text.y = element_text(color="black", size="12"),
+        axis.title.y = element_text(color="black", size="13", vjust=3)) +
+  xlab("") + ylab("Kelp density (/m2)")
