@@ -112,7 +112,7 @@ sitessf <- sitessf %>%
 
 ## Our kelp density data ##
 # Will add this as a value column to the site mapping data above
-dens <- read.csv("./MSc_data/Data_new/kelp_density_2022_KDC_CMA.csv") %>%
+dens <- read.csv("./MSc_data/Data_new/kelp_density_2022.csv") %>%
   mutate(Macro = (Macro_5m2/5), Nereo=(Nereo_5m2/5)) %>% # Changing units to /m2 area
   rowwise() %>%
   mutate(Kelp = sum(Macro,Nereo)) %>% # Sum macro and nereo to get total kelp dens / transect
@@ -179,9 +179,10 @@ data_map
 
 #### Preliminary data plots ----
 
-# Site specific densities (summed Macro & Nereo)
-ggplot(densgrp, aes(x=reorder(SiteName,KelpM), y=KelpM)) + # Ordering by increasing density
-  geom_pointrange(size=1, aes(ymin=KelpM-KelpSD, ymax=KelpM+KelpSD)) +
+# Site specific densities (summed Macro & Nereo) # Ordering by increasing density
+ggplot() +
+  geom_point(data=dens, size=3.5, alpha=0.2, aes(x=reorder(SiteName,Kelp), y=Kelp)) +
+  geom_pointrange(data=densgrp, size=1, aes(x=reorder(SiteName,KelpM), y=KelpM, ymin=KelpM-KelpSD, ymax=KelpM+KelpSD)) +
   theme_classic() +
   theme(axis.text.x = element_text(color="black", size="12", angle=45, vjust=0.9, hjust=0.9),
         axis.text.y = element_text(color="black", size="12"),
