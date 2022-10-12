@@ -2,8 +2,6 @@
 ## Author: Claire Attridge
 ## Origin date: May 2022 
 
-setwd("C:/Users/Claire/Desktop/MSc/Thesis")
-
 library(tidyverse)
 library(sf)
 library(ggsn)
@@ -50,11 +48,11 @@ land <- land %>%
   st_transform(proj) # projecting back into ESPG 3005
 
 
-#### Site prep work ####
+#### Data prep work ####
 
 ## Joanne Lessard survey sites ##
 
-library(foreign)
+library(foreign) # Package for reading in .dbf files
 
 #reading in site location data
 jl <- read.dbf("./MSc_data/Data_sourced/Lessard_sites/2021SITE.DBF")
@@ -90,7 +88,7 @@ recsf <- recsf %>%
   st_crop(st_bbox(corners))
 
 
-## Our finalized survey sites! ##
+## Our finalized survey site list ##
 sites <- read.csv("./MSc_data/Data_new/Final_site_list_2022.csv") %>%
   mutate_all(na_if, "") %>%
   mutate(Lat = as.numeric(Lat), Lon = as.numeric(Lon), Estimated_dens=factor(Estimated_dens, levels=c("High", "Med", "Low", "None"))) %>%
@@ -119,24 +117,24 @@ dens <- read.csv("./MSc_data/Data_new/kelp_density_2022.csv") %>%
   ungroup()
 
 densgrp <- dens %>%
+  mutate(SiteName = as.factor(SiteName)) %>%
   group_by(SiteName) %>% # Averaging to site
   summarise(KelpM = mean(Kelp), KelpSD = sd(Kelp))
 
-# Adding the density data to the mapping data
-sitessf <- merge(sitessf, densgrp, by = "SiteName", all = TRUE)
+densgrp <- as.data.frame(densgrp)
+
+# Adding the additional kelp data metrics to the mapping data
+plotdata <- merge(sitessf, densgrp, by = "SiteName", all = TRUE) %>% #Adding on the kelp density data
+            merge(tempgrp) # Adding in the temp logger data
 
 
 #### Making the maps ####
 
-## plotting the map (discrete fill)
+## plotting the kelp map (discrete fill)
 data_map <- ggplot(land)+
   geom_sf(fill = "grey53", color = NA) + #color = NA will remove country border
   theme_minimal(base_size = 16) +
-  # geom_sf(data = jlsf, size=4, shape=18) +
-  # geom_sf_text(mapping=aes(), data=jlsf, label=jlsf$TRANSECT, stat="sf_coordinates", inherit.aes=T, size=2.5, nudge_y=100, nudge_x=-1200) +
-  # geom_sf(data = recsf, size=4, shape=18) +
-  # geom_sf_text(mapping=aes(), data=recsf, label=recsf$SiteName, stat="sf_coordinates", inherit.aes=T, size=2.5, nudge_y=100, nudge_x=-900) +
-  geom_sf(data = sitessf, size=3, shape=23, color="black", aes(fill=Estimated_dens)) +
+  geom_sf(data = plotdata, size=3, shape=23, color="black", aes(fill=Composition)) + 
   geom_sf_text(mapping=aes(), data=sitessf, label=sitessf$SiteName, stat="sf_coordinates", inherit.aes=T, size=2.5, nudge_y=100, nudge_x=-1200) +
   scale_fill_manual(values=met.brewer("Degas", 4), name="") +
   theme(panel.grid.major = element_line(colour = "transparent"), #hiding graticules
@@ -155,11 +153,11 @@ data_map <- ggplot(land)+
 data_map
 
 
-## plotting the map (continuous fill)
+## plotting the kelp map (continuous fill)
 data_map <- ggplot(land)+
   geom_sf(fill = "grey53", color = NA) + #color = NA will remove country border
   theme_minimal(base_size = 16) +
-  geom_sf(data = sitessf, size=3, shape=23, color="black", aes(fill=KelpM)) +
+  geom_sf(data = plotdata, size=4, shape=21, color="black", aes(fill=KelpM)) +
   geom_sf_text(mapping=aes(), data=sitessf, label=sitessf$SiteName, stat="sf_coordinates", inherit.aes=T, size=2.5, nudge_y=100, nudge_x=-1200) +
   scale_fill_gradientn(colors=met.brewer("VanGogh3"), name="Density (/m2)", limits=c(0,16)) +
   theme(panel.grid.major = element_line(colour = "transparent"), #hiding graticules
@@ -177,14 +175,25 @@ data_map <- ggplot(land)+
                  model = 'NAD83')
 data_map
 
-#### Preliminary data plots ----
 
-# Site specific densities (summed Macro & Nereo) # Ordering by increasing density
-ggplot() +
-  geom_point(data=dens, size=3.5, alpha=0.2, aes(x=reorder(SiteName,Kelp), y=Kelp)) +
-  geom_pointrange(data=densgrp, size=1, aes(x=reorder(SiteName,KelpM), y=KelpM, ymin=KelpM-KelpSD, ymax=KelpM+KelpSD)) +
-  theme_classic() +
-  theme(axis.text.x = element_text(color="black", size="12", angle=45, vjust=0.9, hjust=0.9),
-        axis.text.y = element_text(color="black", size="12"),
-        axis.title.y = element_text(color="black", size="13", vjust=3)) +
-  xlab("") + ylab("Kelp density (/m2)")
+## plotting the temp map (continuous fill)
+data_map <- ggplot(land)+
+  geom_sf(fill = "grey53", color = NA) + #color = NA will remove country border
+  theme_minimal(base_size = 16) +
+  geom_sf(data = plotdata, size=4, shape=21, color="black", aes(fill=Tempmax)) + # Modify fill to see diff variables
+  geom_sf_text(mapping=aes(), data=sitessf, label=sitessf$SiteName, stat="sf_coordinates", inherit.aes=T, size=2.5, nudge_y=100, nudge_x=-1200) +
+  scale_fill_gradientn(colors=rev(met.brewer("Homer1")), name="Temperature (C)") +
+  theme(panel.grid.major = element_line(colour = "transparent"), #hiding graticules
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank()) + 
+  north(land, symbol=12, location="topleft") +
+  ggsn::scalebar(land,
+                 location = "bottomright",
+                 transform = F,
+                 st.bottom = F,
+                 st.size = 4,
+                 height = 0.01,
+                 dist = 2,
+                 dist_unit = "km",
+                 model = 'NAD83')
+data_map
