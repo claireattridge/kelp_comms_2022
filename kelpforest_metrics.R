@@ -9,6 +9,7 @@ library(MetBrewer)
 
 #### Data cleaning ----
 
+
 ## Our kelp density data ##
 dens <- read.csv("./MSc_data/Data_new/kelp_density_2022.csv") %>%
   mutate(Macro = (Macro_5m2/5), Nereo=(Nereo_5m2/5)) %>% # Changing units to /m2 area
@@ -22,6 +23,7 @@ densgrp <- dens %>%
   summarise(KelpM = mean(Kelp), KelpSD = sd(Kelp))
 
 
+
 ## Our kelp height & biomass data ##
 kelp <- read.csv("./MSc_data/Data_new/kelp_morphology_2022.csv") %>%
   as.data.frame()
@@ -32,7 +34,6 @@ kelp <- kelp %>%
   mutate(Sub_diam_cm = (Sub_circ_cm/3.14159)) %>%
   ungroup()
   
-
 # Equation for converting from sub-bulb to biomass as per our Nereo sub-bulb model
 formula <- function(x){
   (150.7966*(x)^2 -216.2721*(x) + 315.0124)
@@ -42,7 +43,6 @@ options(scipen=999) # Turning off scientific notation
 
 # Statement for applying sub-bulb equation when biomass is absent
 kelp$Biomass_g <- ifelse(is.na(kelp$Biomass_g), ifelse(is.na(kelp$Sub_diam_cm), NA, formula(kelp$Sub_diam_cm)), kelp$Biomass_g)
-
 
 # Special addition for plotting the raw data by density
 kelpbydens <- merge(kelp, densgrp, by="SiteName", all=TRUE)
@@ -59,6 +59,7 @@ kelpgrp <- kelp %>%
 ### Joining the data together ###
 kelpdat <- merge(densgrp, kelpgrp, by = "SiteName", all=TRUE) %>%
                merge(tempgrp) # Adding in the temp logger data
+
 
 #### Plotting the data ----
 
@@ -113,8 +114,11 @@ dev.off()
 
 #### Regressions of the data ----
 
-ggplot(kelpdat, aes(x=Depth_logger_datum_m, y=Tempmax)) +
+kelpdat2 <- merge(kelpdat, rls_richness, by="SiteName", all=T)
+
+ggplot(kelpdat2, aes(x=HeightM, y=species_richness)) +
   geom_point() +
-  geom_smooth(method="lm", formula = y ~ x, se=T) + # Lm
-  scale_x_reverse() +
+  # geom_smooth(method="lm", formula = y ~ x + I(x^2), se=T) + # Lm quadratic
+  # geom_smooth(method="lm", formula = y ~ x, se=T) + # Lm
+  geom_smooth(method="gam", formula = y ~ s(x, bs="cs", k=3), se=T) + # GAM
   theme_classic()

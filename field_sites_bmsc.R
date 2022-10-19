@@ -50,7 +50,9 @@ land <- land %>%
 
 #### Data prep work ####
 
+##                             ##
 ## Joanne Lessard survey sites ##
+##                             ##
 
 library(foreign) # Package for reading in .dbf files
 
@@ -70,7 +72,10 @@ jlsf <- jlsf %>%
   st_crop(st_bbox(corners))
 
 
+##                          ##
 ## CN/SS & JMS survey sites ##
+##                          ## 
+
 rec <- read.csv("./MSc_data/Data_sourced/Fieldedits_Kelp_site_suggestions_2022.csv") %>%
   mutate(Lat = as.numeric(Lat), Lon = as.numeric(Lon))
 
@@ -88,7 +93,10 @@ recsf <- recsf %>%
   st_crop(st_bbox(corners))
 
 
+##                                ##
 ## Our finalized survey site list ##
+##                                ##
+
 sites <- read.csv("./MSc_data/Data_new/Final_site_list_2022.csv") %>%
   mutate_all(na_if, "") %>%
   mutate(Lat = as.numeric(Lat), Lon = as.numeric(Lon), Estimated_dens=factor(Estimated_dens, levels=c("High", "Med", "Low", "None"))) %>%
@@ -108,7 +116,11 @@ sitessf <- sitessf %>%
   st_crop(st_bbox(corners))
 
 
+
+##                       ##
 ## Our kelp density data ##
+##                       ##
+
 # Will add this as a value column to the site mapping data above
 dens <- read.csv("./MSc_data/Data_new/kelp_density_2022.csv") %>%
   mutate(Macro = (Macro_5m2/5), Nereo=(Nereo_5m2/5)) %>% # Changing units to /m2 area
@@ -123,43 +135,53 @@ densgrp <- dens %>%
 
 densgrp <- as.data.frame(densgrp)
 
+
 # Adding the additional kelp data metrics to the mapping data
 plotdata <- merge(sitessf, densgrp, by = "SiteName", all = TRUE) %>% #Adding on the kelp density data
-            merge(tempgrp) # Adding in the temp logger data
+            merge(kelpgrp) # Adding in the canopy height and biomass data from 'kelpforest_metrics.R'
+# Should leave just the 23 sites that we have all kelp data for
 
 
 #### Making the maps ####
 
-## plotting the kelp map (discrete fill)
+tiff(file="./MSc_plots/MapDens.tiff", height = 5.5, width = 8.5, units = "in", res=600)
+
+## plotting the kelp composition map (discrete fill)
 data_map <- ggplot(land)+
   geom_sf(fill = "grey53", color = NA) + #color = NA will remove country border
   theme_minimal(base_size = 16) +
-  geom_sf(data = plotdata, size=3, shape=23, color="black", aes(fill=Composition)) + 
+  geom_sf(data = plotdata, size=4, shape=21, color="black", aes(fill=Composition)) + 
   geom_sf_text(mapping=aes(), data=sitessf, label=sitessf$SiteName, stat="sf_coordinates", inherit.aes=T, size=2.5, nudge_y=100, nudge_x=-1200) +
-  scale_fill_manual(values=met.brewer("Degas", 4), name="") +
+  scale_fill_manual(values=met.brewer("Degas", 4), name="Canopy composition") +
   theme(panel.grid.major = element_line(colour = "transparent"), #hiding graticules
         axis.title.x = element_blank(),
-        axis.title.y = element_blank()) + 
+        axis.title.y = element_blank(),
+        axis.text = element_text(color="black", size=12),
+        legend.title = element_text(color="black", size=12),
+        legend.text = element_text(color="black", size=11),
+        panel.border = element_rect(colour="black", fill=NA, size=1)) + # Adding in outer border
   north(land, symbol=12, location="topleft") +
   ggsn::scalebar(land,
                location = "bottomright",
                transform = F,
                st.bottom = F,
-               st.size = 4,
+               st.size = 3.5,
                height = 0.01,
-               dist = 2,
+               dist = 1,
                dist_unit = "km",
                model = 'NAD83')
 data_map
 
+dev.off()
 
-## plotting the kelp map (continuous fill)
+
+## plotting the kelp density map (continuous fill)
 data_map <- ggplot(land)+
   geom_sf(fill = "grey53", color = NA) + #color = NA will remove country border
   theme_minimal(base_size = 16) +
   geom_sf(data = plotdata, size=4, shape=21, color="black", aes(fill=KelpM)) +
-  geom_sf_text(mapping=aes(), data=sitessf, label=sitessf$SiteName, stat="sf_coordinates", inherit.aes=T, size=2.5, nudge_y=100, nudge_x=-1200) +
-  scale_fill_gradientn(colors=met.brewer("VanGogh3"), name="Density (/m2)", limits=c(0,16)) +
+  # geom_sf_text(mapping=aes(), data=sitessf, label=sitessf$SiteName, stat="sf_coordinates", inherit.aes=T, size=2.5, nudge_y=100, nudge_x=-1200) +
+  scale_fill_gradientn(colors=met.brewer("VanGogh3"), name="Kelp density (/m2)", limits=c(0,16)) +
   theme(panel.grid.major = element_line(colour = "transparent"), #hiding graticules
         axis.title.x = element_blank(),
         axis.title.y = element_blank()) + 
@@ -175,25 +197,3 @@ data_map <- ggplot(land)+
                  model = 'NAD83')
 data_map
 
-
-## plotting the temp map (continuous fill)
-data_map <- ggplot(land)+
-  geom_sf(fill = "grey53", color = NA) + #color = NA will remove country border
-  theme_minimal(base_size = 16) +
-  geom_sf(data = plotdata, size=4, shape=21, color="black", aes(fill=Tempmax)) + # Modify fill to see diff variables
-  geom_sf_text(mapping=aes(), data=sitessf, label=sitessf$SiteName, stat="sf_coordinates", inherit.aes=T, size=2.5, nudge_y=100, nudge_x=-1200) +
-  scale_fill_gradientn(colors=rev(met.brewer("Homer1")), name="Temperature (C)") +
-  theme(panel.grid.major = element_line(colour = "transparent"), #hiding graticules
-        axis.title.x = element_blank(),
-        axis.title.y = element_blank()) + 
-  north(land, symbol=12, location="topleft") +
-  ggsn::scalebar(land,
-                 location = "bottomright",
-                 transform = F,
-                 st.bottom = F,
-                 st.size = 4,
-                 height = 0.01,
-                 dist = 2,
-                 dist_unit = "km",
-                 model = 'NAD83')
-data_map
