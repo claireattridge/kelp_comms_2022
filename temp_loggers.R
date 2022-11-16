@@ -221,7 +221,6 @@ plotdata <- plotdata %>%
 
 
 
-
 ###                  ###
 ### RASTER PREP WORK ###
 ###                  ###
@@ -245,8 +244,8 @@ dem <- projectRaster(dem, crs=crs(seacrop))
 extent(dem) <- extent(seacrop)
 
 
-# # going to a more course cell resolution (taking too long to process when at 1 arc (i.e., 30m))
-# dem150 <- aggregate(dem, fact = 5, fun = "mean") # Up to 150 x 150 m
+# going to a more course cell resolution (taking too long to process at 1 arc (i.e., 30m))
+dem150 <- aggregate(dem, fact = 5, fun = "mean") # Up to 150 x 150 m
 
 
 # converting the sf multipolygon of sea to a spatial polygon for plotting & limits
@@ -267,6 +266,7 @@ writeRaster(searas, "./Maps_BC/eez_bc/eez_crop_ras_BarkleyS.tif", format="GTiff"
 ###               ###
 
 library(geoR)
+library(automap)
 
 # loading in the raster version of BC sea map cropped (eez) *saved in code above
 searas <- raster("./Maps_BC/eez_bc/eez_crop_ras_BarkleyS.tif")
@@ -311,6 +311,7 @@ plot(vario, fit)
 
 
 ############ Interpolating using ordinary Kriging
+# Helpful link: https://www.neonscience.org/resources/learning-hub/tutorials/raster-data-r
 
 # Double checking that the land is set to NA values for my raster layer
 plot(searas, colNA="red")
@@ -319,13 +320,23 @@ plot(searas, colNA="red")
 ## Converting the raster to spatial points for interpolating over
 rassp <- as(searas,"SpatialPoints")
 
-## converting the sf dataframe of my data points to spatial 
+## Converting the sf dataframe of my data points to spatial 
 plotsp <- as_Spatial(plotdata)
+
+
+## Converting the raster of dem to spatial 
+demfr <- as.data.frame(dem,xy=TRUE)
+demsf <- st_as_sf(x = demfr, 
+                        coords = c("x", "y"),
+                        crs = proj)
+demsf2 <- st_join(demsf, plotdata, left=TRUE)
+
+demsp <- as(demsf2, "Spatial")
 
 
 ### running ordinary kriging
 
-k <- krige((Tempave)~1, plotsp, rassp, model=fit) # Ordinary kriging w. autoKrige()
+k <- krige(Tempave~1, plotsp, rassp, model=fit) # Ordinary kriging w. autoKrige()
 
 k <- autoKrige(Tempave~1, input_data=plotsp, new_data=rassp)
 
