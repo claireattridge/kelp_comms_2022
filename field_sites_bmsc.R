@@ -144,7 +144,7 @@ plotdata <- merge(sitessf, densgrp, by = "SiteName", all = TRUE) %>% #Adding on 
 
 #### Making the maps ####
 
-tiff(file="./MSc_plots/MapDens.tiff", height = 5.5, width = 8.5, units = "in", res=600)
+tiff(file="./MSc_plots/MapForests.tiff", height = 5.5, width = 8.5, units = "in", res=600)
 
 ## plotting the kelp composition map (discrete fill)
 data_map <- ggplot(land)+
@@ -175,16 +175,22 @@ data_map
 dev.off()
 
 
+
+tiff(file="./MSc_plots/MapDens.tiff", height = 5, width = 10, units = "in", res=600)
+
 ## plotting the kelp density map (continuous fill)
 data_map <- ggplot(land)+
   geom_sf(fill = "grey53", color = NA) + #color = NA will remove country border
   theme_minimal(base_size = 16) +
-  geom_sf(data = plotdata, size=4, shape=21, color="black", aes(fill=KelpM)) +
+  geom_sf(data = plotdata, size=3, shape=21, color="black", aes(fill=KelpM)) +
   # geom_sf_text(mapping=aes(), data=sitessf, label=sitessf$SiteName, stat="sf_coordinates", inherit.aes=T, size=2.5, nudge_y=100, nudge_x=-1200) +
   scale_fill_gradientn(colors=met.brewer("VanGogh3"), name="Kelp density (/m2)", limits=c(0,16)) +
   theme(panel.grid.major = element_line(colour = "transparent"), #hiding graticules
         axis.title.x = element_blank(),
-        axis.title.y = element_blank()) + 
+        axis.title.y = element_blank(),
+        legend.title = element_text(color="black", size=11),
+        legend.text = element_text(color="black", size=10),
+        panel.border = element_rect(colour="black", fill=NA, size=1)) + # Adding in outer border
   north(land, symbol=12, location="topleft") +
   ggsn::scalebar(land,
                  location = "bottomright",
@@ -196,4 +202,6 @@ data_map <- ggplot(land)+
                  dist_unit = "km",
                  model = 'NAD83')
 data_map
+
+dev.off()
 
