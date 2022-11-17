@@ -252,6 +252,7 @@ dem150 <- aggregate(dem, fact = 5, fun = "mean") # Up to 150 x 150 m
 seacropsp <- seacrop %>%
   as("Spatial")
 
+
 # rasterizing the sea multipolygon to the DEM cell size *Should only have to do this the first time
 searas <- rasterize(seacrop, dem, fun="last")
 
@@ -295,7 +296,7 @@ hist(plotdata$Tempmin) # looks ok
 plotsp <- as_Spatial(plotdata)
 
 # fitting variogram of data points to the spatial map data
-vario <- variogram(Tempmax~1, data=plotsp)
+vario <- variogram(Tempave~1, data=plotsp)
 # eyefit(vario)
 
 # fitting model to the variogram
@@ -310,7 +311,19 @@ fit <- fit.variogram(vario, model = vgm(model="Exp")) # fit model
 plot(vario, fit)
 
 
-############ Interpolating using ordinary Kriging
+############ Interpolating using co-Kriging ??????????????????????????????????
+# Helpful link: https://gis.stackexchange.com/questions/280850/preparing-dataset-to-perform-co-kriging-in-r-gstat?fbclid=IwAR1-facpiy2c-pZc2F4EkA0bSNCojYcPLxlx2Dt8oi5GjfhTyCUfqd4KaX0
+
+g <- gstat(NULL, id="Temps", form=Tempave~1, data=plotsp) # gstat object for temp data
+g <- gstat(g, id="bathy", form=GDAL.Band.Number.1~1, data=demsp) # gstat object for dem data
+v <- variogram(g, cutoff=2000) # variograms for both & the cross-variogram
+
+g <- gstat(g, id="Temps", model=v, fill.all=T) # adding the variogram models to the gstat object
+pred <- predict.gstat(g, rassp) # predicting over the empty grid of my study area
+
+
+
+############ Interpolating using ordinary Kriging (AUTOKRIGE) !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # Helpful link: https://www.neonscience.org/resources/learning-hub/tutorials/raster-data-r
 
 # Double checking that the land is set to NA values for my raster layer
@@ -329,14 +342,11 @@ demfr <- as.data.frame(dem,xy=TRUE)
 demsf <- st_as_sf(x = demfr, 
                         coords = c("x", "y"),
                         crs = proj)
-demsf2 <- st_join(demsf, plotdata, left=TRUE)
-
-demsp <- as(demsf2, "Spatial")
+demsfclean <- na.omit(demsf)
+demsp <- as(demsfclean, "Spatial")
 
 
 ### running ordinary kriging
-
-k <- krige(Tempave~1, plotsp, rassp, model=fit) # Ordinary kriging w. autoKrige()
 
 k <- autoKrige(Tempave~1, input_data=plotsp, new_data=rassp)
 
