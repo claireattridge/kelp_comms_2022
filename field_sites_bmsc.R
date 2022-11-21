@@ -14,7 +14,7 @@ library(MetBrewer)
 
 ## setting projections at outset
 proj <- st_crs(3005) # ESPG code for BC Albers projection
-latlong <- "+proj=longlat +datum=WGS84 +no_defs" # identifying the coordinate system being used for the corner values
+latlong <- st_crs(4326) # for baseline/existing WGS84 ("+proj=longlat +datum=WGS84 +no_defs")
 
 ## seting map extent for Bamfield 
 ymax <- 48.922
@@ -46,6 +46,10 @@ land <- st_difference(mask, sea) # removing the intersecting area (i.e., removin
 land <- land %>%
   st_sf() %>% # making into sf object 
   st_transform(proj) # projecting back into ESPG 3005
+
+
+## saving the cropped size map of land *Should be able to use this going forward now!
+write_sf(land, "./Maps_BC/eez_bc/land_crop_BarkleyS.shp", overwrite=T)
 
 
 #### Data prep work ####
