@@ -2,15 +2,15 @@
 ## Author: Claire Attridge
 ## Origin date: August 2022
 
+# Loading base packages
 library(tidyverse)
 library(ggpubr)
 library(gridExtra)
 library(MetBrewer)
 
-#### Data cleaning ----
+#### Kelp density cleaning ----
 
-
-## Our kelp density data ##
+## Our kelp density data
 dens <- read.csv("./MSc_data/Data_new/kelp_density_2022.csv") %>%
   mutate(Macro = (Macro_5m2/5), Nereo=(Nereo_5m2/5)) %>% # Changing units to /m2 area
   rowwise() %>%
@@ -23,8 +23,9 @@ densgrp <- dens %>%
   summarise(KelpM = mean(Kelp), KelpSD = sd(Kelp))
 
 
+#### Kelp height & biomass cleaning ----
 
-## Our kelp height & biomass data ##
+## Our kelp height and biomass data
 kelp <- read.csv("./MSc_data/Data_new/kelp_morphology_2022.csv") %>%
   as.data.frame()
 
@@ -34,18 +35,22 @@ kelp <- kelp %>%
   mutate(Sub_diam_cm = (Sub_circ_cm/3.14159)) %>%
   ungroup()
   
-# Equation for converting from sub-bulb to biomass as per our Nereo sub-bulb model
+# Equation for converting from sub-bulb to biomass as per our Nereo sub-bulb model (all sites combined)
+# See 'nereo_biomass.R'
 formula <- function(x){
   (150.7966*(x)^2 -216.2721*(x) + 315.0124)
 }
 
 options(scipen=999) # Turning off scientific notation
 
-# Statement for applying sub-bulb equation when biomass is absent
+# Statement for applying sub-bulb equation when biomass is absent (i.e., when it needs to happen)
 kelp$Biomass_g <- ifelse(is.na(kelp$Biomass_g), ifelse(is.na(kelp$Sub_diam_cm), NA, formula(kelp$Sub_diam_cm)), kelp$Biomass_g)
 
-# Special addition for plotting the raw data by density
+
+#
+# A 'sidenote' dataframe for plotting the raw data by density order
 kelpbydens <- merge(kelp, densgrp, by="SiteName", all=TRUE)
+#
 
 
 # Grouping/averaging for site specific height & biomass
@@ -56,11 +61,122 @@ kelpgrp <- kelp %>%
             BiomassM = mean(Biomass_g, na.rm=T), BiomassSD = sd(Biomass_g, na.rm=T))
 
 
-### Joining the data together ###
-kelpdat <- merge(densgrp, kelpgrp, by = "SiteName", all=TRUE)
+#### Kelp area cleaning ----
+
+library(scales)
+library(sf)
+library(ggsn)
+library(MetBrewer)
+library(maptools)
+library(rgeos)
+
+### Prepping the backing map
+
+## setting projections at outset 
+proj <- st_crs(3005) # ESPG for BC/Albers 
+latlong <- st_crs(4326) # for baseline/existing WGS84 ("+proj=longlat +datum=WGS84 +no_defs")
+
+## setting map extent for Barkley Sound 
+ymax <- 48.922
+ymin <- 48.80
+xmax <- -125.05
+xmin <- -125.26
+
+## making corners for the area of interest 
+corners <- st_multipoint(matrix(c(xmax,xmin,ymax,ymin),ncol=2)) %>% 
+  st_sfc(crs=latlong) %>%
+  st_sf() %>%
+  st_transform(proj) 
+plot(corners)
 
 
-#### Plotting the data ----
+### Loading in the kelp forest shapefiles
+
+# get all files with the .shp extension from the correct folder (i.e., the QGIS cleaned versions)
+path <- "./MSc_data/Data_new/Kelp_area/CleanGPX" # set path to the folder
+
+n <- list.files(path, pattern = "*shp", full.names=FALSE) # pull only the relevant names
+
+shps <- list.files(path, pattern = "*shp", full.names=TRUE) # pull full file location names
+lshps <- as.list(shps) # turn character vector into list
+
+names(lshps) <- n # assign relevant names to elements of the list
+
+f <- function(x){
+  st_read(x, crs=latlong) # base crs of the GPS used to create the shapefiles is WGS84 
+}
+
+allshps <- lapply(lshps, f) # apply function to read in as sf objects with crs set as WGS84
+
+
+list2env(allshps, envir=.GlobalEnv) # bring each unique sf object to the working environment for plotting             
+
+
+### Calculating area of each kelp forest shape file
+
+# I know this is terrible, still working on code to automate/loop st_area() through the .shp files
+# But, at least it works! Keep eyes out for updates to this code. 
+a <- st_area(allshps[[1]])
+b <- st_area(allshps[[2]])
+c <- st_area(allshps[[3]])
+d <- st_area(allshps[[4]])
+e <- st_area(allshps[[5]])
+f <- st_area(allshps[[6]])
+g <- st_area(allshps[[7]])
+h <- st_area(allshps[[8]])
+i <- st_area(allshps[[9]])
+j <- st_area(allshps[[10]])
+k <- st_area(allshps[[11]])
+l <- st_area(allshps[[12]])
+m <- st_area(allshps[[13]])
+n <- st_area(allshps[[14]])
+o <- st_area(allshps[[15]])
+p <- st_area(allshps[[16]])
+q <- st_area(allshps[[17]])
+r <- st_area(allshps[[18]])
+s <- st_area(allshps[[19]])
+t <- st_area(allshps[[20]])
+u <- st_area(allshps[[21]])
+v <- st_area(allshps[[22]])
+w <- st_area(allshps[[23]])
+
+# Making dataframe of kelp forest areas
+area.frame <- data.frame(SiteName = names(allshps), Area_m2 = cbind(c(a,d,b,c,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w))) %>%
+  mutate(SiteName = as.factor(SiteName), Area_m2 = as.numeric(Area_m2))
+
+############### TRYING TO FIGURE OUT HOW TO AUTOMATE THIS OVER THE LIST EGAUYGDUGHAIJIJIJXIAIEUHW
+
+f2 <- function(polygon){
+  st_area(polygon) #
+}
+
+
+test <- vector('list', length(allshps))
+for (i in seq_along(allshps)) {
+  x <- st_area(allshps[[i]])
+  test[i] <- x
+}
+testdf <- do.call(rbind, test)
+
+
+# Empty List for Centroids
+test <- list()
+
+# For Loop
+for (i in seq_along(allshps)) {
+    sf::st_area(allshps[[i]])
+}
+
+################ Anyways, moving on for now...
+
+#### Joining the data together ----
+
+
+### Merging density, canopy height, biomass, and area data 
+kelpdat <- merge(densgrp, kelpgrp, area.frame, by = "SiteName", all=TRUE)
+
+
+#### Plotting out the data ----
 
 tiff(file="./MSc_plots/KelpMetrics3.tiff", height = 5, width = 7, units = "in", res=500)
 
