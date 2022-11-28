@@ -1,501 +1,541 @@
-SiteName,Date,Depth_m,Depth_datum_m,Transect,Species,Sampled,Height_m,Biomass_g,Sub_circ_cm,
-Ross Islet Slug Island,7/4/2022,3,1.81,0,Macro,n1,2.14,210,NA,
-Ross Islet Slug Island,7/4/2022,3,1.81,0,Macro,n2,0.7,42,NA,
-Ross Islet Slug Island,7/4/2022,3,1.81,0,Macro,n3,0.43,860,NA,
-Ross Islet Slug Island,7/4/2022,3,1.81,0,Macro,n4,0.71,232,NA,
-Ross Islet Slug Island,7/4/2022,3,1.81,0,Macro,n5,0.57,132,NA,
-Ross Islet Slug Island,7/4/2022,3,1.81,5,Macro,n1,1.02,120,NA,
-Ross Islet Slug Island,7/4/2022,3,1.81,5,Macro,n2,1,236,NA,
-Ross Islet Slug Island,7/4/2022,3,1.81,5,Macro,n3,2.02,560,NA,
-Ross Islet Slug Island,7/4/2022,3,1.81,5,Macro,n4,3.23,1206,NA,
-Ross Islet Slug Island,7/4/2022,3,1.81,5,Macro,n5,1.79,130,NA,
-Ross Islet Slug Island,7/4/2022,3,1.81,10,Macro,n1,1.07,256,NA,
-Ross Islet Slug Island,7/4/2022,3,1.81,10,Macro,n2,1.55,308,NA,
-Ross Islet Slug Island,7/4/2022,3,1.81,10,Macro,n3,0.89,200,NA,
-Ross Islet Slug Island,7/4/2022,3,1.81,10,Macro,n4,0.4,96,NA,
-Ross Islet Slug Island,7/4/2022,3,1.81,10,Macro,n5,0.3,44,NA,
-Ross Islet Slug Island,7/4/2022,3,1.81,15,Macro,n1,0.31,100,NA,
-Ross Islet Slug Island,7/4/2022,3,1.81,15,Macro,n2,1.22,398,NA,
-Ross Islet Slug Island,7/4/2022,3,1.81,15,Macro,n3,1.46,360,NA,
-Ross Islet Slug Island,7/4/2022,3,1.81,15,Macro,n4,2.59,432,NA,
-Ross Islet Slug Island,7/4/2022,3,1.81,15,Macro,n5,0.21,48,NA,
-Between Scotts and Bradys,7/5/2022,2.7,1.42,0,Macro,n1,2.38,902,NA,
-Between Scotts and Bradys,7/5/2022,2.7,1.42,0,Macro,n2,1.71,2428,NA,
-Between Scotts and Bradys,7/5/2022,2.7,1.42,0,Macro,n3,1.93,394,NA,
-Between Scotts and Bradys,7/5/2022,2.7,1.42,0,Macro,n4,0.12,14,NA,
-Between Scotts and Bradys,7/5/2022,2.7,1.42,0,Macro,n5,0.29,18,NA,
-Between Scotts and Bradys,7/5/2022,2.7,1.42,5,Macro,n1,0.38,50,NA,
-Between Scotts and Bradys,7/5/2022,2.7,1.42,5,Macro,n2,0.63,86,NA,
-Between Scotts and Bradys,7/5/2022,2.7,1.42,5,Macro,n3,3.12,944,NA,
-Between Scotts and Bradys,7/5/2022,2.7,1.42,5,Macro,n4,0.32,88,NA,
-Between Scotts and Bradys,7/5/2022,2.7,1.42,5,Macro,n5,0.29,58,NA,
-Between Scotts and Bradys,7/5/2022,2.7,1.42,10,Macro,n1,3.35,754,NA,
-Between Scotts and Bradys,7/5/2022,2.7,1.42,10,Macro,n2,0.99,88,NA,
-Between Scotts and Bradys,7/5/2022,2.7,1.42,10,Macro,n3,0.86,104,NA,
-Between Scotts and Bradys,7/5/2022,2.7,1.42,10,Macro,n4,0.86,312,NA,
-Between Scotts and Bradys,7/5/2022,2.7,1.42,10,Macro,n5,0.62,72,NA,
-Between Scotts and Bradys,7/5/2022,2.7,1.42,15,Macro,n1,3.03,640,NA,
-Between Scotts and Bradys,7/5/2022,2.7,1.42,15,Macro,n2,0.51,50,NA,
-Between Scotts and Bradys,7/5/2022,2.7,1.42,15,Macro,n3,2.22,372,NA,
-Between Scotts and Bradys,7/5/2022,2.7,1.42,15,Macro,n4,2.26,302,NA,
-Between Scotts and Bradys,7/5/2022,2.7,1.42,15,Macro,n5,0.47,42,NA,
-Dodger Channel 1,7/5/2022,3,1.69,0,Macro,n1,1.73,418,NA,
-Dodger Channel 1,7/5/2022,3,1.69,0,Macro,n2,0.84,238,NA,
-Dodger Channel 1,7/5/2022,3,1.69,0,Macro,n3,0.51,72,NA,
-Dodger Channel 1,7/5/2022,3,1.69,0,Macro,n4,0.52,160,NA,
-Dodger Channel 1,7/5/2022,3,1.69,0,Macro,n5,NA,NA,NA,
-Dodger Channel 1,7/5/2022,3,1.69,5,Macro,n1,3.3,624,NA,
-Dodger Channel 1,7/5/2022,3,1.69,5,Macro,n2,0.77,22,NA,
-Dodger Channel 1,7/5/2022,3,1.69,5,Macro,n3,2.11,556,NA,
-Dodger Channel 1,7/5/2022,3,1.69,5,Macro,n4,1.12,196,NA,
-Dodger Channel 1,7/5/2022,3,1.69,5,Macro,n5,1.3,296,NA,
-Dodger Channel 1,7/5/2022,3,1.69,10,Macro,n1,0.2,34,NA,
-Dodger Channel 1,7/5/2022,3,1.69,10,Macro,n2,0.55,124,NA,
-Dodger Channel 1,7/5/2022,3,1.69,10,Macro,n3,1.78,346,NA,
-Dodger Channel 1,7/5/2022,3,1.69,10,Macro,n4,0.4,98,NA,
-Dodger Channel 1,7/5/2022,3,1.69,10,Macro,n5,0.33,118,NA,
-Dodger Channel 1,7/5/2022,3,1.69,15,Macro,n1,5.48,1826,NA,
-Dodger Channel 1,7/5/2022,3,1.69,15,Macro,n2,1.45,200,NA,
-Dodger Channel 1,7/5/2022,3,1.69,15,Macro,n3,4.13,1138,NA,
-Dodger Channel 1,7/5/2022,3,1.69,15,Macro,n4,1.81,NA,NA,
-Dodger Channel 1,7/5/2022,3,1.69,15,Macro,n5,0.33,220,NA,
-Flemming 112,7/7/2022,3.2,2.11,0,Macro,n1,0.59,192,NA,
-Flemming 112,7/7/2022,3.2,2.11,0,Macro,n2,4.81,996,NA,
-Flemming 112,7/7/2022,3.2,2.11,0,Macro,n3,0.81,176,NA,
-Flemming 112,7/7/2022,3.2,2.11,0,Macro,n4,4.24,1034,NA,
-Flemming 112,7/7/2022,3.2,2.11,0,Macro,n5,0.95,230,NA,
-Flemming 112,7/7/2022,3.2,2.11,5,Macro,n1,5.16,544,NA,
-Flemming 112,7/7/2022,3.2,2.11,5,Macro,n2,4.96,1004,NA,
-Flemming 112,7/7/2022,3.2,2.11,5,Macro,n3,5.02,644,NA,
-Flemming 112,7/7/2022,3.2,2.11,5,Macro,n4,1.23,204,NA,
-Flemming 112,7/7/2022,3.2,2.11,5,Macro,n5,0.47,62,NA,
-Flemming 112,7/7/2022,3.2,2.11,10,Macro,n1,2.63,344,NA,
-Flemming 112,7/7/2022,3.2,2.11,10,Macro,n2,1.41,232,NA,
-Flemming 112,7/7/2022,3.2,2.11,10,Macro,n3,1.23,212,NA,
-Flemming 112,7/7/2022,3.2,2.11,10,Macro,n4,0.63,188,NA,
-Flemming 112,7/7/2022,3.2,2.11,10,Macro,n5,NA,NA,NA,
-Flemming 112,7/7/2022,3.2,2.11,15,Macro,n1,4.2,376,NA,
-Flemming 112,7/7/2022,3.2,2.11,15,Macro,n2,0.94,186,NA,
-Flemming 112,7/7/2022,3.2,2.11,15,Macro,n3,2.06,850,NA,
-Flemming 112,7/7/2022,3.2,2.11,15,Macro,n4,1.36,210,NA,
-Flemming 112,7/7/2022,3.2,2.11,15,Macro,n5,3.94,610,NA,
-Swiss Boy,7/23/2022,4.3,2,0,Nereo,n1,2.45,NA,1.6,
-Swiss Boy,7/23/2022,4.3,2,0,Nereo,n2,1.45,NA,1.7,
-Swiss Boy,7/23/2022,4.3,2,0,Nereo,n3,0.33,NA,0.6,
-Swiss Boy,7/23/2022,4.3,2,0,Nereo,n4,0.39,NA,0.8,
-Swiss Boy,7/23/2022,4.3,2,0,Nereo,n5,1.1,NA,2.2,
-Swiss Boy,7/23/2022,4.3,2,5,Nereo,n1,3.43,NA,13,
-Swiss Boy,7/23/2022,4.3,2,5,Nereo,n2,1.12,NA,0.5,
-Swiss Boy,7/23/2022,4.3,2,5,Nereo,n3,1.04,NA,0.5,
-Swiss Boy,7/23/2022,4.3,2,5,Nereo,n4,0.63,NA,0.5,
-Swiss Boy,7/23/2022,4.3,2,5,Nereo,n5,1.28,NA,2,
-Swiss Boy,7/23/2022,4.3,2,10,Nereo,n1,3.96,NA,3,
-Swiss Boy,7/23/2022,4.3,2,10,Nereo,n2,5.9,NA,2.3,
-Swiss Boy,7/23/2022,4.3,2,10,Nereo,n3,3.65,NA,10.8,
-Swiss Boy,7/23/2022,4.3,2,10,Nereo,n4,2.3,NA,5.8,
-Swiss Boy,7/23/2022,4.3,2,10,Nereo,n5,6.3,NA,5.8,
-Swiss Boy,7/23/2022,4.3,2,15,Nereo,n1,2.67,NA,4,
-Swiss Boy,7/23/2022,4.3,2,15,Nereo,n2,1.26,NA,2,
-Swiss Boy,7/23/2022,4.3,2,15,Nereo,n3,0.44,NA,0.5,
-Swiss Boy,7/23/2022,4.3,2,15,Nereo,n4,0.78,NA,0.5,
-Swiss Boy,7/23/2022,4.3,2,15,Nereo,n5,1.16,NA,1,
-Less Dangerous Bay,7/24/2022,4,1.41,0,NA,n1,NA,NA,NA,
-Less Dangerous Bay,7/24/2022,4,1.41,0,NA,n2,NA,NA,NA,
-Less Dangerous Bay,7/24/2022,4,1.41,0,NA,n3,NA,NA,NA,
-Less Dangerous Bay,7/24/2022,4,1.41,0,NA,n4,NA,NA,NA,
-Less Dangerous Bay,7/24/2022,4,1.41,0,NA,n5,NA,NA,NA,
-Less Dangerous Bay,7/24/2022,4,1.41,5,NA,n1,NA,NA,NA,
-Less Dangerous Bay,7/24/2022,4,1.41,5,NA,n2,NA,NA,NA,
-Less Dangerous Bay,7/24/2022,4,1.41,5,NA,n3,NA,NA,NA,
-Less Dangerous Bay,7/24/2022,4,1.41,5,NA,n4,NA,NA,NA,
-Less Dangerous Bay,7/24/2022,4,1.41,5,NA,n5,NA,NA,NA,
-Less Dangerous Bay,7/24/2022,4,1.41,10,NA,n1,NA,NA,NA,
-Less Dangerous Bay,7/24/2022,4,1.41,10,NA,n2,NA,NA,NA,
-Less Dangerous Bay,7/24/2022,4,1.41,10,NA,n3,NA,NA,NA,
-Less Dangerous Bay,7/24/2022,4,1.41,10,NA,n4,NA,NA,NA,
-Less Dangerous Bay,7/24/2022,4,1.41,10,NA,n5,NA,NA,NA,
-Less Dangerous Bay,7/24/2022,4,1.41,15,NA,n1,NA,NA,NA,
-Less Dangerous Bay,7/24/2022,4,1.41,15,NA,n2,NA,NA,NA,
-Less Dangerous Bay,7/24/2022,4,1.41,15,NA,n3,NA,NA,NA,
-Less Dangerous Bay,7/24/2022,4,1.41,15,NA,n4,NA,NA,NA,
-Less Dangerous Bay,7/24/2022,4,1.41,15,NA,n5,NA,NA,NA,
-Ed King East Inside,7/25/2022,3,0.24,0,Macro,n1,6.07,780,NA,
-Ed King East Inside,7/25/2022,3,0.24,0,Macro,n2,5.13,1046,NA,
-Ed King East Inside,7/25/2022,3,0.24,0,Macro,n3,0.63,60,NA,
-Ed King East Inside,7/25/2022,3,0.24,0,Macro,n4,0.77,76,NA,
-Ed King East Inside,7/25/2022,3,0.24,0,Macro,n5,1.16,122,NA,
-Ed King East Inside,7/25/2022,3,0.24,5,Macro,n1,0.77,494,NA,
-Ed King East Inside,7/25/2022,3,0.24,5,Macro,n2,0.82,500,NA,
-Ed King East Inside,7/25/2022,3,0.24,5,Macro,n3,2.87,664,NA,
-Ed King East Inside,7/25/2022,3,0.24,5,Macro,n4,1.69,500,NA,
-Ed King East Inside,7/25/2022,3,0.24,5,Macro,n5,NA,NA,NA,
-Ed King East Inside,7/25/2022,3,0.24,10,Macro,n1,4.92,548,NA,
-Ed King East Inside,7/25/2022,3,0.24,10,Macro,n2,0.22,16,NA,
-Ed King East Inside,7/25/2022,3,0.24,10,Macro,n3,3.49,806,NA,
-Ed King East Inside,7/25/2022,3,0.24,10,Macro,n4,2.69,224,NA,
-Ed King East Inside,7/25/2022,3,0.24,10,Macro,n5,1.5,686,NA,
-Ed King East Inside,7/25/2022,3,0.24,15,Macro,n1,2.12,752,NA,
-Ed King East Inside,7/25/2022,3,0.24,15,Macro,n2,2.65,1084,NA,
-Ed King East Inside,7/25/2022,3,0.24,15,Macro,n3,4.27,1080,NA,
-Ed King East Inside,7/25/2022,3,0.24,15,Macro,n4,2.71,1082,NA,
-Ed King East Inside,7/25/2022,3,0.24,15,Macro,n5,4.01,1062,NA,
-Ed King East Inside,7/25/2022,3,0.24,0,Nereo,n1,2.44,,6.5,
-Ed King East Inside,7/25/2022,3,0.24,0,Nereo,n2,2.45,,4.8,
-Ed King East Inside,7/25/2022,3,0.24,0,Nereo,n3,2.67,,7.9,
-Ed King East Inside,7/25/2022,3,0.24,0,Nereo,n4,2.83,,6.3,
-Ed King East Inside,7/25/2022,3,0.24,0,Nereo,n5,NA,NA,NA,
-Ed King East Inside,7/25/2022,3,0.24,5,Nereo,n1,2.91,,9,
-Ed King East Inside,7/25/2022,3,0.24,5,Nereo,n2,3.14,,10,
-Ed King East Inside,7/25/2022,3,0.24,5,Nereo,n3,1.84,,6,
-Ed King East Inside,7/25/2022,3,0.24,5,Nereo,n4,1.85,,4,
-Ed King East Inside,7/25/2022,3,0.24,5,Nereo,n5,2.55,,6,
-Ed King East Inside,7/25/2022,3,0.24,10,Nereo,n1,1.58,,5,
-Ed King East Inside,7/25/2022,3,0.24,10,Nereo,n2,1.73,,5.7,
-Ed King East Inside,7/25/2022,3,0.24,10,Nereo,n3,0.86,,2.2,
-Ed King East Inside,7/25/2022,3,0.24,10,Nereo,n4,1.01,,2.2,
-Ed King East Inside,7/25/2022,3,0.24,10,Nereo,n5,1.39,,2,
-Ed King East Inside,7/25/2022,3,0.24,15,Nereo,n1,2.17,,9,
-Ed King East Inside,7/25/2022,3,0.24,15,Nereo,n2,1.92,,6,
-Ed King East Inside,7/25/2022,3,0.24,15,Nereo,n3,2.14,,4,
-Ed King East Inside,7/25/2022,3,0.24,15,Nereo,n4,2.03,,1,
-Ed King East Inside,7/25/2022,3,0.24,15,Nereo,n5,2.56,,6,
-Dixon Island Back (Bay),7/26/2022,3.5,1.18,0,Macro,n1,3.29,1762,NA,
-Dixon Island Back (Bay),7/26/2022,3.5,1.18,0,Macro,n2,0.99,814,NA,
-Dixon Island Back (Bay),7/26/2022,3.5,1.18,0,Macro,n3,3.76,2230,NA,
-Dixon Island Back (Bay),7/26/2022,3.5,1.18,0,Macro,n4,0.8,486,NA,
-Dixon Island Back (Bay),7/26/2022,3.5,1.18,0,Macro,n5,0.58,902,NA,
-Dixon Island Back (Bay),7/26/2022,3.5,1.18,5,Macro,n1,0.86,440,NA,
-Dixon Island Back (Bay),7/26/2022,3.5,1.18,5,Macro,n2,1.3,580,NA,
-Dixon Island Back (Bay),7/26/2022,3.5,1.18,5,Macro,n3,1.3,660,NA,
-Dixon Island Back (Bay),7/26/2022,3.5,1.18,5,Macro,n4,1.36,810,NA,
-Dixon Island Back (Bay),7/26/2022,3.5,1.18,5,Macro,n5,0.47,228,NA,
-Dixon Island Back (Bay),7/26/2022,3.5,1.18,10,Macro,n1,0.92,790,NA,
-Dixon Island Back (Bay),7/26/2022,3.5,1.18,10,Macro,n2,0.72,902,NA,
-Dixon Island Back (Bay),7/26/2022,3.5,1.18,10,Macro,n3,0.81,384,NA,
-Dixon Island Back (Bay),7/26/2022,3.5,1.18,10,Macro,n4,2.08,606,NA,
-Dixon Island Back (Bay),7/26/2022,3.5,1.18,10,Macro,n5,NA,NA,NA,
-Dixon Island Back (Bay),7/26/2022,3.5,1.18,15,Macro,n1,1.06,1058,NA,
-Dixon Island Back (Bay),7/26/2022,3.5,1.18,15,Macro,n2,0.26,114,NA,
-Dixon Island Back (Bay),7/26/2022,3.5,1.18,15,Macro,n3,NA,NA,NA,
-Dixon Island Back (Bay),7/26/2022,3.5,1.18,15,Macro,n4,NA,NA,NA,
-Dixon Island Back (Bay),7/26/2022,3.5,1.18,15,Macro,n5,NA,NA,NA,
-Wizard Islet South,7/27/2022,3,0.1,0,Macro,n1,0.69,262,NA,
-Wizard Islet South,7/27/2022,3,0.1,0,Macro,n2,1.41,302,NA,
-Wizard Islet South,7/27/2022,3,0.1,0,Macro,n3,0.7,130,NA,
-Wizard Islet South,7/27/2022,3,0.1,0,Macro,n4,2.05,304,NA,
-Wizard Islet South,7/27/2022,3,0.1,0,Macro,n5,0.322,36,NA,
-Wizard Islet South,7/27/2022,3,0.1,5,Macro,n1,1.13,236,NA,
-Wizard Islet South,7/27/2022,3,0.1,5,Macro,n2,1.2,284,NA,
-Wizard Islet South,7/27/2022,3,0.1,5,Macro,n3,1.3,402,NA,
-Wizard Islet South,7/27/2022,3,0.1,5,Macro,n4,0.92,220,NA,
-Wizard Islet South,7/27/2022,3,0.1,5,Macro,n5,0.82,230,NA,
-Wizard Islet South,7/27/2022,3,0.1,10,Macro,n1,1.21,262,NA,
-Wizard Islet South,7/27/2022,3,0.1,10,Macro,n2,1.32,628,NA,
-Wizard Islet South,7/27/2022,3,0.1,10,Macro,n3,0.94,324,NA,
-Wizard Islet South,7/27/2022,3,0.1,10,Macro,n4,0.75,262,NA,
-Wizard Islet South,7/27/2022,3,0.1,10,Macro,n5,0.33,92,NA,
-Wizard Islet South,7/27/2022,3,0.1,15,Macro,n1,1.58,374,NA,
-Wizard Islet South,7/27/2022,3,0.1,15,Macro,n2,1.9,386,NA,
-Wizard Islet South,7/27/2022,3,0.1,15,Macro,n3,2.12,652,NA,
-Wizard Islet South,7/27/2022,3,0.1,15,Macro,n4,0.86,252,NA,
-Wizard Islet South,7/27/2022,3,0.1,15,Macro,n5,0.75,242,NA,
-Dodger Channel 2,7/28/2022,5,2.7,0,Macro,n1,4.44,990,NA,
-Dodger Channel 2,7/28/2022,5,2.7,0,Macro,n2,3.28,322,NA,
-Dodger Channel 2,7/28/2022,5,2.7,0,Macro,n3,1.34,226,NA,
-Dodger Channel 2,7/28/2022,5,2.7,0,Macro,n4,0.6,166,NA,
-Dodger Channel 2,7/28/2022,5,2.7,0,Macro,n5,NA,NA,NA,
-Dodger Channel 2,7/28/2022,5,2.7,5,Macro,n1,6.1,568,NA,
-Dodger Channel 2,7/28/2022,5,2.7,5,Macro,n2,0.59,132,NA,
-Dodger Channel 2,7/28/2022,5,2.7,5,Macro,n3,5.28,796,NA,
-Dodger Channel 2,7/28/2022,5,2.7,5,Macro,n4,1.83,508,NA,
-Dodger Channel 2,7/28/2022,5,2.7,5,Macro,n5,0.84,54,NA,
-Dodger Channel 2,7/28/2022,5,2.7,10,Macro,n1,5.41,320,NA,
-Dodger Channel 2,7/28/2022,5,2.7,10,Macro,n2,6.93,698,NA,
-Dodger Channel 2,7/28/2022,5,2.7,10,Macro,n3,0.7,308,NA,
-Dodger Channel 2,7/28/2022,5,2.7,10,Macro,n4,1.85,374,NA,
-Dodger Channel 2,7/28/2022,5,2.7,10,Macro,n5,4.23,1830,NA,
-Dodger Channel 2,7/28/2022,5,2.7,15,Macro,n1,4.86,418,NA,
-Dodger Channel 2,7/28/2022,5,2.7,15,Macro,n2,3.92,308,NA,
-Dodger Channel 2,7/28/2022,5,2.7,15,Macro,n3,3.66,522,NA,
-Dodger Channel 2,7/28/2022,5,2.7,15,Macro,n4,1.75,480,NA,
-Dodger Channel 2,7/28/2022,5,2.7,15,Macro,n5,NA,NA,NA,
-Ross Islet 2,7/29/2022,3.2,0.19,0,Macro,n1,1.39,424,NA,
-Ross Islet 2,7/29/2022,3.2,0.19,0,Macro,n2,1.6,234,NA,
-Ross Islet 2,7/29/2022,3.2,0.19,0,Macro,n3,1.7,424,NA,
-Ross Islet 2,7/29/2022,3.2,0.19,0,Macro,n4,0.59,114,NA,
-Ross Islet 2,7/29/2022,3.2,0.19,0,Macro,n5,1.98,630,NA,
-Ross Islet 2,7/29/2022,3.2,0.19,5,Macro,n1,2.49,762,NA,
-Ross Islet 2,7/29/2022,3.2,0.19,5,Macro,n2,4.29,248,NA,
-Ross Islet 2,7/29/2022,3.2,0.19,5,Macro,n3,2.24,96,NA,
-Ross Islet 2,7/29/2022,3.2,0.19,5,Macro,n4,0.33,78,NA,
-Ross Islet 2,7/29/2022,3.2,0.19,5,Macro,n5,0.52,62,NA,
-Ross Islet 2,7/29/2022,3.2,0.19,10,Macro,n1,1.52,350,NA,
-Ross Islet 2,7/29/2022,3.2,0.19,10,Macro,n2,1.41,342,NA,
-Ross Islet 2,7/29/2022,3.2,0.19,10,Macro,n3,2.26,530,NA,
-Ross Islet 2,7/29/2022,3.2,0.19,10,Macro,n4,1.28,172,NA,
-Ross Islet 2,7/29/2022,3.2,0.19,10,Macro,n5,1.35,596,NA,
-Ross Islet 2,7/29/2022,3.2,0.19,15,Macro,n1,3.17,240,NA,
-Ross Islet 2,7/29/2022,3.2,0.19,15,Macro,n2,1.6,174,NA,
-Ross Islet 2,7/29/2022,3.2,0.19,15,Macro,n3,0.54,156,NA,
-Ross Islet 2,7/29/2022,3.2,0.19,15,Macro,n4,0.39,70,NA,
-Ross Islet 2,7/29/2022,3.2,0.19,15,Macro,n5,0.57,82,NA,
-North Helby Rock,8/3/2022,3.5,2.41,0,Macro,n1,3.32,860,NA,
-North Helby Rock,8/3/2022,3.5,2.41,0,Macro,n2,3.2,690,NA,
-North Helby Rock,8/3/2022,3.5,2.41,0,Macro,n3,1.35,800,NA,
-North Helby Rock,8/3/2022,3.5,2.41,0,Macro,n4,2.14,486,NA,
-North Helby Rock,8/3/2022,3.5,2.41,0,Macro,n5,0.82,550,NA,
-North Helby Rock,8/3/2022,3.5,2.41,5,Macro,n1,1.25,162,NA,
-North Helby Rock,8/3/2022,3.5,2.41,5,Macro,n2,1.4,196,NA,
-North Helby Rock,8/3/2022,3.5,2.41,5,Macro,n3,2.64,634,NA,
-North Helby Rock,8/3/2022,3.5,2.41,5,Macro,n4,0.74,150,NA,
-North Helby Rock,8/3/2022,3.5,2.41,5,Macro,n5,0.67,168,NA,
-North Helby Rock,8/3/2022,3.5,2.41,10,Macro,n1,2.41,948,NA,
-North Helby Rock,8/3/2022,3.5,2.41,10,Macro,n2,2.44,806,NA,
-North Helby Rock,8/3/2022,3.5,2.41,10,Macro,n3,2.85,790,NA,
-North Helby Rock,8/3/2022,3.5,2.41,10,Macro,n4,1.38,168,NA,
-North Helby Rock,8/3/2022,3.5,2.41,10,Macro,n5,0.89,100,NA,
-North Helby Rock,8/3/2022,3.5,2.41,15,Macro,n1,1.92,446,NA,
-North Helby Rock,8/3/2022,3.5,2.41,15,Macro,n2,1.48,252,NA,
-North Helby Rock,8/3/2022,3.5,2.41,15,Macro,n3,1.3,176,NA,
-North Helby Rock,8/3/2022,3.5,2.41,15,Macro,n4,3.16,746,NA,
-North Helby Rock,8/3/2022,3.5,2.41,15,Macro,n5,1.03,122,NA,
-Second Beach South,8/5/2022,6.5,4.93,0,Nereo,n1,5.95,NA,17.9,
-Second Beach South,8/5/2022,6.5,4.93,0,Nereo,n2,6.36,NA,12.2,
-Second Beach South,8/5/2022,6.5,4.93,0,Nereo,n3,3.25,NA,2.2,
-Second Beach South,8/5/2022,6.5,4.93,0,Nereo,n4,5.36,NA,4,
-Second Beach South,8/5/2022,6.5,4.93,0,Nereo,n5,2.74,NA,1.2,
-Second Beach South,8/5/2022,6.5,4.93,5,Nereo,n1,7.33,NA,28,
-Second Beach South,8/5/2022,6.5,4.93,5,Nereo,n2,7.55,NA,18,
-Second Beach South,8/5/2022,6.5,4.93,5,Nereo,n3,1.54,NA,3,
-Second Beach South,8/5/2022,6.5,4.93,5,Nereo,n4,6.58,NA,20,
-Second Beach South,8/5/2022,6.5,4.93,5,Nereo,n5,5.9,NA,20,
-Second Beach South,8/5/2022,6.5,4.93,10,Nereo,n1,6.33,NA,7.5,
-Second Beach South,8/5/2022,6.5,4.93,10,Nereo,n2,6.62,NA,11.4,
-Second Beach South,8/5/2022,6.5,4.93,10,Nereo,n3,4.81,NA,12.4,
-Second Beach South,8/5/2022,6.5,4.93,10,Nereo,n4,5.92,NA,4,
-Second Beach South,8/5/2022,6.5,4.93,10,Nereo,n5,7.2,NA,9.8,
-Second Beach South,8/5/2022,6.5,4.93,15,Nereo,n1,1.82,NA,0.6,
-Second Beach South,8/5/2022,6.5,4.93,15,Nereo,n2,7.22,NA,8,
-Second Beach South,8/5/2022,6.5,4.93,15,Nereo,n3,5.54,NA,9,
-Second Beach South,8/5/2022,6.5,4.93,15,Nereo,n4,6.24,NA,9,
-Second Beach South,8/5/2022,6.5,4.93,15,Nereo,n5,7.5,NA,5,
-Danvers Danger Rock,8/6/2022,3,1.21,0,Macro,n1,0.48,66,NA,
-Danvers Danger Rock,8/6/2022,3,1.21,0,Macro,n2,1.07,242,NA,
-Danvers Danger Rock,8/6/2022,3,1.21,0,Macro,n3,1.07,270,NA,
-Danvers Danger Rock,8/6/2022,3,1.21,0,Macro,n4,0.37,34,NA,
-Danvers Danger Rock,8/6/2022,3,1.21,0,Macro,n5,0.55,16,NA,
-Danvers Danger Rock,8/6/2022,3,1.21,5,Macro,n1,2.35,1186,NA,
-Danvers Danger Rock,8/6/2022,3,1.21,5,Macro,n2,0.99,190,NA,
-Danvers Danger Rock,8/6/2022,3,1.21,5,Macro,n3,0.84,108,NA,
-Danvers Danger Rock,8/6/2022,3,1.21,5,Macro,n4,1.13,44,NA,
-Danvers Danger Rock,8/6/2022,3,1.21,5,Macro,n5,0.59,24,NA,
-Danvers Danger Rock,8/6/2022,3,1.21,10,Macro,n1,0.82,104,NA,
-Danvers Danger Rock,8/6/2022,3,1.21,10,Macro,n2,0.95,82,NA,
-Danvers Danger Rock,8/6/2022,3,1.21,10,Macro,n3,1.27,326,NA,
-Danvers Danger Rock,8/6/2022,3,1.21,10,Macro,n4,0.55,78,NA,
-Danvers Danger Rock,8/6/2022,3,1.21,10,Macro,n5,0.74,36,NA,
-Danvers Danger Rock,8/6/2022,3,1.21,15,Macro,n1,2.81,524,NA,
-Danvers Danger Rock,8/6/2022,3,1.21,15,Macro,n2,3.76,1460,NA,
-Danvers Danger Rock,8/6/2022,3,1.21,15,Macro,n3,1.94,76,NA,
-Danvers Danger Rock,8/6/2022,3,1.21,15,Macro,n4,0.44,40,NA,
-Danvers Danger Rock,8/6/2022,3,1.21,15,Macro,n5,0.43,18,NA,
-Cable Beach (Blow Hole),8/7/2022,3,0.87,0,Nereo,n1,4.2,NA,12,
-Cable Beach (Blow Hole),8/7/2022,3,0.87,0,Nereo,n2,2.3,NA,5,
-Cable Beach (Blow Hole),8/7/2022,3,0.87,0,Nereo,n3,1.1,NA,5.5,
-Cable Beach (Blow Hole),8/7/2022,3,0.87,0,Nereo,n4,2.1,NA,7,
-Cable Beach (Blow Hole),8/7/2022,3,0.87,0,Nereo,n5,0.25,NA,1.8,
-Cable Beach (Blow Hole),8/7/2022,3,0.87,5,Nereo,n1,1.69,NA,2.3,
-Cable Beach (Blow Hole),8/7/2022,3,0.87,5,Nereo,n2,2.23,NA,9.6,
-Cable Beach (Blow Hole),8/7/2022,3,0.87,5,Nereo,n3,1.72,NA,10.3,
-Cable Beach (Blow Hole),8/7/2022,3,0.87,5,Nereo,n4,2.24,NA,6.2,
-Cable Beach (Blow Hole),8/7/2022,3,0.87,5,Nereo,n5,2.4,NA,11.8,
-Cable Beach (Blow Hole),8/7/2022,3,0.87,10,Nereo,n1,3.2,NA,11,
-Cable Beach (Blow Hole),8/7/2022,3,0.87,10,Nereo,n2,3,NA,10,
-Cable Beach (Blow Hole),8/7/2022,3,0.87,10,Nereo,n3,3.3,NA,7.5,
-Cable Beach (Blow Hole),8/7/2022,3,0.87,10,Nereo,n4,0.21,NA,0.15,
-Cable Beach (Blow Hole),8/7/2022,3,0.87,10,Nereo,n5,1.15,NA,5.9,
-Cable Beach (Blow Hole),8/7/2022,3,0.87,15,Nereo,n1,2.86,NA,12.4,
-Cable Beach (Blow Hole),8/7/2022,3,0.87,15,Nereo,n2,1.6,NA,4.2,
-Cable Beach (Blow Hole),8/7/2022,3,0.87,15,Nereo,n3,2.24,NA,10.3,
-Cable Beach (Blow Hole),8/7/2022,3,0.87,15,Nereo,n4,1.88,NA,9.3,
-Cable Beach (Blow Hole),8/7/2022,3,0.87,15,Nereo,n5,1.65,NA,5,
-Tzartus 116,8/18/2022,3.7,2.23,0,Macro,n1,2.09,492,NA,
-Tzartus 116,8/18/2022,3.7,2.23,0,Macro,n2,1.79,280,NA,
-Tzartus 116,8/18/2022,3.7,2.23,0,Macro,n3,3.36,272,NA,
-Tzartus 116,8/18/2022,3.7,2.23,0,Macro,n4,2.26,264,NA,
-Tzartus 116,8/18/2022,3.7,2.23,0,Macro,n5,2.22,124,NA,
-Tzartus 116,8/18/2022,3.7,2.23,5,Macro,n1,4.94,514,NA,
-Tzartus 116,8/18/2022,3.7,2.23,5,Macro,n2,3.01,420,NA,
-Tzartus 116,8/18/2022,3.7,2.23,5,Macro,n3,5.67,658,NA,
-Tzartus 116,8/18/2022,3.7,2.23,5,Macro,n4,0.33,46,NA,
-Tzartus 116,8/18/2022,3.7,2.23,5,Macro,n5,NA,NA,NA,
-Tzartus 116,8/18/2022,3.7,2.23,10,Macro,n1,2.5,124,NA,
-Tzartus 116,8/18/2022,3.7,2.23,10,Macro,n2,2.31,202,NA,
-Tzartus 116,8/18/2022,3.7,2.23,10,Macro,n3,4.13,230,NA,
-Tzartus 116,8/18/2022,3.7,2.23,10,Macro,n4,0.73,94,NA,
-Tzartus 116,8/18/2022,3.7,2.23,10,Macro,n5,1.98,400,NA,
-Tzartus 116,8/18/2022,3.7,2.23,15,Macro,n1,4.95,358,NA,
-Tzartus 116,8/18/2022,3.7,2.23,15,Macro,n2,1.13,296,NA,
-Tzartus 116,8/18/2022,3.7,2.23,15,Macro,n3,1.01,176,NA,
-Tzartus 116,8/18/2022,3.7,2.23,15,Macro,n4,0.89,150,NA,
-Tzartus 116,8/18/2022,3.7,2.23,15,Macro,n5,1.2,210,NA,
-Turf Island 2,8/20/2022,2.4,0.33,0,Macro,n1,2.38,492,NA,
-Turf Island 2,8/20/2022,2.4,0.33,0,Macro,n2,0.26,34,NA,
-Turf Island 2,8/20/2022,2.4,0.33,0,Macro,n3,0.38,60,NA,
-Turf Island 2,8/20/2022,2.4,0.33,0,Macro,n4,0.47,40,NA,
-Turf Island 2,8/20/2022,2.4,0.33,0,Macro,n5,0.17,16,NA,
-Turf Island 2,8/20/2022,2.4,0.33,5,Macro,n1,2.31,318,NA,
-Turf Island 2,8/20/2022,2.4,0.33,5,Macro,n2,2,318,NA,
-Turf Island 2,8/20/2022,2.4,0.33,5,Macro,n3,1.45,376,NA,
-Turf Island 2,8/20/2022,2.4,0.33,5,Macro,n4,1.13,244,NA,
-Turf Island 2,8/20/2022,2.4,0.33,5,Macro,n5,0.82,262,NA,
-Turf Island 2,8/20/2022,2.4,0.33,10,Macro,n1,0.32,82,NA,
-Turf Island 2,8/20/2022,2.4,0.33,10,Macro,n2,1.54,262,NA,
-Turf Island 2,8/20/2022,2.4,0.33,10,Macro,n3,0.56,72,NA,
-Turf Island 2,8/20/2022,2.4,0.33,10,Macro,n4,0.89,104,NA,
-Turf Island 2,8/20/2022,2.4,0.33,10,Macro,n5,0.22,22,NA,
-Turf Island 2,8/20/2022,2.4,0.33,15,Macro,n1,1.3,594,NA,
-Turf Island 2,8/20/2022,2.4,0.33,15,Macro,n2,2.28,364,NA,
-Turf Island 2,8/20/2022,2.4,0.33,15,Macro,n3,0.79,162,NA,
-Turf Island 2,8/20/2022,2.4,0.33,15,Macro,n4,2.22,484,NA,
-Turf Island 2,8/20/2022,2.4,0.33,15,Macro,n5,1.97,288,NA,
-Second Beach,8/21/2022,4.3,2.19,0,Nereo,n1,4.39,NA,14.2,
-Second Beach,8/21/2022,4.3,2.19,0,Nereo,n2,3.45,NA,7,
-Second Beach,8/21/2022,4.3,2.19,0,Nereo,n3,5.81,NA,11.5,
-Second Beach,8/21/2022,4.3,2.19,0,Nereo,n4,5.34,NA,5.4,
-Second Beach,8/21/2022,4.3,2.19,0,Nereo,n5,5.6,NA,9.5,
-Second Beach,8/21/2022,4.3,2.19,5,Nereo,n1,1.19,NA,0.7,
-Second Beach,8/21/2022,4.3,2.19,5,Nereo,n2,5.54,NA,12,
-Second Beach,8/21/2022,4.3,2.19,5,Nereo,n3,5.81,NA,11,
-Second Beach,8/21/2022,4.3,2.19,5,Nereo,n4,2.93,NA,2.5,
-Second Beach,8/21/2022,4.3,2.19,5,Nereo,n5,6.13,NA,12.5,
-Second Beach,8/21/2022,4.3,2.19,10,Nereo,n1,4.21,NA,10.5,
-Second Beach,8/21/2022,4.3,2.19,10,Nereo,n2,4.46,NA,9.3,
-Second Beach,8/21/2022,4.3,2.19,10,Nereo,n3,4.3,NA,14.5,
-Second Beach,8/21/2022,4.3,2.19,10,Nereo,n4,3.81,NA,5.7,
-Second Beach,8/21/2022,4.3,2.19,10,Nereo,n5,4.14,NA,13.4,
-Second Beach,8/21/2022,4.3,2.19,15,Nereo,n1,4.81,NA,11.5,
-Second Beach,8/21/2022,4.3,2.19,15,Nereo,n2,2.13,NA,2.5,
-Second Beach,8/21/2022,4.3,2.19,15,Nereo,n3,5.21,NA,13,
-Second Beach,8/21/2022,4.3,2.19,15,Nereo,n4,1.16,NA,0.8,
-Second Beach,8/21/2022,4.3,2.19,15,Nereo,n5,0.98,NA,6,
-Wizard Islet North,8/22/2022,5,2.56,0,Nereo,n1,NA,NA,NA,
-Wizard Islet North,8/22/2022,5,2.56,0,Nereo,n2,NA,NA,NA,
-Wizard Islet North,8/22/2022,5,2.56,0,Nereo,n3,NA,NA,NA,
-Wizard Islet North,8/22/2022,5,2.56,0,Nereo,n4,NA,NA,NA,
-Wizard Islet North,8/22/2022,5,2.56,0,Nereo,n5,NA,NA,NA,
-Wizard Islet North,8/22/2022,5,2.56,5,Nereo,n1,NA,NA,NA,
-Wizard Islet North,8/22/2022,5,2.56,5,Nereo,n2,NA,NA,NA,
-Wizard Islet North,8/22/2022,5,2.56,5,Nereo,n3,NA,NA,NA,
-Wizard Islet North,8/22/2022,5,2.56,5,Nereo,n4,NA,NA,NA,
-Wizard Islet North,8/22/2022,5,2.56,5,Nereo,n5,NA,NA,NA,
-Wizard Islet North,8/22/2022,5,2.56,10,Nereo,n1,1.92,NA,6.5,
-Wizard Islet North,8/22/2022,5,2.56,10,Nereo,n2,2.64,NA,7.9,
-Wizard Islet North,8/22/2022,5,2.56,10,Nereo,n3,NA,NA,NA,
-Wizard Islet North,8/22/2022,5,2.56,10,Nereo,n4,NA,NA,NA,
-Wizard Islet North,8/22/2022,5,2.56,10,Nereo,n5,NA,NA,NA,
-Wizard Islet North,8/22/2022,5,2.56,15,Nereo,n1,NA,NA,NA,
-Wizard Islet North,8/22/2022,5,2.56,15,Nereo,n2,NA,NA,NA,
-Wizard Islet North,8/22/2022,5,2.56,15,Nereo,n3,NA,NA,NA,
-Wizard Islet North,8/22/2022,5,2.56,15,Nereo,n4,NA,NA,NA,
-Wizard Islet North,8/22/2022,5,2.56,15,Nereo,n5,NA,NA,NA,
-Nanat Bay,8/31/2022,5.5,3.5,0,Macro,n1,1.43,798,NA,
-Nanat Bay,8/31/2022,5.5,3.5,0,Macro,n2,7.1,464,NA,
-Nanat Bay,8/31/2022,5.5,3.5,0,Macro,n3,4.51,840,NA,
-Nanat Bay,8/31/2022,5.5,3.5,0,Macro,n4,3.09,994,NA,
-Nanat Bay,8/31/2022,5.5,3.5,0,Macro,n5,0.31,500,NA,
-Nanat Bay,8/31/2022,5.5,3.5,5,Macro,n1,0.91,626,NA,
-Nanat Bay,8/31/2022,5.5,3.5,5,Macro,n2,1.47,672,NA,
-Nanat Bay,8/31/2022,5.5,3.5,5,Macro,n3,0.5,488,NA,
-Nanat Bay,8/31/2022,5.5,3.5,5,Macro,n4,NA,NA,NA,
-Nanat Bay,8/31/2022,5.5,3.5,5,Macro,n5,NA,NA,NA,
-Nanat Bay,8/31/2022,5.5,3.5,10,Macro,n1,1.1,446,NA,
-Nanat Bay,8/31/2022,5.5,3.5,10,Macro,n2,NA,NA,NA,
-Nanat Bay,8/31/2022,5.5,3.5,10,Macro,n3,NA,NA,NA,
-Nanat Bay,8/31/2022,5.5,3.5,10,Macro,n4,NA,NA,NA,
-Nanat Bay,8/31/2022,5.5,3.5,10,Macro,n5,NA,NA,NA,
-Nanat Bay,8/31/2022,5.5,3.5,15,Macro,n1,6.65,1072,NA,
-Nanat Bay,8/31/2022,5.5,3.5,15,Macro,n2,NA,NA,NA,
-Nanat Bay,8/31/2022,5.5,3.5,15,Macro,n3,NA,NA,NA,
-Nanat Bay,8/31/2022,5.5,3.5,15,Macro,n4,NA,NA,NA,
-Nanat Bay,8/31/2022,5.5,3.5,15,Macro,n5,NA,NA,NA,
-Bordelais Island,9/1/2022,3.5,1.61,0,Nereo,n1,3.05,NA,0.5,
-Bordelais Island,9/1/2022,3.5,1.61,0,Nereo,n2,2.93,NA,4.3,
-Bordelais Island,9/1/2022,3.5,1.61,0,Nereo,n3,3.61,NA,5.1,
-Bordelais Island,9/1/2022,3.5,1.61,0,Nereo,n4,3.72,NA,9,
-Bordelais Island,9/1/2022,3.5,1.61,0,Nereo,n5,4.42,NA,10.2,
-Bordelais Island,9/1/2022,3.5,1.61,5,Nereo,n1,4.25,NA,6.5,
-Bordelais Island,9/1/2022,3.5,1.61,5,Nereo,n2,6,NA,10.5,
-Bordelais Island,9/1/2022,3.5,1.61,5,Nereo,n3,7.15,NA,12.8,
-Bordelais Island,9/1/2022,3.5,1.61,5,Nereo,n4,7,NA,10,
-Bordelais Island,9/1/2022,3.5,1.61,5,Nereo,n5,6.25,NA,10.5,
-Bordelais Island,9/1/2022,3.5,1.61,10,Nereo,n1,3.13,NA,9.5,
-Bordelais Island,9/1/2022,3.5,1.61,10,Nereo,n2,2.53,NA,11.2,
-Bordelais Island,9/1/2022,3.5,1.61,10,Nereo,n3,1.93,NA,9.3,
-Bordelais Island,9/1/2022,3.5,1.61,10,Nereo,n4,NA,NA,NA,
-Bordelais Island,9/1/2022,3.5,1.61,10,Nereo,n5,NA,NA,NA,
-Bordelais Island,9/1/2022,3.5,1.61,15,Nereo,n1,4.55,NA,13,
-Bordelais Island,9/1/2022,3.5,1.61,15,Nereo,n2,6,NA,14,
-Bordelais Island,9/1/2022,3.5,1.61,15,Nereo,n3,4,NA,3,
-Bordelais Island,9/1/2022,3.5,1.61,15,Nereo,n4,4.5,NA,10,
-Bordelais Island,9/1/2022,3.5,1.61,15,Nereo,n5,6.15,NA,9,
-Taylor Rock,9/5/2022,3.5,1.43,0,Macro,n1,3.65,752,NA,
-Taylor Rock,9/5/2022,3.5,1.43,0,Macro,n2,4.57,684,NA,
-Taylor Rock,9/5/2022,3.5,1.43,0,Macro,n3,0.75,84,NA,
-Taylor Rock,9/5/2022,3.5,1.43,0,Macro,n4,0.69,70,NA,
-Taylor Rock,9/5/2022,3.5,1.43,0,Macro,n5,0.85,62,NA,
-Taylor Rock,9/5/2022,3.5,1.43,5,Macro,n1,1.19,128,NA,
-Taylor Rock,9/5/2022,3.5,1.43,5,Macro,n2,4.68,1002,NA,
-Taylor Rock,9/5/2022,3.5,1.43,5,Macro,n3,2.82,600,NA,
-Taylor Rock,9/5/2022,3.5,1.43,5,Macro,n4,3.4,332,NA,
-Taylor Rock,9/5/2022,3.5,1.43,5,Macro,n5,1.44,108,NA,
-Taylor Rock,9/5/2022,3.5,1.43,10,Macro,n1,4.22,1040,NA,
-Taylor Rock,9/5/2022,3.5,1.43,10,Macro,n2,2.5,448,NA,
-Taylor Rock,9/5/2022,3.5,1.43,10,Macro,n3,3.44,656,NA,
-Taylor Rock,9/5/2022,3.5,1.43,10,Macro,n4,1.22,154,NA,
-Taylor Rock,9/5/2022,3.5,1.43,10,Macro,n5,0.82,76,NA,
-Taylor Rock,9/5/2022,3.5,1.43,15,Macro,n1,4.27,504,NA,
-Taylor Rock,9/5/2022,3.5,1.43,15,Macro,n2,0.85,112,NA,
-Taylor Rock,9/5/2022,3.5,1.43,15,Macro,n3,0.6,32,NA,
-Taylor Rock,9/5/2022,3.5,1.43,15,Macro,n4,3.4,78,NA,
-Taylor Rock,9/5/2022,3.5,1.43,15,Macro,n5,1.78,160,NA,
-Taylor Rock,9/5/2022,3.5,1.43,0,Nereo,n1,1.32,NA,1.4,
-Taylor Rock,9/5/2022,3.5,1.43,0,Nereo,n2,2.79,NA,6.9,
-Taylor Rock,9/5/2022,3.5,1.43,0,Nereo,n3,2.49,NA,13.2,
-Taylor Rock,9/5/2022,3.5,1.43,0,Nereo,n4,1.6,NA,3,
-Taylor Rock,9/5/2022,3.5,1.43,0,Nereo,n5,1.45,NA,2.5,
-Taylor Rock,9/5/2022,3.5,1.43,5,Nereo,n1,2.17,NA,8.5,
-Taylor Rock,9/5/2022,3.5,1.43,5,Nereo,n2,2.3,NA,7.9,
-Taylor Rock,9/5/2022,3.5,1.43,5,Nereo,n3,3.14,NA,12.7,
-Taylor Rock,9/5/2022,3.5,1.43,5,Nereo,n4,2.05,NA,8.8,
-Taylor Rock,9/5/2022,3.5,1.43,5,Nereo,n5,1.69,NA,2.7,
-Taylor Rock,9/5/2022,3.5,1.43,10,Nereo,n1,2.52,NA,7.5,
-Taylor Rock,9/5/2022,3.5,1.43,10,Nereo,n2,2.82,NA,12,
-Taylor Rock,9/5/2022,3.5,1.43,10,Nereo,n3,1.73,NA,4.5,
-Taylor Rock,9/5/2022,3.5,1.43,10,Nereo,n4,1.06,NA,2,
-Taylor Rock,9/5/2022,3.5,1.43,10,Nereo,n5,1.97,NA,5.4,
-Taylor Rock,9/5/2022,3.5,1.43,15,Nereo,n1,2.94,NA,7.2,
-Taylor Rock,9/5/2022,3.5,1.43,15,Nereo,n2,2.72,NA,6.7,
-Taylor Rock,9/5/2022,3.5,1.43,15,Nereo,n3,2.76,NA,6.2,
-Taylor Rock,9/5/2022,3.5,1.43,15,Nereo,n4,2.71,NA,13,
-Taylor Rock,9/5/2022,3.5,1.43,15,Nereo,n5,2.6,NA,5,
-Flemming 114,9/8/2022,7,3.85,0,Macro,n1,2.48,5.28,NA,
-Flemming 114,9/8/2022,7,3.85,0,Macro,n2,2.85,3.96,NA,
-Flemming 114,9/8/2022,7,3.85,0,Macro,n3,3.31,2.5,NA,
-Flemming 114,9/8/2022,7,3.85,0,Macro,n4,6.57,5.54,NA,
-Flemming 114,9/8/2022,7,3.85,0,Macro,n5,0.76,1.22,NA,
-Flemming 114,9/8/2022,7,3.85,5,Macro,n1,12.24,1060,NA,
-Flemming 114,9/8/2022,7,3.85,5,Macro,n2,5.94,610,NA,
-Flemming 114,9/8/2022,7,3.85,5,Macro,n3,2.14,506,NA,
-Flemming 114,9/8/2022,7,3.85,5,Macro,n4,5.74,1312,NA,
-Flemming 114,9/8/2022,7,3.85,5,Macro,n5,0.34,72,NA,
-Flemming 114,9/8/2022,7,3.85,10,Macro,n1,NA,NA,NA,
-Flemming 114,9/8/2022,7,3.85,10,Macro,n2,NA,NA,NA,
-Flemming 114,9/8/2022,7,3.85,10,Macro,n3,NA,NA,NA,
-Flemming 114,9/8/2022,7,3.85,10,Macro,n4,NA,NA,NA,
-Flemming 114,9/8/2022,7,3.85,10,Macro,n5,NA,NA,NA,
-Flemming 114,9/8/2022,7,3.85,15,Macro,n1,2.69,562,NA,
-Flemming 114,9/8/2022,7,3.85,15,Macro,n2,2.79,422,NA,
-Flemming 114,9/8/2022,7,3.85,15,Macro,n3,2.82,692,NA,
-Flemming 114,9/8/2022,7,3.85,15,Macro,n4,2.49,326,NA,
-Flemming 114,9/8/2022,7,3.85,15,Macro,n5,0.36,0.98,NA,
+SiteName,Date,Depth_m,Depth_datum_m,Transect,Species,Sampled,Height_m,Biomass_g,Sub_circ_cm
+Ross Islet Slug Island,07/04/2022,3,1.81,0,Macro,n1,2.14,210,NA
+Ross Islet Slug Island,07/04/2022,3,1.81,0,Macro,n2,0.7,42,NA
+Ross Islet Slug Island,07/04/2022,3,1.81,0,Macro,n3,0.43,860,NA
+Ross Islet Slug Island,07/04/2022,3,1.81,0,Macro,n4,0.71,232,NA
+Ross Islet Slug Island,07/04/2022,3,1.81,0,Macro,n5,0.57,132,NA
+Ross Islet Slug Island,07/04/2022,3,1.81,5,Macro,n1,1.02,120,NA
+Ross Islet Slug Island,07/04/2022,3,1.81,5,Macro,n2,1,236,NA
+Ross Islet Slug Island,07/04/2022,3,1.81,5,Macro,n3,2.02,560,NA
+Ross Islet Slug Island,07/04/2022,3,1.81,5,Macro,n4,3.23,1206,NA
+Ross Islet Slug Island,07/04/2022,3,1.81,5,Macro,n5,1.79,130,NA
+Ross Islet Slug Island,07/04/2022,3,1.81,10,Macro,n1,1.07,256,NA
+Ross Islet Slug Island,07/04/2022,3,1.81,10,Macro,n2,1.55,308,NA
+Ross Islet Slug Island,07/04/2022,3,1.81,10,Macro,n3,0.89,200,NA
+Ross Islet Slug Island,07/04/2022,3,1.81,10,Macro,n4,0.4,96,NA
+Ross Islet Slug Island,07/04/2022,3,1.81,10,Macro,n5,0.3,44,NA
+Ross Islet Slug Island,07/04/2022,3,1.81,15,Macro,n1,0.31,100,NA
+Ross Islet Slug Island,07/04/2022,3,1.81,15,Macro,n2,1.22,398,NA
+Ross Islet Slug Island,07/04/2022,3,1.81,15,Macro,n3,1.46,360,NA
+Ross Islet Slug Island,07/04/2022,3,1.81,15,Macro,n4,2.59,432,NA
+Ross Islet Slug Island,07/04/2022,3,1.81,15,Macro,n5,0.21,48,NA
+Between Scotts and Bradys,07/05/2022,2.7,1.42,0,Macro,n1,2.38,902,NA
+Between Scotts and Bradys,07/05/2022,2.7,1.42,0,Macro,n2,1.71,2428,NA
+Between Scotts and Bradys,07/05/2022,2.7,1.42,0,Macro,n3,1.93,394,NA
+Between Scotts and Bradys,07/05/2022,2.7,1.42,0,Macro,n4,0.12,14,NA
+Between Scotts and Bradys,07/05/2022,2.7,1.42,0,Macro,n5,0.29,18,NA
+Between Scotts and Bradys,07/05/2022,2.7,1.42,5,Macro,n1,0.38,50,NA
+Between Scotts and Bradys,07/05/2022,2.7,1.42,5,Macro,n2,0.63,86,NA
+Between Scotts and Bradys,07/05/2022,2.7,1.42,5,Macro,n3,3.12,944,NA
+Between Scotts and Bradys,07/05/2022,2.7,1.42,5,Macro,n4,0.32,88,NA
+Between Scotts and Bradys,07/05/2022,2.7,1.42,5,Macro,n5,0.29,58,NA
+Between Scotts and Bradys,07/05/2022,2.7,1.42,10,Macro,n1,3.35,754,NA
+Between Scotts and Bradys,07/05/2022,2.7,1.42,10,Macro,n2,0.99,88,NA
+Between Scotts and Bradys,07/05/2022,2.7,1.42,10,Macro,n3,0.86,104,NA
+Between Scotts and Bradys,07/05/2022,2.7,1.42,10,Macro,n4,0.86,312,NA
+Between Scotts and Bradys,07/05/2022,2.7,1.42,10,Macro,n5,0.62,72,NA
+Between Scotts and Bradys,07/05/2022,2.7,1.42,15,Macro,n1,3.03,640,NA
+Between Scotts and Bradys,07/05/2022,2.7,1.42,15,Macro,n2,0.51,50,NA
+Between Scotts and Bradys,07/05/2022,2.7,1.42,15,Macro,n3,2.22,372,NA
+Between Scotts and Bradys,07/05/2022,2.7,1.42,15,Macro,n4,2.26,302,NA
+Between Scotts and Bradys,07/05/2022,2.7,1.42,15,Macro,n5,0.47,42,NA
+Dodger Channel 1,07/05/2022,3,1.69,0,Macro,n1,1.73,418,NA
+Dodger Channel 1,07/05/2022,3,1.69,0,Macro,n2,0.84,238,NA
+Dodger Channel 1,07/05/2022,3,1.69,0,Macro,n3,0.51,72,NA
+Dodger Channel 1,07/05/2022,3,1.69,0,Macro,n4,0.52,160,NA
+Dodger Channel 1,07/05/2022,3,1.69,0,Macro,n5,NA,NA,NA
+Dodger Channel 1,07/05/2022,3,1.69,5,Macro,n1,3.3,624,NA
+Dodger Channel 1,07/05/2022,3,1.69,5,Macro,n2,0.77,22,NA
+Dodger Channel 1,07/05/2022,3,1.69,5,Macro,n3,2.11,556,NA
+Dodger Channel 1,07/05/2022,3,1.69,5,Macro,n4,1.12,196,NA
+Dodger Channel 1,07/05/2022,3,1.69,5,Macro,n5,1.3,296,NA
+Dodger Channel 1,07/05/2022,3,1.69,10,Macro,n1,0.2,34,NA
+Dodger Channel 1,07/05/2022,3,1.69,10,Macro,n2,0.55,124,NA
+Dodger Channel 1,07/05/2022,3,1.69,10,Macro,n3,1.78,346,NA
+Dodger Channel 1,07/05/2022,3,1.69,10,Macro,n4,0.4,98,NA
+Dodger Channel 1,07/05/2022,3,1.69,10,Macro,n5,0.33,118,NA
+Dodger Channel 1,07/05/2022,3,1.69,15,Macro,n1,5.48,1826,NA
+Dodger Channel 1,07/05/2022,3,1.69,15,Macro,n2,1.45,200,NA
+Dodger Channel 1,07/05/2022,3,1.69,15,Macro,n3,4.13,1138,NA
+Dodger Channel 1,07/05/2022,3,1.69,15,Macro,n4,1.81,NA,NA
+Dodger Channel 1,07/05/2022,3,1.69,15,Macro,n5,0.33,220,NA
+Flemming 112,07/07/2022,3.2,2.11,0,Macro,n1,0.59,192,NA
+Flemming 112,07/07/2022,3.2,2.11,0,Macro,n2,4.81,996,NA
+Flemming 112,07/07/2022,3.2,2.11,0,Macro,n3,0.81,176,NA
+Flemming 112,07/07/2022,3.2,2.11,0,Macro,n4,4.24,1034,NA
+Flemming 112,07/07/2022,3.2,2.11,0,Macro,n5,0.95,230,NA
+Flemming 112,07/07/2022,3.2,2.11,5,Macro,n1,5.16,544,NA
+Flemming 112,07/07/2022,3.2,2.11,5,Macro,n2,4.96,1004,NA
+Flemming 112,07/07/2022,3.2,2.11,5,Macro,n3,5.02,644,NA
+Flemming 112,07/07/2022,3.2,2.11,5,Macro,n4,1.23,204,NA
+Flemming 112,07/07/2022,3.2,2.11,5,Macro,n5,0.47,62,NA
+Flemming 112,07/07/2022,3.2,2.11,10,Macro,n1,2.63,344,NA
+Flemming 112,07/07/2022,3.2,2.11,10,Macro,n2,1.41,232,NA
+Flemming 112,07/07/2022,3.2,2.11,10,Macro,n3,1.23,212,NA
+Flemming 112,07/07/2022,3.2,2.11,10,Macro,n4,0.63,188,NA
+Flemming 112,07/07/2022,3.2,2.11,10,Macro,n5,NA,NA,NA
+Flemming 112,07/07/2022,3.2,2.11,15,Macro,n1,4.2,376,NA
+Flemming 112,07/07/2022,3.2,2.11,15,Macro,n2,0.94,186,NA
+Flemming 112,07/07/2022,3.2,2.11,15,Macro,n3,2.06,850,NA
+Flemming 112,07/07/2022,3.2,2.11,15,Macro,n4,1.36,210,NA
+Flemming 112,07/07/2022,3.2,2.11,15,Macro,n5,3.94,610,NA
+Swiss Boy,07/23/2022,4.3,2,0,Nereo,n1,2.45,NA,1.6
+Swiss Boy,07/23/2022,4.3,2,0,Nereo,n2,1.45,NA,1.7
+Swiss Boy,07/23/2022,4.3,2,0,Nereo,n3,0.33,NA,0.6
+Swiss Boy,07/23/2022,4.3,2,0,Nereo,n4,0.39,NA,0.8
+Swiss Boy,07/23/2022,4.3,2,0,Nereo,n5,1.1,NA,2.2
+Swiss Boy,07/23/2022,4.3,2,5,Nereo,n1,3.43,NA,13
+Swiss Boy,07/23/2022,4.3,2,5,Nereo,n2,1.12,NA,0.5
+Swiss Boy,07/23/2022,4.3,2,5,Nereo,n3,1.04,NA,0.5
+Swiss Boy,07/23/2022,4.3,2,5,Nereo,n4,0.63,NA,0.5
+Swiss Boy,07/23/2022,4.3,2,5,Nereo,n5,1.28,NA,2
+Swiss Boy,07/23/2022,4.3,2,10,Nereo,n1,3.96,NA,3
+Swiss Boy,07/23/2022,4.3,2,10,Nereo,n2,5.9,NA,2.3
+Swiss Boy,07/23/2022,4.3,2,10,Nereo,n3,3.65,NA,10.8
+Swiss Boy,07/23/2022,4.3,2,10,Nereo,n4,2.3,NA,5.8
+Swiss Boy,07/23/2022,4.3,2,10,Nereo,n5,6.3,NA,5.8
+Swiss Boy,07/23/2022,4.3,2,15,Nereo,n1,2.67,NA,4
+Swiss Boy,07/23/2022,4.3,2,15,Nereo,n2,1.26,NA,2
+Swiss Boy,07/23/2022,4.3,2,15,Nereo,n3,0.44,NA,0.5
+Swiss Boy,07/23/2022,4.3,2,15,Nereo,n4,0.78,NA,0.5
+Swiss Boy,07/23/2022,4.3,2,15,Nereo,n5,1.16,NA,1
+Less Dangerous Bay,07/24/2022,4,1.41,0,NA,n1,NA,NA,NA
+Less Dangerous Bay,07/24/2022,4,1.41,0,NA,n2,NA,NA,NA
+Less Dangerous Bay,07/24/2022,4,1.41,0,NA,n3,NA,NA,NA
+Less Dangerous Bay,07/24/2022,4,1.41,0,NA,n4,NA,NA,NA
+Less Dangerous Bay,07/24/2022,4,1.41,0,NA,n5,NA,NA,NA
+Less Dangerous Bay,07/24/2022,4,1.41,5,NA,n1,NA,NA,NA
+Less Dangerous Bay,07/24/2022,4,1.41,5,NA,n2,NA,NA,NA
+Less Dangerous Bay,07/24/2022,4,1.41,5,NA,n3,NA,NA,NA
+Less Dangerous Bay,07/24/2022,4,1.41,5,NA,n4,NA,NA,NA
+Less Dangerous Bay,07/24/2022,4,1.41,5,NA,n5,NA,NA,NA
+Less Dangerous Bay,07/24/2022,4,1.41,10,NA,n1,NA,NA,NA
+Less Dangerous Bay,07/24/2022,4,1.41,10,NA,n2,NA,NA,NA
+Less Dangerous Bay,07/24/2022,4,1.41,10,NA,n3,NA,NA,NA
+Less Dangerous Bay,07/24/2022,4,1.41,10,NA,n4,NA,NA,NA
+Less Dangerous Bay,07/24/2022,4,1.41,10,NA,n5,NA,NA,NA
+Less Dangerous Bay,07/24/2022,4,1.41,15,NA,n1,NA,NA,NA
+Less Dangerous Bay,07/24/2022,4,1.41,15,NA,n2,NA,NA,NA
+Less Dangerous Bay,07/24/2022,4,1.41,15,NA,n3,NA,NA,NA
+Less Dangerous Bay,07/24/2022,4,1.41,15,NA,n4,NA,NA,NA
+Less Dangerous Bay,07/24/2022,4,1.41,15,NA,n5,NA,NA,NA
+Ed King East Inside,07/25/2022,3,0.24,0,Macro,n1,6.07,780,NA
+Ed King East Inside,07/25/2022,3,0.24,0,Macro,n2,5.13,1046,NA
+Ed King East Inside,07/25/2022,3,0.24,0,Macro,n3,0.63,60,NA
+Ed King East Inside,07/25/2022,3,0.24,0,Macro,n4,0.77,76,NA
+Ed King East Inside,07/25/2022,3,0.24,0,Macro,n5,1.16,122,NA
+Ed King East Inside,07/25/2022,3,0.24,5,Macro,n1,0.77,494,NA
+Ed King East Inside,07/25/2022,3,0.24,5,Macro,n2,0.82,500,NA
+Ed King East Inside,07/25/2022,3,0.24,5,Macro,n3,2.87,664,NA
+Ed King East Inside,07/25/2022,3,0.24,5,Macro,n4,1.69,500,NA
+Ed King East Inside,07/25/2022,3,0.24,5,Macro,n5,NA,NA,NA
+Ed King East Inside,07/25/2022,3,0.24,10,Macro,n1,4.92,548,NA
+Ed King East Inside,07/25/2022,3,0.24,10,Macro,n2,0.22,16,NA
+Ed King East Inside,07/25/2022,3,0.24,10,Macro,n3,3.49,806,NA
+Ed King East Inside,07/25/2022,3,0.24,10,Macro,n4,2.69,224,NA
+Ed King East Inside,07/25/2022,3,0.24,10,Macro,n5,1.5,686,NA
+Ed King East Inside,07/25/2022,3,0.24,15,Macro,n1,2.12,752,NA
+Ed King East Inside,07/25/2022,3,0.24,15,Macro,n2,2.65,1084,NA
+Ed King East Inside,07/25/2022,3,0.24,15,Macro,n3,4.27,1080,NA
+Ed King East Inside,07/25/2022,3,0.24,15,Macro,n4,2.71,1082,NA
+Ed King East Inside,07/25/2022,3,0.24,15,Macro,n5,4.01,1062,NA
+Ed King East Inside,07/25/2022,3,0.24,0,Nereo,n1,2.44,,6.5
+Ed King East Inside,07/25/2022,3,0.24,0,Nereo,n2,2.45,,4.8
+Ed King East Inside,07/25/2022,3,0.24,0,Nereo,n3,2.67,,7.9
+Ed King East Inside,07/25/2022,3,0.24,0,Nereo,n4,2.83,,6.3
+Ed King East Inside,07/25/2022,3,0.24,0,Nereo,n5,NA,NA,NA
+Ed King East Inside,07/25/2022,3,0.24,5,Nereo,n1,2.91,,9
+Ed King East Inside,07/25/2022,3,0.24,5,Nereo,n2,3.14,,10
+Ed King East Inside,07/25/2022,3,0.24,5,Nereo,n3,1.84,,6
+Ed King East Inside,07/25/2022,3,0.24,5,Nereo,n4,1.85,,4
+Ed King East Inside,07/25/2022,3,0.24,5,Nereo,n5,2.55,,6
+Ed King East Inside,07/25/2022,3,0.24,10,Nereo,n1,1.58,,5
+Ed King East Inside,07/25/2022,3,0.24,10,Nereo,n2,1.73,,5.7
+Ed King East Inside,07/25/2022,3,0.24,10,Nereo,n3,0.86,,2.2
+Ed King East Inside,07/25/2022,3,0.24,10,Nereo,n4,1.01,,2.2
+Ed King East Inside,07/25/2022,3,0.24,10,Nereo,n5,1.39,,2
+Ed King East Inside,07/25/2022,3,0.24,15,Nereo,n1,2.17,,9
+Ed King East Inside,07/25/2022,3,0.24,15,Nereo,n2,1.92,,6
+Ed King East Inside,07/25/2022,3,0.24,15,Nereo,n3,2.14,,4
+Ed King East Inside,07/25/2022,3,0.24,15,Nereo,n4,2.03,,1
+Ed King East Inside,07/25/2022,3,0.24,15,Nereo,n5,2.56,,6
+Dixon Island Back (Bay),07/26/2022,3.5,1.18,0,Macro,n1,3.29,1762,NA
+Dixon Island Back (Bay),07/26/2022,3.5,1.18,0,Macro,n2,0.99,814,NA
+Dixon Island Back (Bay),07/26/2022,3.5,1.18,0,Macro,n3,3.76,2230,NA
+Dixon Island Back (Bay),07/26/2022,3.5,1.18,0,Macro,n4,0.8,486,NA
+Dixon Island Back (Bay),07/26/2022,3.5,1.18,0,Macro,n5,0.58,902,NA
+Dixon Island Back (Bay),07/26/2022,3.5,1.18,5,Macro,n1,0.86,440,NA
+Dixon Island Back (Bay),07/26/2022,3.5,1.18,5,Macro,n2,1.3,580,NA
+Dixon Island Back (Bay),07/26/2022,3.5,1.18,5,Macro,n3,1.3,660,NA
+Dixon Island Back (Bay),07/26/2022,3.5,1.18,5,Macro,n4,1.36,810,NA
+Dixon Island Back (Bay),07/26/2022,3.5,1.18,5,Macro,n5,0.47,228,NA
+Dixon Island Back (Bay),07/26/2022,3.5,1.18,10,Macro,n1,0.92,790,NA
+Dixon Island Back (Bay),07/26/2022,3.5,1.18,10,Macro,n2,0.72,902,NA
+Dixon Island Back (Bay),07/26/2022,3.5,1.18,10,Macro,n3,0.81,384,NA
+Dixon Island Back (Bay),07/26/2022,3.5,1.18,10,Macro,n4,2.08,606,NA
+Dixon Island Back (Bay),07/26/2022,3.5,1.18,10,Macro,n5,NA,NA,NA
+Dixon Island Back (Bay),07/26/2022,3.5,1.18,15,Macro,n1,1.06,1058,NA
+Dixon Island Back (Bay),07/26/2022,3.5,1.18,15,Macro,n2,0.26,114,NA
+Dixon Island Back (Bay),07/26/2022,3.5,1.18,15,Macro,n3,NA,NA,NA
+Dixon Island Back (Bay),07/26/2022,3.5,1.18,15,Macro,n4,NA,NA,NA
+Dixon Island Back (Bay),07/26/2022,3.5,1.18,15,Macro,n5,NA,NA,NA
+Wizard Islet South,07/27/2022,3,0.1,0,Macro,n1,0.69,262,NA
+Wizard Islet South,07/27/2022,3,0.1,0,Macro,n2,1.41,302,NA
+Wizard Islet South,07/27/2022,3,0.1,0,Macro,n3,0.7,130,NA
+Wizard Islet South,07/27/2022,3,0.1,0,Macro,n4,2.05,304,NA
+Wizard Islet South,07/27/2022,3,0.1,0,Macro,n5,0.322,36,NA
+Wizard Islet South,07/27/2022,3,0.1,5,Macro,n1,1.13,236,NA
+Wizard Islet South,07/27/2022,3,0.1,5,Macro,n2,1.2,284,NA
+Wizard Islet South,07/27/2022,3,0.1,5,Macro,n3,1.3,402,NA
+Wizard Islet South,07/27/2022,3,0.1,5,Macro,n4,0.92,220,NA
+Wizard Islet South,07/27/2022,3,0.1,5,Macro,n5,0.82,230,NA
+Wizard Islet South,07/27/2022,3,0.1,10,Macro,n1,1.21,262,NA
+Wizard Islet South,07/27/2022,3,0.1,10,Macro,n2,1.32,628,NA
+Wizard Islet South,07/27/2022,3,0.1,10,Macro,n3,0.94,324,NA
+Wizard Islet South,07/27/2022,3,0.1,10,Macro,n4,0.75,262,NA
+Wizard Islet South,07/27/2022,3,0.1,10,Macro,n5,0.33,92,NA
+Wizard Islet South,07/27/2022,3,0.1,15,Macro,n1,1.58,374,NA
+Wizard Islet South,07/27/2022,3,0.1,15,Macro,n2,1.9,386,NA
+Wizard Islet South,07/27/2022,3,0.1,15,Macro,n3,2.12,652,NA
+Wizard Islet South,07/27/2022,3,0.1,15,Macro,n4,0.86,252,NA
+Wizard Islet South,07/27/2022,3,0.1,15,Macro,n5,0.75,242,NA
+Dodger Channel 2,07/28/2022,5,2.7,0,Macro,n1,4.44,990,NA
+Dodger Channel 2,07/28/2022,5,2.7,0,Macro,n2,3.28,322,NA
+Dodger Channel 2,07/28/2022,5,2.7,0,Macro,n3,1.34,226,NA
+Dodger Channel 2,07/28/2022,5,2.7,0,Macro,n4,0.6,166,NA
+Dodger Channel 2,07/28/2022,5,2.7,0,Macro,n5,NA,NA,NA
+Dodger Channel 2,07/28/2022,5,2.7,5,Macro,n1,6.1,568,NA
+Dodger Channel 2,07/28/2022,5,2.7,5,Macro,n2,0.59,132,NA
+Dodger Channel 2,07/28/2022,5,2.7,5,Macro,n3,5.28,796,NA
+Dodger Channel 2,07/28/2022,5,2.7,5,Macro,n4,1.83,508,NA
+Dodger Channel 2,07/28/2022,5,2.7,5,Macro,n5,0.84,54,NA
+Dodger Channel 2,07/28/2022,5,2.7,10,Macro,n1,5.41,320,NA
+Dodger Channel 2,07/28/2022,5,2.7,10,Macro,n2,6.93,698,NA
+Dodger Channel 2,07/28/2022,5,2.7,10,Macro,n3,0.7,308,NA
+Dodger Channel 2,07/28/2022,5,2.7,10,Macro,n4,1.85,374,NA
+Dodger Channel 2,07/28/2022,5,2.7,10,Macro,n5,4.23,1830,NA
+Dodger Channel 2,07/28/2022,5,2.7,15,Macro,n1,4.86,418,NA
+Dodger Channel 2,07/28/2022,5,2.7,15,Macro,n2,3.92,308,NA
+Dodger Channel 2,07/28/2022,5,2.7,15,Macro,n3,3.66,522,NA
+Dodger Channel 2,07/28/2022,5,2.7,15,Macro,n4,1.75,480,NA
+Dodger Channel 2,07/28/2022,5,2.7,15,Macro,n5,NA,NA,NA
+Ross Islet 2,07/29/2022,3.2,0.19,0,Macro,n1,1.39,424,NA
+Ross Islet 2,07/29/2022,3.2,0.19,0,Macro,n2,1.6,234,NA
+Ross Islet 2,07/29/2022,3.2,0.19,0,Macro,n3,1.7,424,NA
+Ross Islet 2,07/29/2022,3.2,0.19,0,Macro,n4,0.59,114,NA
+Ross Islet 2,07/29/2022,3.2,0.19,0,Macro,n5,1.98,630,NA
+Ross Islet 2,07/29/2022,3.2,0.19,5,Macro,n1,2.49,762,NA
+Ross Islet 2,07/29/2022,3.2,0.19,5,Macro,n2,4.29,248,NA
+Ross Islet 2,07/29/2022,3.2,0.19,5,Macro,n3,2.24,96,NA
+Ross Islet 2,07/29/2022,3.2,0.19,5,Macro,n4,0.33,78,NA
+Ross Islet 2,07/29/2022,3.2,0.19,5,Macro,n5,0.52,62,NA
+Ross Islet 2,07/29/2022,3.2,0.19,10,Macro,n1,1.52,350,NA
+Ross Islet 2,07/29/2022,3.2,0.19,10,Macro,n2,1.41,342,NA
+Ross Islet 2,07/29/2022,3.2,0.19,10,Macro,n3,2.26,530,NA
+Ross Islet 2,07/29/2022,3.2,0.19,10,Macro,n4,1.28,172,NA
+Ross Islet 2,07/29/2022,3.2,0.19,10,Macro,n5,1.35,596,NA
+Ross Islet 2,07/29/2022,3.2,0.19,15,Macro,n1,3.17,240,NA
+Ross Islet 2,07/29/2022,3.2,0.19,15,Macro,n2,1.6,174,NA
+Ross Islet 2,07/29/2022,3.2,0.19,15,Macro,n3,0.54,156,NA
+Ross Islet 2,07/29/2022,3.2,0.19,15,Macro,n4,0.39,70,NA
+Ross Islet 2,07/29/2022,3.2,0.19,15,Macro,n5,0.57,82,NA
+North Helby Rock,08/03/2022,3.5,2.41,0,Macro,n1,3.32,860,NA
+North Helby Rock,08/03/2022,3.5,2.41,0,Macro,n2,3.2,690,NA
+North Helby Rock,08/03/2022,3.5,2.41,0,Macro,n3,1.35,800,NA
+North Helby Rock,08/03/2022,3.5,2.41,0,Macro,n4,2.14,486,NA
+North Helby Rock,08/03/2022,3.5,2.41,0,Macro,n5,0.82,550,NA
+North Helby Rock,08/03/2022,3.5,2.41,5,Macro,n1,1.25,162,NA
+North Helby Rock,08/03/2022,3.5,2.41,5,Macro,n2,1.4,196,NA
+North Helby Rock,08/03/2022,3.5,2.41,5,Macro,n3,2.64,634,NA
+North Helby Rock,08/03/2022,3.5,2.41,5,Macro,n4,0.74,150,NA
+North Helby Rock,08/03/2022,3.5,2.41,5,Macro,n5,0.67,168,NA
+North Helby Rock,08/03/2022,3.5,2.41,10,Macro,n1,2.41,948,NA
+North Helby Rock,08/03/2022,3.5,2.41,10,Macro,n2,2.44,806,NA
+North Helby Rock,08/03/2022,3.5,2.41,10,Macro,n3,2.85,790,NA
+North Helby Rock,08/03/2022,3.5,2.41,10,Macro,n4,1.38,168,NA
+North Helby Rock,08/03/2022,3.5,2.41,10,Macro,n5,0.89,100,NA
+North Helby Rock,08/03/2022,3.5,2.41,15,Macro,n1,1.92,446,NA
+North Helby Rock,08/03/2022,3.5,2.41,15,Macro,n2,1.48,252,NA
+North Helby Rock,08/03/2022,3.5,2.41,15,Macro,n3,1.3,176,NA
+North Helby Rock,08/03/2022,3.5,2.41,15,Macro,n4,3.16,746,NA
+North Helby Rock,08/03/2022,3.5,2.41,15,Macro,n5,1.03,122,NA
+Second Beach South,08/05/2022,6.5,4.93,0,Nereo,n1,5.95,NA,17.9
+Second Beach South,08/05/2022,6.5,4.93,0,Nereo,n2,6.36,NA,12.2
+Second Beach South,08/05/2022,6.5,4.93,0,Nereo,n3,3.25,NA,2.2
+Second Beach South,08/05/2022,6.5,4.93,0,Nereo,n4,5.36,NA,4
+Second Beach South,08/05/2022,6.5,4.93,0,Nereo,n5,2.74,NA,1.2
+Second Beach South,08/05/2022,6.5,4.93,5,Nereo,n1,7.33,NA,28
+Second Beach South,08/05/2022,6.5,4.93,5,Nereo,n2,7.55,NA,18
+Second Beach South,08/05/2022,6.5,4.93,5,Nereo,n3,1.54,NA,3
+Second Beach South,08/05/2022,6.5,4.93,5,Nereo,n4,6.58,NA,20
+Second Beach South,08/05/2022,6.5,4.93,5,Nereo,n5,5.9,NA,20
+Second Beach South,08/05/2022,6.5,4.93,10,Nereo,n1,6.33,NA,7.5
+Second Beach South,08/05/2022,6.5,4.93,10,Nereo,n2,6.62,NA,11.4
+Second Beach South,08/05/2022,6.5,4.93,10,Nereo,n3,4.81,NA,12.4
+Second Beach South,08/05/2022,6.5,4.93,10,Nereo,n4,5.92,NA,4
+Second Beach South,08/05/2022,6.5,4.93,10,Nereo,n5,7.2,NA,9.8
+Second Beach South,08/05/2022,6.5,4.93,15,Nereo,n1,1.82,NA,0.6
+Second Beach South,08/05/2022,6.5,4.93,15,Nereo,n2,7.22,NA,8
+Second Beach South,08/05/2022,6.5,4.93,15,Nereo,n3,5.54,NA,9
+Second Beach South,08/05/2022,6.5,4.93,15,Nereo,n4,6.24,NA,9
+Second Beach South,08/05/2022,6.5,4.93,15,Nereo,n5,7.5,NA,5
+Danvers Danger Rock,08/06/2022,3,1.21,0,Macro,n1,0.48,66,NA
+Danvers Danger Rock,08/06/2022,3,1.21,0,Macro,n2,1.07,242,NA
+Danvers Danger Rock,08/06/2022,3,1.21,0,Macro,n3,1.07,270,NA
+Danvers Danger Rock,08/06/2022,3,1.21,0,Macro,n4,0.37,34,NA
+Danvers Danger Rock,08/06/2022,3,1.21,0,Macro,n5,0.55,16,NA
+Danvers Danger Rock,08/06/2022,3,1.21,5,Macro,n1,2.35,1186,NA
+Danvers Danger Rock,08/06/2022,3,1.21,5,Macro,n2,0.99,190,NA
+Danvers Danger Rock,08/06/2022,3,1.21,5,Macro,n3,0.84,108,NA
+Danvers Danger Rock,08/06/2022,3,1.21,5,Macro,n4,1.13,44,NA
+Danvers Danger Rock,08/06/2022,3,1.21,5,Macro,n5,0.59,24,NA
+Danvers Danger Rock,08/06/2022,3,1.21,10,Macro,n1,0.82,104,NA
+Danvers Danger Rock,08/06/2022,3,1.21,10,Macro,n2,0.95,82,NA
+Danvers Danger Rock,08/06/2022,3,1.21,10,Macro,n3,1.27,326,NA
+Danvers Danger Rock,08/06/2022,3,1.21,10,Macro,n4,0.55,78,NA
+Danvers Danger Rock,08/06/2022,3,1.21,10,Macro,n5,0.74,36,NA
+Danvers Danger Rock,08/06/2022,3,1.21,15,Macro,n1,2.81,524,NA
+Danvers Danger Rock,08/06/2022,3,1.21,15,Macro,n2,3.76,1460,NA
+Danvers Danger Rock,08/06/2022,3,1.21,15,Macro,n3,1.94,76,NA
+Danvers Danger Rock,08/06/2022,3,1.21,15,Macro,n4,0.44,40,NA
+Danvers Danger Rock,08/06/2022,3,1.21,15,Macro,n5,0.43,18,NA
+Cable Beach (Blow Hole),08/07/2022,3,0.87,0,Nereo,n1,4.2,NA,12
+Cable Beach (Blow Hole),08/07/2022,3,0.87,0,Nereo,n2,2.3,NA,5
+Cable Beach (Blow Hole),08/07/2022,3,0.87,0,Nereo,n3,1.1,NA,5.5
+Cable Beach (Blow Hole),08/07/2022,3,0.87,0,Nereo,n4,2.1,NA,7
+Cable Beach (Blow Hole),08/07/2022,3,0.87,0,Nereo,n5,0.25,NA,1.8
+Cable Beach (Blow Hole),08/07/2022,3,0.87,5,Nereo,n1,1.69,NA,2.3
+Cable Beach (Blow Hole),08/07/2022,3,0.87,5,Nereo,n2,2.23,NA,9.6
+Cable Beach (Blow Hole),08/07/2022,3,0.87,5,Nereo,n3,1.72,NA,10.3
+Cable Beach (Blow Hole),08/07/2022,3,0.87,5,Nereo,n4,2.24,NA,6.2
+Cable Beach (Blow Hole),08/07/2022,3,0.87,5,Nereo,n5,2.4,NA,11.8
+Cable Beach (Blow Hole),08/07/2022,3,0.87,10,Nereo,n1,3.2,NA,11
+Cable Beach (Blow Hole),08/07/2022,3,0.87,10,Nereo,n2,3,NA,10
+Cable Beach (Blow Hole),08/07/2022,3,0.87,10,Nereo,n3,3.3,NA,7.5
+Cable Beach (Blow Hole),08/07/2022,3,0.87,10,Nereo,n4,0.21,NA,0.15
+Cable Beach (Blow Hole),08/07/2022,3,0.87,10,Nereo,n5,1.15,NA,5.9
+Cable Beach (Blow Hole),08/07/2022,3,0.87,15,Nereo,n1,2.86,NA,12.4
+Cable Beach (Blow Hole),08/07/2022,3,0.87,15,Nereo,n2,1.6,NA,4.2
+Cable Beach (Blow Hole),08/07/2022,3,0.87,15,Nereo,n3,2.24,NA,10.3
+Cable Beach (Blow Hole),08/07/2022,3,0.87,15,Nereo,n4,1.88,NA,9.3
+Cable Beach (Blow Hole),08/07/2022,3,0.87,15,Nereo,n5,1.65,NA,5
+Tzartus 116,08/18/2022,3.7,2.23,0,Macro,n1,2.09,492,NA
+Tzartus 116,08/18/2022,3.7,2.23,0,Macro,n2,1.79,280,NA
+Tzartus 116,08/18/2022,3.7,2.23,0,Macro,n3,3.36,272,NA
+Tzartus 116,08/18/2022,3.7,2.23,0,Macro,n4,2.26,264,NA
+Tzartus 116,08/18/2022,3.7,2.23,0,Macro,n5,2.22,124,NA
+Tzartus 116,08/18/2022,3.7,2.23,5,Macro,n1,4.94,514,NA
+Tzartus 116,08/18/2022,3.7,2.23,5,Macro,n2,3.01,420,NA
+Tzartus 116,08/18/2022,3.7,2.23,5,Macro,n3,5.67,658,NA
+Tzartus 116,08/18/2022,3.7,2.23,5,Macro,n4,0.33,46,NA
+Tzartus 116,08/18/2022,3.7,2.23,5,Macro,n5,NA,NA,NA
+Tzartus 116,08/18/2022,3.7,2.23,10,Macro,n1,2.5,124,NA
+Tzartus 116,08/18/2022,3.7,2.23,10,Macro,n2,2.31,202,NA
+Tzartus 116,08/18/2022,3.7,2.23,10,Macro,n3,4.13,230,NA
+Tzartus 116,08/18/2022,3.7,2.23,10,Macro,n4,0.73,94,NA
+Tzartus 116,08/18/2022,3.7,2.23,10,Macro,n5,1.98,400,NA
+Tzartus 116,08/18/2022,3.7,2.23,15,Macro,n1,4.95,358,NA
+Tzartus 116,08/18/2022,3.7,2.23,15,Macro,n2,1.13,296,NA
+Tzartus 116,08/18/2022,3.7,2.23,15,Macro,n3,1.01,176,NA
+Tzartus 116,08/18/2022,3.7,2.23,15,Macro,n4,0.89,150,NA
+Tzartus 116,08/18/2022,3.7,2.23,15,Macro,n5,1.2,210,NA
+Turf Island 2,08/20/2022,2.4,0.33,0,Macro,n1,2.38,492,NA
+Turf Island 2,08/20/2022,2.4,0.33,0,Macro,n2,0.26,34,NA
+Turf Island 2,08/20/2022,2.4,0.33,0,Macro,n3,0.38,60,NA
+Turf Island 2,08/20/2022,2.4,0.33,0,Macro,n4,0.47,40,NA
+Turf Island 2,08/20/2022,2.4,0.33,0,Macro,n5,0.17,16,NA
+Turf Island 2,08/20/2022,2.4,0.33,5,Macro,n1,2.31,318,NA
+Turf Island 2,08/20/2022,2.4,0.33,5,Macro,n2,2,318,NA
+Turf Island 2,08/20/2022,2.4,0.33,5,Macro,n3,1.45,376,NA
+Turf Island 2,08/20/2022,2.4,0.33,5,Macro,n4,1.13,244,NA
+Turf Island 2,08/20/2022,2.4,0.33,5,Macro,n5,0.82,262,NA
+Turf Island 2,08/20/2022,2.4,0.33,10,Macro,n1,0.32,82,NA
+Turf Island 2,08/20/2022,2.4,0.33,10,Macro,n2,1.54,262,NA
+Turf Island 2,08/20/2022,2.4,0.33,10,Macro,n3,0.56,72,NA
+Turf Island 2,08/20/2022,2.4,0.33,10,Macro,n4,0.89,104,NA
+Turf Island 2,08/20/2022,2.4,0.33,10,Macro,n5,0.22,22,NA
+Turf Island 2,08/20/2022,2.4,0.33,15,Macro,n1,1.3,594,NA
+Turf Island 2,08/20/2022,2.4,0.33,15,Macro,n2,2.28,364,NA
+Turf Island 2,08/20/2022,2.4,0.33,15,Macro,n3,0.79,162,NA
+Turf Island 2,08/20/2022,2.4,0.33,15,Macro,n4,2.22,484,NA
+Turf Island 2,08/20/2022,2.4,0.33,15,Macro,n5,1.97,288,NA
+Second Beach,08/21/2022,4.3,2.19,0,Nereo,n1,4.39,NA,14.2
+Second Beach,08/21/2022,4.3,2.19,0,Nereo,n2,3.45,NA,7
+Second Beach,08/21/2022,4.3,2.19,0,Nereo,n3,5.81,NA,11.5
+Second Beach,08/21/2022,4.3,2.19,0,Nereo,n4,5.34,NA,5.4
+Second Beach,08/21/2022,4.3,2.19,0,Nereo,n5,5.6,NA,9.5
+Second Beach,08/21/2022,4.3,2.19,5,Nereo,n1,1.19,NA,0.7
+Second Beach,08/21/2022,4.3,2.19,5,Nereo,n2,5.54,NA,12
+Second Beach,08/21/2022,4.3,2.19,5,Nereo,n3,5.81,NA,11
+Second Beach,08/21/2022,4.3,2.19,5,Nereo,n4,2.93,NA,2.5
+Second Beach,08/21/2022,4.3,2.19,5,Nereo,n5,6.13,NA,12.5
+Second Beach,08/21/2022,4.3,2.19,10,Nereo,n1,4.21,NA,10.5
+Second Beach,08/21/2022,4.3,2.19,10,Nereo,n2,4.46,NA,9.3
+Second Beach,08/21/2022,4.3,2.19,10,Nereo,n3,4.3,NA,14.5
+Second Beach,08/21/2022,4.3,2.19,10,Nereo,n4,3.81,NA,5.7
+Second Beach,08/21/2022,4.3,2.19,10,Nereo,n5,4.14,NA,13.4
+Second Beach,08/21/2022,4.3,2.19,15,Nereo,n1,4.81,NA,11.5
+Second Beach,08/21/2022,4.3,2.19,15,Nereo,n2,2.13,NA,2.5
+Second Beach,08/21/2022,4.3,2.19,15,Nereo,n3,5.21,NA,13
+Second Beach,08/21/2022,4.3,2.19,15,Nereo,n4,1.16,NA,0.8
+Second Beach,08/21/2022,4.3,2.19,15,Nereo,n5,0.98,NA,6
+Wizard Islet North,08/22/2022,5,2.56,0,Nereo,n1,NA,NA,NA
+Wizard Islet North,08/22/2022,5,2.56,0,Nereo,n2,NA,NA,NA
+Wizard Islet North,08/22/2022,5,2.56,0,Nereo,n3,NA,NA,NA
+Wizard Islet North,08/22/2022,5,2.56,0,Nereo,n4,NA,NA,NA
+Wizard Islet North,08/22/2022,5,2.56,0,Nereo,n5,NA,NA,NA
+Wizard Islet North,08/22/2022,5,2.56,5,Nereo,n1,NA,NA,NA
+Wizard Islet North,08/22/2022,5,2.56,5,Nereo,n2,NA,NA,NA
+Wizard Islet North,08/22/2022,5,2.56,5,Nereo,n3,NA,NA,NA
+Wizard Islet North,08/22/2022,5,2.56,5,Nereo,n4,NA,NA,NA
+Wizard Islet North,08/22/2022,5,2.56,5,Nereo,n5,NA,NA,NA
+Wizard Islet North,08/22/2022,5,2.56,10,Nereo,n1,1.92,NA,6.5
+Wizard Islet North,08/22/2022,5,2.56,10,Nereo,n2,2.64,NA,7.9
+Wizard Islet North,08/22/2022,5,2.56,10,Nereo,n3,NA,NA,NA
+Wizard Islet North,08/22/2022,5,2.56,10,Nereo,n4,NA,NA,NA
+Wizard Islet North,08/22/2022,5,2.56,10,Nereo,n5,NA,NA,NA
+Wizard Islet North,08/22/2022,5,2.56,15,Nereo,n1,NA,NA,NA
+Wizard Islet North,08/22/2022,5,2.56,15,Nereo,n2,NA,NA,NA
+Wizard Islet North,08/22/2022,5,2.56,15,Nereo,n3,NA,NA,NA
+Wizard Islet North,08/22/2022,5,2.56,15,Nereo,n4,NA,NA,NA
+Wizard Islet North,08/22/2022,5,2.56,15,Nereo,n5,NA,NA,NA
+Nanat Bay,08/31/2022,5.5,3.5,0,Macro,n1,1.43,798,NA
+Nanat Bay,08/31/2022,5.5,3.5,0,Macro,n2,7.1,464,NA
+Nanat Bay,08/31/2022,5.5,3.5,0,Macro,n3,4.51,840,NA
+Nanat Bay,08/31/2022,5.5,3.5,0,Macro,n4,3.09,994,NA
+Nanat Bay,08/31/2022,5.5,3.5,0,Macro,n5,0.31,500,NA
+Nanat Bay,08/31/2022,5.5,3.5,5,Macro,n1,0.91,626,NA
+Nanat Bay,08/31/2022,5.5,3.5,5,Macro,n2,1.47,672,NA
+Nanat Bay,08/31/2022,5.5,3.5,5,Macro,n3,0.5,488,NA
+Nanat Bay,08/31/2022,5.5,3.5,5,Macro,n4,NA,NA,NA
+Nanat Bay,08/31/2022,5.5,3.5,5,Macro,n5,NA,NA,NA
+Nanat Bay,08/31/2022,5.5,3.5,10,Macro,n1,1.1,446,NA
+Nanat Bay,08/31/2022,5.5,3.5,10,Macro,n2,NA,NA,NA
+Nanat Bay,08/31/2022,5.5,3.5,10,Macro,n3,NA,NA,NA
+Nanat Bay,08/31/2022,5.5,3.5,10,Macro,n4,NA,NA,NA
+Nanat Bay,08/31/2022,5.5,3.5,10,Macro,n5,NA,NA,NA
+Nanat Bay,08/31/2022,5.5,3.5,15,Macro,n1,6.65,1072,NA
+Nanat Bay,08/31/2022,5.5,3.5,15,Macro,n2,NA,NA,NA
+Nanat Bay,08/31/2022,5.5,3.5,15,Macro,n3,NA,NA,NA
+Nanat Bay,08/31/2022,5.5,3.5,15,Macro,n4,NA,NA,NA
+Nanat Bay,08/31/2022,5.5,3.5,15,Macro,n5,NA,NA,NA
+Bordelais Island,09/01/2022,3.5,1.61,0,Nereo,n1,3.05,NA,0.5
+Bordelais Island,09/01/2022,3.5,1.61,0,Nereo,n2,2.93,NA,4.3
+Bordelais Island,09/01/2022,3.5,1.61,0,Nereo,n3,3.61,NA,5.1
+Bordelais Island,09/01/2022,3.5,1.61,0,Nereo,n4,3.72,NA,9
+Bordelais Island,09/01/2022,3.5,1.61,0,Nereo,n5,4.42,NA,10.2
+Bordelais Island,09/01/2022,3.5,1.61,5,Nereo,n1,4.25,NA,6.5
+Bordelais Island,09/01/2022,3.5,1.61,5,Nereo,n2,6,NA,10.5
+Bordelais Island,09/01/2022,3.5,1.61,5,Nereo,n3,7.15,NA,12.8
+Bordelais Island,09/01/2022,3.5,1.61,5,Nereo,n4,7,NA,10
+Bordelais Island,09/01/2022,3.5,1.61,5,Nereo,n5,6.25,NA,10.5
+Bordelais Island,09/01/2022,3.5,1.61,10,Nereo,n1,3.13,NA,9.5
+Bordelais Island,09/01/2022,3.5,1.61,10,Nereo,n2,2.53,NA,11.2
+Bordelais Island,09/01/2022,3.5,1.61,10,Nereo,n3,1.93,NA,9.3
+Bordelais Island,09/01/2022,3.5,1.61,10,Nereo,n4,NA,NA,NA
+Bordelais Island,09/01/2022,3.5,1.61,10,Nereo,n5,NA,NA,NA
+Bordelais Island,09/01/2022,3.5,1.61,15,Nereo,n1,4.55,NA,13
+Bordelais Island,09/01/2022,3.5,1.61,15,Nereo,n2,6,NA,14
+Bordelais Island,09/01/2022,3.5,1.61,15,Nereo,n3,4,NA,3
+Bordelais Island,09/01/2022,3.5,1.61,15,Nereo,n4,4.5,NA,10
+Bordelais Island,09/01/2022,3.5,1.61,15,Nereo,n5,6.15,NA,9
+Taylor Rock,09/05/2022,3.5,1.43,0,Macro,n1,3.65,752,NA
+Taylor Rock,09/05/2022,3.5,1.43,0,Macro,n2,4.57,684,NA
+Taylor Rock,09/05/2022,3.5,1.43,0,Macro,n3,0.75,84,NA
+Taylor Rock,09/05/2022,3.5,1.43,0,Macro,n4,0.69,70,NA
+Taylor Rock,09/05/2022,3.5,1.43,0,Macro,n5,0.85,62,NA
+Taylor Rock,09/05/2022,3.5,1.43,5,Macro,n1,1.19,128,NA
+Taylor Rock,09/05/2022,3.5,1.43,5,Macro,n2,4.68,1002,NA
+Taylor Rock,09/05/2022,3.5,1.43,5,Macro,n3,2.82,600,NA
+Taylor Rock,09/05/2022,3.5,1.43,5,Macro,n4,3.4,332,NA
+Taylor Rock,09/05/2022,3.5,1.43,5,Macro,n5,1.44,108,NA
+Taylor Rock,09/05/2022,3.5,1.43,10,Macro,n1,4.22,1040,NA
+Taylor Rock,09/05/2022,3.5,1.43,10,Macro,n2,2.5,448,NA
+Taylor Rock,09/05/2022,3.5,1.43,10,Macro,n3,3.44,656,NA
+Taylor Rock,09/05/2022,3.5,1.43,10,Macro,n4,1.22,154,NA
+Taylor Rock,09/05/2022,3.5,1.43,10,Macro,n5,0.82,76,NA
+Taylor Rock,09/05/2022,3.5,1.43,15,Macro,n1,4.27,504,NA
+Taylor Rock,09/05/2022,3.5,1.43,15,Macro,n2,0.85,112,NA
+Taylor Rock,09/05/2022,3.5,1.43,15,Macro,n3,0.6,32,NA
+Taylor Rock,09/05/2022,3.5,1.43,15,Macro,n4,3.4,78,NA
+Taylor Rock,09/05/2022,3.5,1.43,15,Macro,n5,1.78,160,NA
+Taylor Rock,09/05/2022,3.5,1.43,0,Nereo,n1,1.32,NA,1.4
+Taylor Rock,09/05/2022,3.5,1.43,0,Nereo,n2,2.79,NA,6.9
+Taylor Rock,09/05/2022,3.5,1.43,0,Nereo,n3,2.49,NA,13.2
+Taylor Rock,09/05/2022,3.5,1.43,0,Nereo,n4,1.6,NA,3
+Taylor Rock,09/05/2022,3.5,1.43,0,Nereo,n5,1.45,NA,2.5
+Taylor Rock,09/05/2022,3.5,1.43,5,Nereo,n1,2.17,NA,8.5
+Taylor Rock,09/05/2022,3.5,1.43,5,Nereo,n2,2.3,NA,7.9
+Taylor Rock,09/05/2022,3.5,1.43,5,Nereo,n3,3.14,NA,12.7
+Taylor Rock,09/05/2022,3.5,1.43,5,Nereo,n4,2.05,NA,8.8
+Taylor Rock,09/05/2022,3.5,1.43,5,Nereo,n5,1.69,NA,2.7
+Taylor Rock,09/05/2022,3.5,1.43,10,Nereo,n1,2.52,NA,7.5
+Taylor Rock,09/05/2022,3.5,1.43,10,Nereo,n2,2.82,NA,12
+Taylor Rock,09/05/2022,3.5,1.43,10,Nereo,n3,1.73,NA,4.5
+Taylor Rock,09/05/2022,3.5,1.43,10,Nereo,n4,1.06,NA,2
+Taylor Rock,09/05/2022,3.5,1.43,10,Nereo,n5,1.97,NA,5.4
+Taylor Rock,09/05/2022,3.5,1.43,15,Nereo,n1,2.94,NA,7.2
+Taylor Rock,09/05/2022,3.5,1.43,15,Nereo,n2,2.72,NA,6.7
+Taylor Rock,09/05/2022,3.5,1.43,15,Nereo,n3,2.76,NA,6.2
+Taylor Rock,09/05/2022,3.5,1.43,15,Nereo,n4,2.71,NA,13
+Taylor Rock,09/05/2022,3.5,1.43,15,Nereo,n5,2.6,NA,5
+Flemming 114,09/08/2022,7,3.85,0,Macro,n1,2.48,5.28,NA
+Flemming 114,09/08/2022,7,3.85,0,Macro,n2,2.85,3.96,NA
+Flemming 114,09/08/2022,7,3.85,0,Macro,n3,3.31,2.5,NA
+Flemming 114,09/08/2022,7,3.85,0,Macro,n4,6.57,5.54,NA
+Flemming 114,09/08/2022,7,3.85,0,Macro,n5,0.76,1.22,NA
+Flemming 114,09/08/2022,7,3.85,5,Macro,n1,12.24,1060,NA
+Flemming 114,09/08/2022,7,3.85,5,Macro,n2,5.94,610,NA
+Flemming 114,09/08/2022,7,3.85,5,Macro,n3,2.14,506,NA
+Flemming 114,09/08/2022,7,3.85,5,Macro,n4,5.74,1312,NA
+Flemming 114,09/08/2022,7,3.85,5,Macro,n5,0.34,72,NA
+Flemming 114,09/08/2022,7,3.85,10,Macro,n1,NA,NA,NA
+Flemming 114,09/08/2022,7,3.85,10,Macro,n2,NA,NA,NA
+Flemming 114,09/08/2022,7,3.85,10,Macro,n3,NA,NA,NA
+Flemming 114,09/08/2022,7,3.85,10,Macro,n4,NA,NA,NA
+Flemming 114,09/08/2022,7,3.85,10,Macro,n5,NA,NA,NA
+Flemming 114,09/08/2022,7,3.85,15,Macro,n1,2.69,562,NA
+Flemming 114,09/08/2022,7,3.85,15,Macro,n2,2.79,422,NA
+Flemming 114,09/08/2022,7,3.85,15,Macro,n3,2.82,692,NA
+Flemming 114,09/08/2022,7,3.85,15,Macro,n4,2.49,326,NA
+Flemming 114,09/08/2022,7,3.85,15,Macro,n5,0.36,0.98,NA
+Ross Islet 2 REDO,09/13/2022,3.2,0.05,0,Macro,n1,2.74,302,NA
+Ross Islet 2 REDO,09/13/2022,3.2,0.05,0,Macro,n2,3.16,600,NA
+Ross Islet 2 REDO,09/13/2022,3.2,0.05,0,Macro,n3,0.75,88,NA
+Ross Islet 2 REDO,09/13/2022,3.2,0.05,0,Macro,n4,0.43,42,NA
+Ross Islet 2 REDO,09/13/2022,3.2,0.05,0,Macro,n5,1.11,126,NA
+Ross Islet 2 REDO,09/13/2022,3.2,0.05,5,Macro,n1,0.72,88,NA
+Ross Islet 2 REDO,09/13/2022,3.2,0.05,5,Macro,n2,3.79,294,NA
+Ross Islet 2 REDO,09/13/2022,3.2,0.05,5,Macro,n3,3.23,436,NA
+Ross Islet 2 REDO,09/13/2022,3.2,0.05,5,Macro,n4,0.17,24,NA
+Ross Islet 2 REDO,09/13/2022,3.2,0.05,5,Macro,n5,1.54,276,NA
+Ross Islet 2 REDO,09/13/2022,3.2,0.05,10,Macro,n1,1.7,192,NA
+Ross Islet 2 REDO,09/13/2022,3.2,0.05,10,Macro,n2,2.27,308,NA
+Ross Islet 2 REDO,09/13/2022,3.2,0.05,10,Macro,n3,2.03,130,NA
+Ross Islet 2 REDO,09/13/2022,3.2,0.05,10,Macro,n4,1.54,114,NA
+Ross Islet 2 REDO,09/13/2022,3.2,0.05,10,Macro,n5,1.89,248,NA
+Ross Islet 2 REDO,09/13/2022,3.2,0.05,15,Macro,n1,1.85,200,NA
+Ross Islet 2 REDO,09/13/2022,3.2,0.05,15,Macro,n2,2.52,300,NA
+Ross Islet 2 REDO,09/13/2022,3.2,0.05,15,Macro,n3,0.21,56,NA
+Ross Islet 2 REDO,09/13/2022,3.2,0.05,15,Macro,n4,2.62,520,NA
+Ross Islet 2 REDO,09/13/2022,3.2,0.05,15,Macro,n5,0.44,126,NA
+Second Beach South REDO,09/15/2022,7,5.11,0,Nereo,n1,7.13,NA,8.7
+Second Beach South REDO,09/15/2022,7,5.11,0,Nereo,n2,2.95,NA,1.3
+Second Beach South REDO,09/15/2022,7,5.11,0,Nereo,n3,5.39,NA,4
+Second Beach South REDO,09/15/2022,7,5.11,0,Nereo,n4,4.68,NA,6.5
+Second Beach South REDO,09/15/2022,7,5.11,0,Nereo,n5,5.67,NA,7.8
+Second Beach South REDO,09/15/2022,7,5.11,5,Nereo,n1,9.38,NA,12.5
+Second Beach South REDO,09/15/2022,7,5.11,5,Nereo,n2,6,NA,NA
+Second Beach South REDO,09/15/2022,7,5.11,5,Nereo,n3,5.5,NA,NA
+Second Beach South REDO,09/15/2022,7,5.11,5,Nereo,n4,9.8,NA,11.5
+Second Beach South REDO,09/15/2022,7,5.11,5,Nereo,n5,2.1,NA,0.7
+Second Beach South REDO,09/15/2022,7,5.11,10,Nereo,n1,7.95,NA,14.2
+Second Beach South REDO,09/15/2022,7,5.11,10,Nereo,n2,4.79,NA,4.2
+Second Beach South REDO,09/15/2022,7,5.11,10,Nereo,n3,6.34,NA,5.4
+Second Beach South REDO,09/15/2022,7,5.11,10,Nereo,n4,7.12,NA,12.3
+Second Beach South REDO,09/15/2022,7,5.11,10,Nereo,n5,6.86,NA,7
+Second Beach South REDO,09/15/2022,7,5.11,15,Nereo,n1,9,,NA
+Second Beach South REDO,09/15/2022,7,5.11,15,Nereo,n2,5.83,,5.2
+Second Beach South REDO,09/15/2022,7,5.11,15,Nereo,n3,7.1,,11.8
+Second Beach South REDO,09/15/2022,7,5.11,15,Nereo,n4,7.53,,14.3
+Second Beach South REDO,09/15/2022,7,5.11,15,Nereo,n5,4.6,,NA
