@@ -2,6 +2,7 @@
 ## Author: Claire Attridge
 ## Origin date: May 2022 
 
+# Loading base packages
 library(tidyverse)
 library(sf)
 library(ggsn)
@@ -10,7 +11,7 @@ library(raster)
 library(rgeos)
 library(MetBrewer)
 
-#### Map prep work ####
+#### Map prep work ----
 
 ## setting projections at outset
 proj <- st_crs(3005) # ESPG code for BC Albers projection
@@ -52,54 +53,54 @@ land <- land %>%
 write_sf(land, "./Maps_BC/eez_bc/land_crop_BarkleyS.shp", overwrite=T)
 
 
-#### Data prep work ####
+#### Data prep work ----
 
-##                             ##
-## Joanne Lessard survey sites ##
-##                             ##
-
-library(foreign) # Package for reading in .dbf files
-
-#reading in site location data
-jl <- read.dbf("./MSc_data/Data_sourced/Lessard_sites/2021SITE.DBF")
-
-#converting location data to sf object
-jlsf <- jl %>%
-  dplyr::select(c(TRANSECT, LATEND, LONEND)) %>%
-  st_as_sf(coords = c(3,2))
-
-st_crs(jlsf) = latlong
-jlsf <- st_transform(jlsf,proj) #make sure you assign this, otherwise it does not save the as the transformed version
-
-#cropping to only points within map limits
-jlsf <- jlsf %>%
-  st_crop(st_bbox(corners))
-
-
-##                          ##
-## CN/SS & JMS survey sites ##
-##                          ## 
-
-rec <- read.csv("./MSc_data/Data_sourced/Fieldedits_Kelp_site_suggestions_2022.csv") %>%
-  mutate(Lat = as.numeric(Lat), Lon = as.numeric(Lon))
-
-#converting location data to sf object
-recsf <- rec %>%
-  drop_na(Lat) %>%
-  dplyr::select(c(SiteName, Lat, Lon)) %>%
-  st_as_sf(coords = c(3,2))
-
-st_crs(recsf) = latlong
-recsf <- st_transform(recsf,proj) #make sure you assign this, otherwise it does not save the as the transformed version
-
-#cropping to only points within map limits
-recsf <- recsf %>%
-  st_crop(st_bbox(corners))
+# ##                             ##
+# ## Joanne Lessard survey sites ##
+# ##                             ##
+# 
+# library(foreign) # Package for reading in .dbf files
+# 
+# #reading in site location data
+# jl <- read.dbf("./MSc_data/Data_sourced/Lessard_sites/2021SITE.DBF")
+# 
+# #converting location data to sf object
+# jlsf <- jl %>%
+#   dplyr::select(c(TRANSECT, LATEND, LONEND)) %>%
+#   st_as_sf(coords = c(3,2))
+# 
+# st_crs(jlsf) = latlong
+# jlsf <- st_transform(jlsf,proj) #make sure you assign this, otherwise it does not save the as the transformed version
+# 
+# #cropping to only points within map limits
+# jlsf <- jlsf %>%
+#   st_crop(st_bbox(corners))
 
 
-##                                ##
-## Our finalized survey site list ##
-##                                ##
+# ##                                         ##
+# ## Chris Neufeld & Sam Starko survey sites ##
+# ##                                         ## 
+# 
+# rec <- read.csv("./MSc_data/Data_sourced/Fieldedits_Kelp_site_suggestions_2022.csv") %>%
+#   mutate(Lat = as.numeric(Lat), Lon = as.numeric(Lon))
+# 
+# #converting location data to sf object
+# recsf <- rec %>%
+#   drop_na(Lat) %>%
+#   dplyr::select(c(SiteName, Lat, Lon)) %>%
+#   st_as_sf(coords = c(3,2))
+# 
+# st_crs(recsf) = latlong
+# recsf <- st_transform(recsf,proj) #make sure you assign this, otherwise it does not save the as the transformed version
+# 
+# #cropping to only points within map limits
+# recsf <- recsf %>%
+#   st_crop(st_bbox(corners))
+
+
+##                            ##
+## Our finalized survey sites ##
+##                            ##
 
 sites <- read.csv("./MSc_data/Data_new/Final_site_list_2022.csv") %>%
   mutate_all(na_if, "") %>%
@@ -112,8 +113,8 @@ sitessf <- sites %>%
   dplyr::select(c(SiteName, Lat, Lon, Estimated_dens, Composition, Deploy)) %>%
   st_as_sf(coords = c(3,2))
 
-st_crs(sitessf) = latlong
-sitessf <- st_transform(sitessf,proj) #make sure you assign this, otherwise it does not save the as the transformed version
+st_crs(sitessf) <- latlong # setting 
+sitessf <- st_transform(sitessf,proj) # make sure you assign this, otherwise it won't use the transformed project crs
 
 #cropping to only points within map limits
 sitessf <- sitessf %>%
@@ -140,24 +141,29 @@ densgrp <- dens %>%
 densgrp <- as.data.frame(densgrp)
 
 
+# Removing the site 'redos' for current purposes
+densgrp <- densgrp %>%
+  filter(!str_detect(SiteName, 'REDO'))
+
+
 # Adding the additional kelp data metrics to the mapping data
-plotdata <- merge(sitessf, densgrp, by = "SiteName", all = TRUE) %>% #Adding on the kelp density data
-            merge(kelpgrp) # Adding in the canopy height and biomass data from 'kelpforest_metrics.R'
-# Should leave just the 23 sites that we have all kelp data for
+plotdata <- merge(sitessf, densgrp, by = "SiteName", all = TRUE)  %>% # Adding on the kelp density data
+            merge(kelpgrp, by = "SiteName") %>% # Optional: Adding the canopy height and biomass data from 'kelpforest_metrics.R' (load this first)
+            merge(areagrp, by = "SiteName", all=TRUE)  # Optional: Adding the forest area data from 'kelpforest_metrics.R' (load this first)
 
 
-#### Making the maps ####
+#### Plotting the maps ----
 
 tiff(file="./MSc_plots/MapForests.tiff", height = 5.5, width = 8.5, units = "in", res=600)
 
 ## plotting the kelp composition map (discrete fill)
 data_map <- ggplot(land)+
-  geom_sf(fill = "grey53", color = NA) + #color = NA will remove country border
+  geom_sf(fill = "grey53", color = NA) + # color = NA will remove country border
   theme_minimal(base_size = 16) +
   geom_sf(data = plotdata, size=4, shape=21, color="black", aes(fill=Composition)) + 
-  geom_sf_text(mapping=aes(), data=sitessf, label=sitessf$SiteName, stat="sf_coordinates", inherit.aes=T, size=2.5, nudge_y=100, nudge_x=-1200) +
+  geom_sf_text(mapping=aes(), data=sitessf, label=sitessf$SiteName, stat="sf_coordinates", inherit.aes=T, size=2.5, nudge_y=100, nudge_x=-1200) + # provides site names at points
   scale_fill_manual(values=met.brewer("Degas", 4), name="Canopy composition") +
-  theme(panel.grid.major = element_line(colour = "transparent"), #hiding graticules
+  theme(panel.grid.major = element_line(colour = "transparent"), # hiding graticules
         axis.title.x = element_blank(),
         axis.title.y = element_blank(),
         axis.text = element_text(color="black", size=12),
@@ -184,12 +190,12 @@ tiff(file="./MSc_plots/MapDens.tiff", height = 5, width = 10, units = "in", res=
 
 ## plotting the kelp density map (continuous fill)
 data_map <- ggplot(land)+
-  geom_sf(fill = "grey53", color = NA) + #color = NA will remove country border
+  geom_sf(fill = "grey53", color = NA) + # color = NA will remove country border
   theme_minimal(base_size = 16) +
   geom_sf(data = plotdata, size=3, shape=21, color="black", aes(fill=KelpM)) +
   # geom_sf_text(mapping=aes(), data=sitessf, label=sitessf$SiteName, stat="sf_coordinates", inherit.aes=T, size=2.5, nudge_y=100, nudge_x=-1200) +
-  scale_fill_gradientn(colors=met.brewer("VanGogh3"), name="Kelp density (/m2)", limits=c(0,16)) +
-  theme(panel.grid.major = element_line(colour = "transparent"), #hiding graticules
+  scale_fill_gradientn(colors=met.brewer("VanGogh3"), name=expression("Kelp density (stipes /m"^2*")"), limits=c(0,16)) +
+  theme(panel.grid.major = element_line(colour = "transparent"), # hiding graticules
         axis.title.x = element_blank(),
         axis.title.y = element_blank(),
         legend.title = element_text(color="black", size=11),
@@ -208,4 +214,8 @@ data_map <- ggplot(land)+
 data_map
 
 dev.off()
+
+
+
+
 

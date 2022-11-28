@@ -8,35 +8,44 @@ library(ggpubr)
 library(gridExtra)
 library(MetBrewer)
 
-#### Kelp density cleaning ----
+#### Kelp density, height, & biomass cleaning ----
 
-## Our kelp density data
+####### Reading in our kelp density data
 dens <- read.csv("./MSc_data/Data_new/kelp_density_2022.csv") %>%
   mutate(Macro = (Macro_5m2/5), Nereo=(Nereo_5m2/5)) %>% # Changing units to /m2 area
-  rowwise() %>%
+  rowwise() %>% # To sum across rows
   mutate(Kelp = sum(Macro,Nereo)) %>% # Sum macro and nereo to get total kelp dens / transect
-  ungroup()
+  ungroup() # Stop rowwise 
 
-# Grouping / averaging for site specific density 
+# Removing the site 'redos' for current purposes
+dens <- dens %>%
+  filter(!str_detect(SiteName, 'REDO'))
+
+# Dataframe for site-specific density averages 
 densgrp <- dens %>%
   group_by(SiteName) %>% # Averaging to site
   summarise(KelpM = mean(Kelp), KelpSD = sd(Kelp))
 
 
-#### Kelp height & biomass cleaning ----
-
-## Our kelp height and biomass data
+####### Reading in our kelp height and biomass data
 kelp <- read.csv("./MSc_data/Data_new/kelp_morphology_2022.csv") %>%
   as.data.frame()
 
-# Converting circumference to diameter
+kelp <- kelp[-266,] # Removing the outlier point at Second Beach South!
+
+# Removing the site 'redos' for current purposes
+kelp <- kelp %>%
+  filter(!str_detect(SiteName, 'REDO'))
+
+
+# Converting sub-bulb circumference to diameter
 kelp <- kelp %>%
   rowwise() %>%
   mutate(Sub_diam_cm = (Sub_circ_cm/3.14159)) %>%
   ungroup()
   
-# Equation for converting from sub-bulb to biomass as per our Nereo sub-bulb model (all sites combined)
-# See 'nereo_biomass.R'
+# Equation for converting from sub-bulb diamater (cm) to biomass (g) as per our Nereo sub-bulb model (using equation for all 3 sample sites combined)
+# See 'nereo_biomass.R' for the origin relationship
 formula <- function(x){
   (150.7966*(x)^2 -216.2721*(x) + 315.0124)
 }
@@ -47,22 +56,38 @@ options(scipen=999) # Turning off scientific notation
 kelp$Biomass_g <- ifelse(is.na(kelp$Biomass_g), ifelse(is.na(kelp$Sub_diam_cm), NA, formula(kelp$Sub_diam_cm)), kelp$Biomass_g)
 
 
-#
-# A 'sidenote' dataframe for plotting the raw data by density order
-kelpbydens <- merge(kelp, densgrp, by="SiteName", all=TRUE)
-#
-
-
-# Grouping/averaging for site specific height & biomass
-kelpgrp <- kelp %>%
+# Averaging to transect from individual samples (i.e., ave individual biomass / transect)
+kelptrans <- kelp %>%
   mutate(SiteName = as.factor(SiteName), Height_m = as.numeric(Height_m)) %>%
-  group_by(SiteName) %>% # Averaging to site
-  summarise(HeightM = mean(Height_m, na.rm=T), HeightSD = sd(Height_m, na.rm=T),
-            BiomassM = mean(Biomass_g, na.rm=T), BiomassSD = sd(Biomass_g, na.rm=T))
+  group_by(SiteName, Transect) %>% # Averaging to transect
+  summarise(HeightT = mean(Height_m, na.rm=T),
+            BiomassTind = mean(Biomass_g, na.rm=T)) # Ave individual biomass (g) / transect
 
+
+# Bringing in the kelp density (transect level) data
+kelptog <- merge(kelptrans, dens, by = c("SiteName", "Transect"), all=TRUE)
+
+
+kelptog <- kelptog %>%
+  rowwise() %>% # To sum across rows
+  mutate(BiomassTkg = ((BiomassTind/1000)*Kelp)) %>% # Convert ave ind biomass (g to kg) and multiply by transect density
+  ungroup() %>% # Stop rowwise 
+  mutate(Biomassm2kg = (BiomassTkg/5)) # From ave transect area biomass (/5m2) to /m2 area
+kelptog[sapply(kelptog, is.nan)] <- NA # NaNs to NAs for working with
+
+
+# Grouping/averaging from transect to site level
+kelpgrp <- kelptog %>%
+  mutate(SiteName = as.factor(SiteName)) %>%
+  group_by(SiteName) %>% # Averaging to site
+  summarise(HeightM = mean(HeightT, na.rm=T), HeightSD = sd(HeightT, na.rm=T), # Ave height (m)
+            BiomassM = mean(Biomassm2kg, na.rm=T), BiomassSD = sd(Biomassm2kg, na.rm=T), # Ave biomass (kg / m2)
+            DensityM = mean(Kelp), DensitySD = sd(Kelp, na.rm=T)) # Ave density (m2)
+            
 
 #### Kelp area cleaning ----
 
+# Loading packages for working with sf and mapping objects
 library(scales)
 library(sf)
 library(ggsn)
@@ -70,7 +95,7 @@ library(MetBrewer)
 library(maptools)
 library(rgeos)
 
-### Prepping the backing map
+######## Prepping the backing map (in case you want to plot out any of the .shp files)
 
 ## setting projections at outset 
 proj <- st_crs(3005) # ESPG for BC/Albers 
@@ -84,67 +109,81 @@ xmin <- -125.26
 
 ## making corners for the area of interest 
 corners <- st_multipoint(matrix(c(xmax,xmin,ymax,ymin),ncol=2)) %>% 
-  st_sfc(crs=latlong) %>%
+  st_sfc(crs=latlong) %>% # Origin crs as WGS84
   st_sf() %>%
-  st_transform(proj) 
+  st_transform(proj) # Projecting into working crs (BC/ALBERS)
 plot(corners)
 
 
-### Loading in the kelp forest shapefiles
+######## Loading in the kelp forest shape files
 
-# get all files with the .shp extension from the correct folder (i.e., the QGIS cleaned versions)
+# Get all files with the .shp extension from the correct folder (i.e., the QGIS cleaned versions)
 path <- "./MSc_data/Data_new/Kelp_area/CleanGPX" # set path to the folder
 
-n <- list.files(path, pattern = "*shp", full.names=FALSE) # pull only the relevant names
+n <- list.files(path, pattern = "*shp", full.names=FALSE) # Pull only the relevant names
 
-shps <- list.files(path, pattern = "*shp", full.names=TRUE) # pull full file location names
-lshps <- as.list(shps) # turn character vector into list
+shps <- list.files(path, pattern = "*shp", full.names=TRUE) # Pull full file location names
+lshps <- as.list(shps) # Turn character vector into a list
 
-names(lshps) <- n # assign relevant names to elements of the list
+names(lshps) <- sub(" area.shp", "", n) # Assign relevant names (cleaned) to elements of the list
 
 f <- function(x){
-  st_read(x, crs=latlong) # base crs of the GPS used to create the shapefiles is WGS84 
+  st_read(x, crs=latlong) # Base crs of the GPS used to create the shp files is WGS84 
 }
 
-allshps <- lapply(lshps, f) # apply function to read in as sf objects with crs set as WGS84
+allshps <- lapply(lshps, f) # Apply function to read in shape files as sf objects with crs WGS84
+
+f2 <- function(x){
+  st_transform(x, crs=proj) # TO reproject to project crs with units in metres (BC/Albers) 
+}
+
+allshps <- lapply(allshps, f2) # Apply function to translate shape files to BC/Albers
 
 
-list2env(allshps, envir=.GlobalEnv) # bring each unique sf object to the working environment for plotting             
+list2env(allshps, envir=.GlobalEnv) # Bring each unique sf object to the working environment for plotting             
 
 
-### Calculating area of each kelp forest shape file
+####### Calculating area of each kelp forest shape file
 
-# I know this is terrible, still working on code to automate/loop st_area() through the .shp files
-# But, at least it works! Keep eyes out for updates to this code. 
-a <- st_area(allshps[[1]])
-b <- st_area(allshps[[2]])
-c <- st_area(allshps[[3]])
-d <- st_area(allshps[[4]])
-e <- st_area(allshps[[5]])
-f <- st_area(allshps[[6]])
-g <- st_area(allshps[[7]])
-h <- st_area(allshps[[8]])
-i <- st_area(allshps[[9]])
-j <- st_area(allshps[[10]])
-k <- st_area(allshps[[11]])
-l <- st_area(allshps[[12]])
-m <- st_area(allshps[[13]])
-n <- st_area(allshps[[14]])
-o <- st_area(allshps[[15]])
-p <- st_area(allshps[[16]])
-q <- st_area(allshps[[17]])
-r <- st_area(allshps[[18]])
-s <- st_area(allshps[[19]])
-t <- st_area(allshps[[20]])
-u <- st_area(allshps[[21]])
-v <- st_area(allshps[[22]])
-w <- st_area(allshps[[23]])
+# I know this is terrible, working on code to automate/loop st_area() through the .shp files
+# But, at least it works! Keep an eye out for updates to this code. 
+a <- cbind(st_area(allshps[[1]]), as.character(names(allshps[1])))
+b <- cbind(st_area(allshps[[2]]), as.character(names(allshps[2])))
+c <- cbind(st_area(allshps[[3]]), as.character(names(allshps[3])))
+d <- cbind(st_area(allshps[[4]]), as.character(names(allshps[4])))
+e <- cbind(st_area(allshps[[5]]), as.character(names(allshps[5])))
+f <- cbind(st_area(allshps[[6]]), as.character(names(allshps[6])))
+g <- cbind(st_area(allshps[[7]]), as.character(names(allshps[7])))
+h <- cbind(st_area(allshps[[8]]), as.character(names(allshps[8])))
+i <- cbind(st_area(allshps[[9]]), as.character(names(allshps[9])))
+j <- cbind(st_area(allshps[[10]]), as.character(names(allshps[10])))
+k <- cbind(st_area(allshps[[11]]), as.character(names(allshps[11])))
+l <- cbind(st_area(allshps[[12]]), as.character(names(allshps[12])))
+m <- cbind(st_area(allshps[[13]]), as.character(names(allshps[13])))
+n <- cbind(st_area(allshps[[14]]), as.character(names(allshps[14])))
+o <- cbind(st_area(allshps[[15]]), as.character(names(allshps[15])))
+p <- cbind(st_area(allshps[[16]]), as.character(names(allshps[16])))
+q <- cbind(st_area(allshps[[17]]), as.character(names(allshps[17])))
+r <- cbind(st_area(allshps[[18]]), as.character(names(allshps[18])))
+s <- cbind(st_area(allshps[[19]]), as.character(names(allshps[19])))
+t <- cbind(st_area(allshps[[20]]), as.character(names(allshps[20])))
+u <- cbind(st_area(allshps[[21]]), as.character(names(allshps[21])))
+v <- cbind(st_area(allshps[[22]]), as.character(names(allshps[22])))
+w <- cbind(st_area(allshps[[23]]), as.character(names(allshps[23])))
 
-# Making dataframe of kelp forest areas
-area.frame <- data.frame(SiteName = names(allshps), Area_m2 = cbind(c(a,d,b,c,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w))) %>%
-  mutate(SiteName = as.factor(SiteName), Area_m2 = as.numeric(Area_m2))
 
-############### TRYING TO FIGURE OUT HOW TO AUTOMATE THIS OVER THE LIST EGAUYGDUGHAIJIJIJXIAIEUHW
+# Generating data frame of kelp forest areas
+areagrp <- data.frame(rbind(a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w)) %>%
+  mutate(Area_m2 = as.numeric(X1), SiteName = as.factor(X2)) %>%
+  dplyr::select(-c(X1, X2))
+
+
+# Removing the site 'redos' for current purposes
+areagrp <- areagrp %>%
+  filter(!str_detect(SiteName, 'REDO'))
+
+
+############### TRYING TO FIGURE OUT HOW TO AUTOMATE THIS OVER THE LIST GAHHHHHHH
 
 f2 <- function(polygon){
   st_area(polygon) #
@@ -167,40 +206,40 @@ for (i in seq_along(allshps)) {
     sf::st_area(allshps[[i]])
 }
 
-################ Anyways, moving on for now...
+############### Anyways, moving on for now...
 
-#### Joining the data together ----
+#### Final data joining ----
 
 
 ### Merging density, canopy height, biomass, and area data 
-kelpdat <- merge(densgrp, kelpgrp, area.frame, by = "SiteName", all=TRUE)
+kelpdat <- merge(kelpgrp, areagrp, by = "SiteName", all=TRUE)
 
 
 #### Plotting out the data ----
 
-tiff(file="./MSc_plots/KelpMetrics3.tiff", height = 5, width = 7, units = "in", res=500)
-
 ## Site specific density (summed Macro & Nereo) # Ordered by increasing density
+
 d1 <- ggplot() +
-  geom_point(data=dens, size=2, alpha=0.1, aes(x=reorder(SiteName,Kelp), y=Kelp)) +
-  geom_pointrange(data=kelpdat, size=0.5, aes(x=reorder(SiteName,KelpM), y=KelpM, ymin=KelpM-KelpSD, ymax=KelpM+KelpSD)) +
+  geom_point(data=kelptog, size=2, alpha=0.2, aes(x=reorder(SiteName,Kelp), y=Kelp)) +
+  geom_pointrange(data=kelpdat, size=0.5, aes(x=reorder(SiteName,DensityM), y=DensityM, ymin=DensityM-DensitySD, ymax=DensityM+DensitySD)) +
   scale_y_continuous(limits=c(-0.8,25), breaks=c(0,6,12,18,24)) +
   theme_classic() +
   theme(
-        axis.text.x = element_text(color="black", size="9.5", angle=45, vjust=0.89, hjust=0.85),
-        # axis.text.x = element_blank(),
+        # axis.text.x = element_text(color="black", size="9.5", angle=45, vjust=0.89, hjust=0.85),
+        axis.text.x = element_blank(),
         axis.text.y = element_text(color="black", size="10"),
         axis.title.y = element_text(color="black", size="12", vjust=1)) +
-  xlab("") + ylab("Density (/m2)")
+  xlab("") + ylab(expression("Density (stipes /m"^2*")"))
 d1
 
-dev.off()
+
 
 ## Site specific canopy height # Ordered by increasing density
+
 c1 <- ggplot() + 
-  geom_point(data=kelpbydens, size=2, alpha=0.1, aes(x=reorder(SiteName,KelpM), y=Height_m)) +
-  geom_pointrange(data=kelpdat, size=0.5, aes(x=reorder(SiteName,KelpM), y=HeightM, ymin=HeightM-HeightSD, ymax=HeightM+HeightSD)) +
-  # scale_y_continuous(limits=c(-0.4,9), breaks=c(0,2,4,6,8)) +
+  geom_point(data=kelptog, size=2, alpha=0.2, aes(x=reorder(SiteName,Kelp), y=HeightT)) +
+  geom_pointrange(data=kelpdat, size=0.5, aes(x=reorder(SiteName,DensityM), y=HeightM, ymin=HeightM-HeightSD, ymax=HeightM+HeightSD)) +
+  scale_y_continuous(limits=c(-0.4,7), breaks=c(0,2,4,6)) +
   theme_classic() +
   theme(
         # axis.text.x = element_text(color="black", size="9.5", angle=45, vjust=0.89, hjust=0.85),
@@ -208,42 +247,62 @@ c1 <- ggplot() +
         axis.text.y = element_text(color="black", size="10"),
         axis.title.y = element_text(color="black", size="12", vjust=1)) +
   xlab("") + ylab("Canopy height (m)") +
-  annotate("text", size=4, x=1, y=0.5, label="NA")
-
-
-# kelpbydens <- kelpbydens[-346,] # Removing outlier point at Second Beach South!!
+  annotate("text", size=3, x=1, y=0.1, label="NA")
+c1
 
 
 ## Site specific biomass # Ordered by increasing density
+
 b1 <- ggplot() + 
-  geom_point(data=kelpbydens, size=2, alpha=0.1, aes(x=reorder(SiteName,KelpM), y=Biomass_g)) +
-  geom_pointrange(data=kelpdat, size=0.5, aes(x=reorder(SiteName,KelpM), y=BiomassM, ymin=BiomassM-BiomassSD, ymax=BiomassM+BiomassSD)) +
+  geom_point(data=kelptog, size=2, alpha=0.2, aes(x=reorder(SiteName,Kelp), y=Biomassm2kg)) + # Plotting the background data
+  geom_pointrange(data=kelpdat, size=0.5, aes(x=reorder(SiteName,DensityM), y=BiomassM, ymin=BiomassM-BiomassSD, ymax=BiomassM+BiomassSD)) +
+  scale_y_continuous(limits=c(-0.4,5.5), breaks=c(0,1.5,3,4.5)) +
+  theme_classic() +
+  theme(
+        # axis.text.x = element_text(color="black", size="9.5", angle=45, vjust=0.89, hjust=0.85),
+        axis.text.x = element_blank(), 
+        axis.text.y = element_text(color="black", size="10"),
+        axis.title.y = element_text(color="black", size="12", vjust=1)) +
+  xlab("") + ylab(expression("Biomass (kg wet weight /m"^2*")")) +
+  annotate("text", size=3, x=1, y=0.1, label="NA")
+b1
+
+
+## Site specific area # Ordered by increasing density
+
+a1 <- ggplot() + 
+  geom_point(data=kelpdat, size=2, aes(x=reorder(SiteName,DensityM), y=Area_m2)) +
   # scale_y_continuous(limits=c(-0.4,9), breaks=c(0,2,4,6,8)) +
   theme_classic() +
+  scale_y_continuous(limits=c(-500,15000)) +
   theme(axis.text.x = element_text(color="black", size="9.5", angle=45, vjust=0.89, hjust=0.85),
         axis.text.y = element_text(color="black", size="10"),
         axis.title.y = element_text(color="black", size="12", vjust=1)) +
-  xlab("") + ylab("Biomass (g)") +
-  annotate("text", size=4, x=1, y=0.5, label="NA")
+  xlab("") + ylab(expression("Forest area (/m"^2*")")) +
+  annotate("text", size=3, x=1, y=300, label="NA") +
+  annotate("text", size=3, x=2, y=300, label="NA")
+a1
 
 
-## Grouped multi panel plot ##
 
-tiff(file="./MSc_plots/KelpMetrics.tiff", height = 10, width = 7, units = "in", res=500)
+## Grouped multi-panel plot ##
 
-ggarrange(d1, c1, b1, ncol=1, align="v", heights=c(1,1,1.4)) # Generating the paneled plot
+pdf(file="./MSc_plots/KelpMetricsAll.pdf", height = 12, width = 6)
+
+ggarrange(d1, c1, b1, a1, ncol=1, align="v", heights=c(1,1,1,1.4)) # Generating the paneled plot
 
 dev.off() 
 
 
-#### Regressions of the data ----
+#### Test regressions of the data ----
 
+# Pulling from the 'RLS_species_code.R' sheet
 kelpdat2 <- merge(kelpdat, rls_richness, by="SiteName", all=T)
 
-ggplot(kelpdat2, aes(x=HeightM, y=KelpM)) +
+ggplot(kelpdat2, aes(x=DensityM, y=species_richness)) +
   geom_point() +
   # geom_smooth(method="lm", formula = y ~ x + I(x^2), se=T) + # Lm quadratic
   # geom_smooth(method="lm", formula = y ~ x, se=T) + # Lm
-  # geom_smooth(method="gam", formula = y ~ s(x, bs="cs", k=3), se=T) + # GAM
+  geom_smooth(method="gam", formula = y ~ s(x, bs="cs", k=3), se=T) + # GAM
   theme_classic() +
-  xlab("Kelp Density") + ylab("Kelp Biomass")
+  xlab("Kelp Density") + ylab("Spp richness")

@@ -1,20 +1,19 @@
-## Barkley Sound HOBO temperature logger processing
+## Barkley Sound Electric Blue temperature logger processing
 ## Author: Claire Attridge
 ## Origin date: October 2022
 
+# Loading base packages
 library(tidyverse)
 library(scales)
 library(data.table)
 library(sf)
 library(ggsn)
 library(MetBrewer)
-
-
-###
+library(wesanderson)
 
 #### Data cleaning ----
 
-# Setting pathway to Temp_loggers folder as a variable
+# Setting pathway to 'Temp_loggers' folder as a variable
 mypath <- "C:/Users/Claire/Desktop/MSc/Thesis/kelp_comms_2022/MSc_data/Data_new/Temp_loggers"
 
 # File list with path in name
@@ -36,12 +35,13 @@ for (i in 1:length(files)){
 
 # Setting time as POSIXct
 temp <- temp_h %>%
-  mutate(Date = as.POSIXct(X1, format="%Y-%m-%d %H:%M:%S"),
+  mutate(Date = as.POSIXct(X1, format="%Y-%m-%d %H:%M:%S"), 
          Temp = as.numeric(X2), 
          SiteName = as.factor(SiteName)) %>%
   ungroup() %>%
   dplyr::select(-X1, -X2)
-temp <- as.data.frame(temp)
+temp <- as.data.frame(temp) # Making into a data frame
+
 
 # Cleaning up the lead & butt ends based on deployment timelines
 tempf <- temp %>%
@@ -83,7 +83,7 @@ tempgrp <- tempf %>%
   summarise(Tempave = mean(Temp, na.rm=T), SD_Tempave = sd(Temp, na.rm=T), Tempmax = max(Temp, na.rm=T), Tempmin = min(Temp, na.rm=T)) %>%
   arrange(desc(Tempmax)) # Arranging descending order
 
-tempgrp <- as.data.frame(tempgrp) # Making into a dataframe
+tempgrp <- as.data.frame(tempgrp) # Making into a data frame
 
 ## Loading temp logger info sheet
 info <- read_csv("./MSc_data/Data_new/temp_logger_info.csv") %>%
@@ -92,14 +92,14 @@ info <- read_csv("./MSc_data/Data_new/temp_logger_info.csv") %>%
   filter(ID != "L31" & ID != "L32" & ID != "L33") %>% # Removing the site deployment loggers
   as.data.frame()
 
-tempgrp <- merge(tempgrp, info, by= "SiteName", all = TRUE)
+tempgrp <- merge(tempgrp, info, by= "SiteName", all = TRUE) # Adding info the the logger data frame
 
 
 #### Regressions of data ----
 
 tiff(file="./MSc_plots/SiteDepthsLogger.tiff", height = 6, width = 9, units = "in", res=600)
 
-## Site depth series
+## Site logger depth series
 ggplot() +
   geom_point(data=tempgrp, size=3, alpha=0.9, aes(x=reorder(SiteName,Depth_logger_datum_m), y=Depth_logger_datum_m)) +
   theme_classic() +
@@ -116,7 +116,7 @@ dev.off()
 
 tiff(file="./MSc_plots/SuppFigs/TempSeriesAll.tiff", height = 9, width = 13, units = "in", res=600)
 
-## All temperature series over time (multi panel - for Supp. figs)
+## All temperature series over time (multi-panel for Supp. figs)
 ggplot(tempf, aes(x=Date, y=Temp, group=SiteName, color=SiteName)) +
   geom_line(size=0.5) +
   scale_x_datetime(labels = date_format("%b %d"), breaks = date_breaks("weeks")) + 
@@ -134,13 +134,11 @@ dev.off()
 
 
 ## Temperature against deployment depths
-ggplot(tempgrp, aes(x=Tempmin, y=Tempave)) +
+ggplot(tempgrp, aes(x=Depth_logger_datum_m, y=Tempave)) +
   geom_point() +
   geom_smooth(method="lm", formula = y ~ x, se=T) + # Lm
   # scale_x_reverse() +
   theme_classic()
-
-
 
 
 
@@ -157,7 +155,7 @@ library(gstat)
 proj <- st_crs(3005) # ESPG for BC/Albers 
 latlong <- st_crs(4326) # for baseline/existing WGS84 ("+proj=longlat +datum=WGS84 +no_defs")
 
-## seting map extent for Barkley Sound 
+## setting map extent for Barkley Sound 
 ymax <- 48.922
 ymin <- 48.80
 xmax <- -125.05
@@ -169,6 +167,7 @@ corners <- st_multipoint(matrix(c(xmax,xmin,ymax,ymin),ncol=2)) %>%
   st_sf() %>%
   st_transform(proj) 
 plot(corners)
+
 
 
 ## reading in full size BC sea map (eez) *Should only have to do this the first time
@@ -244,13 +243,8 @@ dem <- projectRaster(dem, crs=crs(seacrop))
 extent(dem) <- extent(seacrop)
 
 
-# going to a more course cell resolution (taking too long to process at 1 arc (i.e., 30m))
-dem150 <- aggregate(dem, fact = 5, fun = "mean") # Up to 150 x 150 m
-
-
-# converting the sf multipolygon of sea to a spatial polygon for plotting & limits
-seacropsp <- seacrop %>%
-  as("Spatial")
+# # going to a more course cell resolution (taking too long to process at 1 arc (i.e., 30m))
+# dem150 <- aggregate(dem, fact = 5, fun = "mean") # Up to 150 x 150 m
 
 
 # rasterizing the sea multipolygon to the DEM cell size *Should only have to do this the first time
@@ -259,6 +253,11 @@ searas <- rasterize(seacrop, dem, fun="last")
 ## saving the raster version of BC sea map (eez) *Can use this going forward now!
 writeRaster(searas, "./Maps_BC/eez_bc/eez_crop_ras_BarkleyS.tif", format="GTiff", overwrite=T)
 
+
+
+# converting the sf multipolygon of sea to a spatial polygon for plotting & limits
+seacropsp <- seacrop %>%
+  as("Spatial")
 
 
 
@@ -272,8 +271,8 @@ library(automap)
 # loading in the raster version of BC sea map cropped (eez) *saved in code above
 searas <- raster("./Maps_BC/eez_bc/eez_crop_ras_BarkleyS.tif")
 
-# going to a more course cell resolution (taking too long to process when at 1 arc (i.e., 30m))
-searas150 <- aggregate(searas, fact = 5, fun = "mean") # Up to 150 x 150 m
+# # going to a more course cell resolution (taking too long to process when at 1 arc (i.e., 30m))
+# searas150 <- aggregate(searas, fact = 5, fun = "mean") # Up to 150 x 150 m
 
 
 ########### Checking for assumptions prior to interpolating
@@ -290,7 +289,7 @@ hist(plotdata$Tempmin) # looks ok
 #https://www.youtube.com/watch?v=iKTut0JfvRg
   
 
-############ Making the variogram fit
+####### Making the variogram fit
 
 # converting the sf dataframe to spatial points
 plotsp <- as_Spatial(plotdata)
@@ -306,24 +305,11 @@ fit <- fit.variogram(vario, model = vgm(model="Exp")) # fit model
 # Nugget: Estimate of non-spatial variance
 # PSill: Estimate of total variance (max value of the variogram) minus the nugget
 # Range: Distance at which the variogram attains the sill (max) (i.e., Dist beyond which data are no longer correlated)
-  # For Temp at my sites, it looks like this is about 0.5 km!!
 
 plot(vario, fit)
 
 
-############ Interpolating using co-Kriging ??????????????????????????????????
-# Helpful link: https://gis.stackexchange.com/questions/280850/preparing-dataset-to-perform-co-kriging-in-r-gstat?fbclid=IwAR1-facpiy2c-pZc2F4EkA0bSNCojYcPLxlx2Dt8oi5GjfhTyCUfqd4KaX0
-
-g <- gstat(NULL, id="Temps", form=Tempave~1, data=plotsp) # gstat object for temp data
-g <- gstat(g, id="bathy", form=GDAL.Band.Number.1~1, data=demsp) # gstat object for dem data
-v <- variogram(g, cutoff=2000) # variograms for both & the cross-variogram
-
-g <- gstat(g, id="Temps", model=v, fill.all=T) # adding the variogram models to the gstat object
-pred <- predict.gstat(g, rassp) # predicting over the empty grid of my study area
-
-
-
-############ Interpolating using ordinary Kriging (AUTOKRIGE) !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+####### Interpolating using ordinary Kriging (AUTOKRIGE) 
 # Helpful link: https://www.neonscience.org/resources/learning-hub/tutorials/raster-data-r
 
 # Double checking that the land is set to NA values for my raster layer
@@ -346,7 +332,7 @@ demsfclean <- na.omit(demsf)
 demsp <- as(demsfclean, "Spatial")
 
 
-### running ordinary kriging
+### running the ordinary kriging
 
 k <- autoKrige(Tempave~1, input_data=plotsp, new_data=rassp)
 
@@ -364,36 +350,26 @@ crs(kras) <- crs(searas) # setting the crs of new raster to the BC/Albers layers
 
 writeRaster(kras, "./MSc_data/Data_new/Maps/AveTempRas.tif", format="GTiff", overwrite=T)
 
-templayer <- raster("./MSc_data/Data_new/Maps/AveTempRas.tif")
+templayer <- raster("./MSc_data/Data_new/Maps/AveTempRas.tif") # Can load this instead going forward now!
+
+
+
+############ Interpolating using co-Kriging (STILL NOT FUNCTIONAL - TBA)
+# Helpful link: https://gis.stackexchange.com/questions/280850/preparing-dataset-to-perform-co-kriging-in-r-gstat?fbclid=IwAR1-facpiy2c-pZc2F4EkA0bSNCojYcPLxlx2Dt8oi5GjfhTyCUfqd4KaX0
+# Intent is to use co-kriging to predict the spatial variation of subtidal temps with respect to influence of depth
+
+g <- gstat(NULL, id="Temps", form=Tempave~1, data=plotsp) # gstat object for temp data
+g <- gstat(g, id="bathy", form=GDAL.Band.Number.1~1, data=demsp) # gstat object for dem data
+v <- variogram(g, cutoff=2000) # variograms for both & the cross-variogram
+
+g <- gstat(g, id="Temps", model=v, fill.all=T) # adding the variogram models to the gstat object
+pred <- predict.gstat(g, rassp) # predicting over the empty grid of my study area
 
 
 
 ###                   ###
 ### PLOTTING THE MAPS ###
 ###                   ###
-
-## kelp forest (logger) temp by gradient
-
-# quick edit of the point data by column for plotting
-plotdata <- plotdata %>%
-  mutate(Composition=ifelse(is.na(Composition), "None", Composition)) %>% # changing NAs to a factor level for no kelp
-  mutate(Composition = as.factor(Composition)) # making into factor column
-
-
-tiff(file="./MSc_plots/MapTempGrd.tiff", height = 6.5, width = 8, units = "in", res=600)
-
-col <- wes_palette("Zissou1", 20, type="continuous") # setting gradient color palette
-image(templayer, zlim=c(12,15), col=col, xlab="", ylab="", axes=F) # plotting sea gradient
-box(col="black") # adding outer box lines
-plot(seacropsp, add=T) # adding land borders & color
-
-fill <- met.brewer(name="Kandinsky", n=4, type="continuous") # setting point color palette
-palette(fill)
-plot(plotdata, add=T, pch=21, cex=1.5, col="black", bg=plotdata$Composition) # plotting points
-legend("topleft", pch=21, legend=c(expression(italic("M. pyrifera")), "Mixed", expression(italic("N. luetkeana")), "None"), title = "", pt.bg = fill, bty="n", cex=1)
-
-dev.off()
-  
 
 
 ## kelp forest (logger) temp by point
@@ -420,6 +396,30 @@ data_map <- ggplot(land)+
                  dist_unit = "km",
                  model = 'WGS84')
 data_map
+
+dev.off()
+
+
+
+## kelp forest (logger) temp by kriging prediction gradient
+
+# quick edit of the point data by column for plotting
+plotdata <- plotdata %>%
+  mutate(Composition=ifelse(is.na(Composition), "None", Composition)) %>% # changing NAs to a factor level for no kelp
+  mutate(Composition = as.factor(Composition)) # making into factor column
+
+
+tiff(file="./MSc_plots/MapTempGrd.tiff", height = 6.5, width = 8, units = "in", res=600)
+
+col <- wes_palette("Zissou1", 20, type="continuous") # setting gradient color palette
+image(templayer, zlim=c(12,15), col=col, xlab="", ylab="", axes=F) # plotting sea gradient
+box(col="black") # adding outer box lines
+plot(seacropsp, add=T) # adding land borders 
+
+fill <- met.brewer(name="Kandinsky", n=4, type="continuous") # setting point color palette
+palette(fill)
+plot(plotdata, add=T, pch=21, cex=1.5, col="black", bg=plotdata$Composition) # plotting points
+legend("topleft", pch=21, legend=c(expression(italic("M. pyrifera")), "Mixed", expression(italic("N. luetkeana")), "None"), title = "", pt.bg = fill, bty="n", cex=1)
 
 dev.off()
 

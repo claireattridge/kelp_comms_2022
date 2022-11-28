@@ -4,7 +4,6 @@
 
 library(tidyverse)
 library(MetBrewer)
-library(mgcv) # For gam models
 library(cowplot)
 library(gridExtra)
 
