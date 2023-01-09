@@ -1,6 +1,6 @@
 SiteNum,SiteName_RLS,SiteName,Original_surveyor,Lat,Lon,Estimated_dens,Composition,Temp_logger,Surveyed,Acoustic,Ammonium,Survey_date
 Site1,KCCA2,Between Scotts and Bradys,CJN/SS,48.83287,-125.1493,Med,Macro,L04,YES,NO,YES,7/5/2022
-Site2,KCCA15,Cable Beach (Blow Hole),CJN/SS,48.82484,-125.16067,Low,Nereo,L16,YES,YES,YES,08/072022
+Site2,KCCA15,Cable Beach (Blow Hole),CJN/SS,48.82484,-125.16067,Low,Nereo,L16,YES,YES,YES,8/7/2022
 Site3,KCCA22,Taylor Rock,JMS_RLS,48.82721,-125.19717,High,Mixed,L19,YES,YES,YES,9/5/2022
 Site4,,North of Taylor Rock,KDC/CMA,48.82888,-125.19872,Low,Nereo,L14,,,,
 Site5,KCCA3,Dodger Channel 1,KDC/CMA,48.83072,-125.19439,Med,Macro,L15,YES,YES,YES,7/6/2022
