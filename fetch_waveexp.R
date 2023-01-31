@@ -21,11 +21,11 @@ library(windfetch)
 proj <- st_crs(3005) # ESPG code for BC Albers projection
 latlong <- st_crs(4326) # for baseline/existing WGS84 ("+proj=longlat +datum=WGS84 +no_defs")
 
-## seting map extent for Bamfield 
-ymax <- 48.922
-ymin <- 48.80
-xmax <- -125.05
-xmin <- -125.26
+## setting map extent for Bamfield (setting a wider range than in previous plots - capturing the Broken Group islands for these calculations)
+ymax <- 48.98
+ymin <- 48.78
+xmax <- -125.00
+xmin <- -125.45
 
 ## making corners for the area of interest 
 corners <- st_multipoint(matrix(c(xmax,xmin,ymax,ymin),ncol=2)) %>% 
@@ -35,20 +35,20 @@ corners <- st_multipoint(matrix(c(xmax,xmin,ymax,ymin),ncol=2)) %>%
 plot(corners)
 
 ## reading in high res map of BC coast from Hakai
-sea <- sf::st_read("./Maps_BC/eez_bc/eez.shp") %>%
+land <- sf::st_read("./Maps_BC/Hakai_BC/COAST_TEST2.shp") %>%
   st_sf() %>%
   st_transform(proj)
-sea <- sea %>% # cropping to the Bamfield corners
+land <- land %>% # cropping to the Bamfield corners
   st_crop(st_bbox(corners))
 
-## converting from sea area to land area (because this map is the water not the land)
-mask <- st_bbox(sea) %>% # generating a box that covers the cropped multipolygon area
+## converting from land area to sea area (because this map is the land not the water)
+mask <- st_bbox(land) %>% # generating a box that covers the cropped multipolygon area
   st_as_sfc() # making a simple geometry feature
 
-sea <- st_union(sea) # unionizing the sea layer
+land <- st_union(land) # unionizing the sea layer
 
-land <- st_difference(mask, sea) # removing the intersecting area (i.e., removing sea and leaving land)
-land <- land %>%
+sea <- st_difference(mask, land) # removing the intersecting area (i.e., removing sea and leaving land)
+sea <- sea %>%
   st_sf() %>% # making into sf object 
   st_transform(proj) # projecting back into ESPG 3005
 
@@ -62,6 +62,20 @@ sites <- read.csv("./MSc_data/Data_new/Final_site_list_2022.csv") %>%
 # selecting for only the used study sites
 sites <- sites %>%
   filter(Surveyed == "YES")
+
+# nudging the lat & lon values for sites that register as 'on land' in the high res coastal map
+sites <- sites %>%
+  mutate(Lat = ifelse(sites$SiteName == "Swiss Boy", (sites$Lat - 0.0001), 
+                        ifelse(sites$SiteName == "Taylor Rock", (sites$Lat + 0.0001), sites$Lat)))
+
+# shifting the lat & lon values for sites that were inaccurately placed gps points
+sites <- sites %>%
+  mutate(Lat = ifelse(sites$SiteName == "Between Scotts and Bradys", as.numeric(48.83257), sites$Lat)) %>%
+  mutate(Lon = ifelse(sites$SiteName == "Between Scotts and Bradys", as.numeric(-125.1490), sites$Lon))
+
+sites <- sites %>%  
+  mutate(Lat = ifelse(sites$SiteName == "Less Dangerous Bay", as.numeric(48.87545), sites$Lat)) %>%
+  mutate(Lon = ifelse(sites$SiteName == "Less Dangerous Bay", as.numeric(-125.0908), sites$Lon))
 
 # converting location data to sf object
 sitessf <- sites %>%
@@ -81,9 +95,9 @@ sitessf <- sitessf %>%
   mutate(Names = as.factor(SiteName)) # renaming so the windfetch package registers them
 
 ### Running the fetch function (windfetch)
-fetch <- windfetch(polygon_layer=land, site_layer=sitessf, max_dist=100, n_directions=9)
-# 100 km max dist (the offshore wind buoy we will use is ~ 168 km offshore -> 'La Perouse')
-# 16 directions (4/quadrant of N, E, S, W)
+fetch <- windfetch(polygon_layer=land, site_layer=sitessf, max_dist=60, n_directions=9)
+# 60 km max dist (the offshore wind buoy we will use is ~ 60 km offshore -> 'La Perouse')
+# 36 directions (9/quadrant of N, E, S, W)
 
 ## visualizing the fetch
 plot(land, col="darkgrey")
@@ -220,6 +234,8 @@ exp_summary <- exp_df %>%
          y = st_coordinates(geometry)[2]) %>%
   dplyr::ungroup()
 
+# saving a .csv file of the final REI site values
+write.csv(exp_summary, "./MSc_data/Data_new/REI_2022.csv", row.names=F)
 
 ## plotting out the trend in site specific REI
 ggplot() +
