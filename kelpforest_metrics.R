@@ -59,7 +59,7 @@ kelp$Biomass_g <- ifelse(is.na(kelp$Biomass_g), ifelse(is.na(kelp$Sub_diam_cm), 
 # Averaging to transect from individual samples (i.e., ave individual biomass / transect)
 kelptrans <- kelp %>%
   mutate(SiteName = as.factor(SiteName), Height_m = as.numeric(Height_m)) %>%
-  group_by(SiteName, Transect) %>% # Averaging to transect
+  group_by(SiteName, Transect) %>% # Averaging to transect 
   summarise(HeightT = mean(Height_m, na.rm=T),
             BiomassTind = mean(Biomass_g, na.rm=T)) # Ave individual biomass (g) / transect
 
@@ -82,8 +82,17 @@ kelpgrp <- kelptog %>%
   group_by(SiteName) %>% # Averaging to site
   summarise(HeightM = mean(HeightT, na.rm=T), HeightSD = sd(HeightT, na.rm=T), # Ave height (m)
             BiomassM = mean(Biomassm2kg, na.rm=T), BiomassSD = sd(Biomassm2kg, na.rm=T), # Ave biomass (kg / m2)
-            DensityM = mean(Kelp), DensitySD = sd(Kelp, na.rm=T)) # Ave density (m2)
-            
+            DensityM = mean(Kelp), DensitySD = sd(Kelp, na.rm=T), # Ave density any kelp (m2)
+            MacroM = mean(Macro), MacroSD = sd(Macro, na.rm=T), # Ave density Macro (m2)
+            NereoM = mean(Nereo), NereoSD = sd(Nereo, na.rm=T)) # Ave density Nereo (m2)
+
+
+# Adding composition identity column for each site
+kelpgrp <- kelpgrp %>%
+  mutate(Composition = case_when(NereoM != 0 & MacroM != 0 ~ "Mixed",
+                                 MacroM != 0 ~ "Macro",
+                                 NereoM != 0 ~ "Nereo",
+                                 TRUE ~ as.character("None")))
 
 #### Kelp area cleaning ----
 
@@ -183,37 +192,38 @@ areagrp <- areagrp %>%
   filter(!str_detect(SiteName, 'REDO'))
 
 
-############### TRYING TO FIGURE OUT HOW TO AUTOMATE THIS OVER THE LIST GAHHHHHHH
-
-f2 <- function(polygon){
-  st_area(polygon) #
-}
-
-
-test <- vector('list', length(allshps))
-for (i in seq_along(allshps)) {
-  x <- st_area(allshps[[i]])
-  test[i] <- x
-}
-testdf <- do.call(rbind, test)
-
-
-# Empty List for Centroids
-test <- list()
-
-# For Loop
-for (i in seq_along(allshps)) {
-    sf::st_area(allshps[[i]])
-}
+# ############### TRYING TO FIGURE OUT HOW TO AUTOMATE THIS OVER THE LIST GAHHHHHHH
+# 
+# f2 <- function(polygon){
+#   st_area(polygon) #
+# }
+# 
+# 
+# test <- vector('list', length(allshps))
+# for (i in seq_along(allshps)) {
+#   x <- st_area(allshps[[i]])
+#   test[i] <- x
+# }
+# testdf <- do.call(rbind, test)
+# 
+# 
+# # Empty List for Centroids
+# test <- list()
+# 
+# # For Loop
+# for (i in seq_along(allshps)) {
+#     sf::st_area(allshps[[i]])
+# }
 
 ############### Anyways, moving on for now...
 
 #### Final data joining ----
 
-
 ### Merging density, canopy height, biomass, and area data 
 kelpdat <- merge(kelpgrp, areagrp, by = "SiteName", all=TRUE)
 
+# saving a .csv file of the kelp metrics by site
+write.csv(kelpdat, "./MSc_data/Data_new/kelpmetrics_2022.csv", row.names=F)
 
 #### Plotting out the data ----
 
