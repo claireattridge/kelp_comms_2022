@@ -49,8 +49,8 @@ land <- land %>%
   st_transform(proj) # projecting back into ESPG 3005
 
 
-## saving the cropped size map of land *Should be able to use this going forward now!
-write_sf(land, "./Maps_BC/eez_bc/land_crop_BarkleyS.shp", overwrite=T)
+# ## saving the cropped size map of land *Should be able to use this going forward now!
+# write_sf(land, "./Maps_BC/eez_bc/land_crop_BarkleyS.shp", overwrite=T)
 
 
 #### Data prep work ----
@@ -107,10 +107,21 @@ sites <- read.csv("./MSc_data/Data_new/Final_site_list_2022.csv") %>%
   mutate(Lat = as.numeric(Lat), Lon = as.numeric(Lon), Estimated_dens=factor(Estimated_dens, levels=c("High", "Med", "Low", "None"))) %>%
   mutate(Deploy = as.factor(ifelse(!is.na(Temp_logger), "YES", "NO")))
 
+# Adding on a column to identify the cluster groups (see 'comm_analyses.R' for details)
+sites <- sites %>%
+mutate(SiteName = as.character(SiteName)) %>% 
+  mutate(Cluster = case_when(SiteName == "Between Scotts and Bradys" | SiteName == "Danvers Danger Rock" | SiteName == "Dixon Island Back (Bay)" | SiteName == "Dodger Channel 1" | SiteName == "Flemming 112" | SiteName == "Flemming 114" | SiteName == "North Helby Rock" | SiteName == "Tzartus 116" ~ "C3",
+                             SiteName == "Dodger Channel 2" | SiteName == "Nanat Bay" ~ "C2",
+                             SiteName == "Ed King East Inside" | SiteName == "Ross Islet 2" | SiteName == "Ross Islet Slug Island" | SiteName == "Taylor Rock" | SiteName == "Turf Island 2" | SiteName == "Wizard Islet South" ~ "C4",
+                             SiteName == "Bordelais Island" | SiteName == "Second Beach" ~ "C5",
+                             SiteName == "Cable Beach (Blow Hole)" | SiteName == "Less Dangerous Bay" | SiteName == "Swiss Boy" | SiteName == "Wizard Islet North" ~ "C1",
+                             TRUE ~ "Aux"))
+
+
 #converting location data to sf object
 sitessf <- sites %>%
   drop_na(Lat) %>%
-  dplyr::select(c(SiteName, Lat, Lon, Estimated_dens, Composition, Deploy)) %>%
+  dplyr::select(c(SiteName, Lat, Lon, Estimated_dens, Composition, Deploy, Cluster)) %>%
   st_as_sf(coords = c(3,2))
 
 st_crs(sitessf) <- latlong # setting 
@@ -123,33 +134,13 @@ sitessf <- sitessf %>%
 
 
 ##                       ##
-## Our kelp density data ##
+## Our kelp metric data  ##
 ##                       ##
 
-# Will add this as a value column to the site mapping data above
-dens <- read.csv("./MSc_data/Data_new/kelp_density_2022.csv") %>%
-  mutate(Macro = (Macro_5m2/5), Nereo=(Nereo_5m2/5)) %>% # Changing units to /m2 area
-  rowwise() %>%
-  mutate(Kelp = sum(Macro,Nereo)) %>% # Sum macro and nereo to get total kelp dens / transect
-  ungroup()
-
-densgrp <- dens %>%
-  mutate(SiteName = as.factor(SiteName)) %>%
-  group_by(SiteName) %>% # Averaging to site
-  summarise(KelpM = mean(Kelp), KelpSD = sd(Kelp))
-
-densgrp <- as.data.frame(densgrp)
-
-
-# Removing the site 'redos' for current purposes
-densgrp <- densgrp %>%
-  filter(!str_detect(SiteName, 'REDO'))
-
-
-# Adding the additional kelp data metrics to the mapping data
-plotdata <- merge(sitessf, densgrp, by = "SiteName", all = TRUE)  %>% # Adding on the kelp density data
-            merge(kelpgrp, by = "SiteName") %>% # Optional: Adding the canopy height and biomass data from 'kelpforest_metrics.R' (load this first)
-            merge(areagrp, by = "SiteName", all=TRUE)  # Optional: Adding the forest area data from 'kelpforest_metrics.R' (load this first)
+# Adding the kelp data metrics to the mapping data!
+# 'kelpforest_metrics.R' (load the objects in this sheet first)
+plotdata <- merge(sitessf, kelpdat, by = "SiteName", all = TRUE) %>% # Adding on the kelp data
+  mutate(Cluster = factor(Cluster, levels=c("C1", "C2", "C3", "C4", "C5", "Aux")))
 
 
 #### Plotting the maps ----
@@ -217,5 +208,61 @@ dev.off()
 
 
 
+# List of relevant sites with 2022 data collection 
+studysites <- as.vector(c("Between Scotts and Bradys","Bordelais Island","Cable Beach (Blow Hole)","Danvers Danger Rock","Dixon Island Back (Bay)","Dodger Channel 1","Dodger Channel 2","Ed King East Inside","Flemming 112","Flemming 114","Less Dangerous Bay","Nanat Bay","North Helby Rock","Ross Islet 2","Ross Islet Slug Island","Second Beach","Second Beach South","Swiss Boy","Taylor Rock","Turf Island 2","Tzartus 116","Wizard Islet North","Wizard Islet South"))
+  
+plotdataclust <- plotdata %>%
+  filter(SiteName %in% studysites)
 
+cols <- c("#e4632d", "#994455", "#015f60", "#4477aa", "#997700")
+
+tiff(file="./MSc_plots/MapClust.tiff", height = 6, width = 8, units = "in", res=400)
+
+## plotting the kelp cluster groups map (discrete fill)
+data_map <- ggplot(land)+
+  geom_sf(fill = "grey70", color = NA) + # color = NA will remove country border
+  theme_minimal(base_size = 16) +
+  geom_sf(data = plotdataclust, size=4, shape=21, color="black", aes(fill=Cluster)) + 
+  scale_fill_manual(values=c(cols, "grey45"), name="") +
+  theme(panel.grid.major = element_line(colour = "transparent"), # hiding graticules
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text = element_text(color="black", size=12),
+        legend.position = "top",
+        legend.title = element_text(color="black", size=12),
+        legend.text = element_text(color="black", size=14, face="bold"),
+        panel.border = element_rect(colour="black", fill=NA, linewidth=1), # border
+        plot.margin = unit(c(0,0.5,0.5,-4), "cm")) + # shrinking margins
+  north(land, symbol=12, location="topleft") +
+  ggsn::scalebar(land,
+                 location = "bottomright",
+                 transform = F,
+                 st.bottom = F,
+                 st.size = 3.5,
+                 height = 0.01,
+                 dist = 1,
+                 dist_unit = "km",
+                 model = 'NAD83')
+data_map
+
+dev.off()
+
+#### Paper Fig. 1 ----
+
+# Calling cluster plot as magick image from 'comm_analyses.R'
+mclust <- image_read("./MSc_plots/Clusters_kmeans.tiff") 
+# mclustscl <- image_scale(mclust, "2000") # Scaling it to smaller size if needed
+
+# Calling map plot as magick image
+mplot <- image_read("./MSc_plots/MapClust.tiff") 
+# mplotscl <- image_scale(mplot, "2000") # Scaling it to smaller size if needed
+
+# Adding in stack of kelp forest images from 'comm_analyses.R'
+mmap <- image_composite(mplot, imgstk, offset="+2565+370")
+
+# Stacking the map & cluster plots together
+mfinal <- image_append(c(mmap, mclust), stack=TRUE)
+
+# Saving the final fig
+image_write(mfinal, path = "./MSc_plots/PaperFigs/Fig1a.tiff", format = "tiff", density=600)
 
