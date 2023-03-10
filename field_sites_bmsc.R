@@ -110,11 +110,10 @@ sites <- read.csv("./MSc_data/Data_new/Final_site_list_2022.csv") %>%
 # Adding on a column to identify the cluster groups (see 'comm_analyses.R' for details)
 sites <- sites %>%
 mutate(SiteName = as.character(SiteName)) %>% 
-  mutate(Cluster = case_when(SiteName == "Between Scotts and Bradys" | SiteName == "Danvers Danger Rock" | SiteName == "Dixon Island Back (Bay)" | SiteName == "Dodger Channel 1" | SiteName == "Flemming 112" | SiteName == "Flemming 114" | SiteName == "North Helby Rock" | SiteName == "Tzartus 116" ~ "C3",
-                             SiteName == "Dodger Channel 2" | SiteName == "Nanat Bay" ~ "C2",
-                             SiteName == "Ed King East Inside" | SiteName == "Ross Islet 2" | SiteName == "Ross Islet Slug Island" | SiteName == "Taylor Rock" | SiteName == "Turf Island 2" | SiteName == "Wizard Islet South" ~ "C4",
-                             SiteName == "Bordelais Island" | SiteName == "Second Beach" ~ "C5",
-                             SiteName == "Cable Beach (Blow Hole)" | SiteName == "Less Dangerous Bay" | SiteName == "Swiss Boy" | SiteName == "Wizard Islet North" ~ "C1",
+  mutate(Cluster = case_when(SiteName == "Between Scotts and Bradys" | SiteName == "Danvers Danger Rock" | SiteName == "Dixon Island Back (Bay)" | SiteName == "Dodger Channel 1" | SiteName == "Flemming 112" | SiteName == "Flemming 114" | SiteName == "North Helby Rock" | SiteName == "Tzartus 116" ~ "C2",
+                             SiteName == "Ed King East Inside" | SiteName == "Ross Islet 2" | SiteName == "Ross Islet Slug Island" | SiteName == "Taylor Rock" | SiteName == "Turf Island 2" | SiteName == "Wizard Islet South" ~ "C1",
+                             SiteName == "Bordelais Island" | SiteName == "Second Beach" | SiteName == "Dodger Channel 2" | SiteName == "Nanat Bay" ~ "C4",
+                             SiteName == "Cable Beach (Blow Hole)" | SiteName == "Less Dangerous Bay" | SiteName == "Swiss Boy" | SiteName == "Wizard Islet North" ~ "C3",
                              TRUE ~ "Aux"))
 
 
@@ -214,16 +213,16 @@ studysites <- as.vector(c("Between Scotts and Bradys","Bordelais Island","Cable 
 plotdataclust <- plotdata %>%
   filter(SiteName %in% studysites)
 
-cols <- c("#e4632d", "#994455", "#015f60", "#4477aa", "#997700")
+colsmap <- c("#225555", "#4477aa", "#997700", "#e4632d")
 
-tiff(file="./MSc_plots/MapClust.tiff", height = 6, width = 8, units = "in", res=400)
+tiff(file="./MSc_plots/MapClust4.tiff", height = 6, width = 8, units = "in", res=400)
 
 ## plotting the kelp cluster groups map (discrete fill)
 data_map <- ggplot(land)+
   geom_sf(fill = "grey70", color = NA) + # color = NA will remove country border
   theme_minimal(base_size = 16) +
   geom_sf(data = plotdataclust, size=4, shape=21, color="black", aes(fill=Cluster)) + 
-  scale_fill_manual(values=c(cols, "grey45"), name="") +
+  scale_fill_manual(values=c(colsmap, "grey45"), name="") +
   theme(panel.grid.major = element_line(colour = "transparent"), # hiding graticules
         axis.title.x = element_blank(),
         axis.title.y = element_blank(),
@@ -250,19 +249,19 @@ dev.off()
 #### Paper Fig. 1 ----
 
 # Calling cluster plot as magick image from 'comm_analyses.R'
-mclust <- image_read("./MSc_plots/Clusters_kmeans.tiff") 
+mclust <- image_read("./MSc_plots/Clusters_kmeans4.tiff") 
 # mclustscl <- image_scale(mclust, "2000") # Scaling it to smaller size if needed
 
 # Calling map plot as magick image
-mplot <- image_read("./MSc_plots/MapClust.tiff") 
+mplot <- image_read("./MSc_plots/MapClust4.tiff") 
 # mplotscl <- image_scale(mplot, "2000") # Scaling it to smaller size if needed
 
 # Adding in stack of kelp forest images from 'comm_analyses.R'
-mmap <- image_composite(mplot, imgstk, offset="+2565+370")
+mmap <- image_composite(mplot, imgstk, offset="+2590+480")
 
 # Stacking the map & cluster plots together
 mfinal <- image_append(c(mmap, mclust), stack=TRUE)
 
 # Saving the final fig
-image_write(mfinal, path = "./MSc_plots/PaperFigs/Fig1a.tiff", format = "tiff", density=600)
+image_write(mfinal, path = "./MSc_plots/PaperFigs/Fig1b.tiff", format = "tiff", density=600)
 
