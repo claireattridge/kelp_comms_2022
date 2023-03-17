@@ -18,10 +18,16 @@ proj <- st_crs(3005) # ESPG code for BC Albers projection
 latlong <- st_crs(4326) # for baseline/existing WGS84 ("+proj=longlat +datum=WGS84 +no_defs")
 
 ## seting map extent for Bamfield 
-ymax <- 48.922
-ymin <- 48.80
-xmax <- -125.05
-xmin <- -125.26
+# ymax <- 48.922
+# ymin <- 48.80
+# xmax <- -125.05
+# xmin <- -125.26
+
+# seting map extent for vancouver Island
+ymax <- 48.0
+ymin <- 51.0
+xmax <- -120.00
+xmin <- -129.00
 
 ## making corners for the area of interest 
 corners <- st_multipoint(matrix(c(xmax,xmin,ymax,ymin),ncol=2)) %>% 
@@ -151,15 +157,17 @@ data_map <- ggplot(land)+
   geom_sf(fill = "grey53", color = NA) + # color = NA will remove country border
   theme_minimal(base_size = 16) +
   geom_sf(data = plotdata, size=4, shape=21, color="black", aes(fill=Composition)) + 
-  geom_sf_text(mapping=aes(), data=sitessf, label=sitessf$SiteName, stat="sf_coordinates", inherit.aes=T, size=2.5, nudge_y=100, nudge_x=-1200) + # provides site names at points
+  # geom_sf_text(mapping=aes(), data=sitessf, label=sitessf$SiteName, stat="sf_coordinates", inherit.aes=T, size=2.5, nudge_y=100, nudge_x=-1200) + # provides site names at points
   scale_fill_manual(values=met.brewer("Degas", 4), name="Canopy composition") +
   theme(panel.grid.major = element_line(colour = "transparent"), # hiding graticules
         axis.title.x = element_blank(),
         axis.title.y = element_blank(),
+        legend.position = "top",
         axis.text = element_text(color="black", size=12),
         legend.title = element_text(color="black", size=12),
         legend.text = element_text(color="black", size=11),
-        panel.border = element_rect(colour="black", fill=NA, size=1)) + # Adding in outer border
+        plot.margin = unit(c(0,0,0.5,0), "cm"), # Selecting margins
+        panel.border = element_rect(colour="black", fill=NA, linewidth=1)) + # Adding in outer border
   north(land, symbol=12, location="topleft") +
   ggsn::scalebar(land,
                location = "bottomright",
@@ -188,17 +196,20 @@ data_map <- ggplot(land)+
   theme(panel.grid.major = element_line(colour = "transparent"), # hiding graticules
         axis.title.x = element_blank(),
         axis.title.y = element_blank(),
+        axis.text = element_text(color="black", size=12),
+        legend.position = "top",
         legend.title = element_text(color="black", size=11),
         legend.text = element_text(color="black", size=10),
+        plot.margin = unit(c(0,0,0.5,0), "cm"), # Selecting margins
         panel.border = element_rect(colour="black", fill=NA, size=1)) + # Adding in outer border
   north(land, symbol=12, location="topleft") +
   ggsn::scalebar(land,
                  location = "bottomright",
                  transform = F,
                  st.bottom = F,
-                 st.size = 4,
+                 st.size = 3.5,
                  height = 0.01,
-                 dist = 2,
+                 dist = 1,
                  dist_unit = "km",
                  model = 'NAD83')
 data_map
@@ -245,6 +256,40 @@ data_map <- ggplot(land)+
 data_map
 
 dev.off()
+
+
+
+tiff(file="./MSc_plots/MapVanIsland.tiff", height = 5.5, width = 8.5, units = "in", res=600)
+
+## plotting Barkley Sound area (Vancouver Island)
+data_map <- ggplot(land)+
+  geom_sf(fill = "grey70", color = NA) + # color = NA will remove country border
+  theme_minimal(base_size = 16) +
+  theme(panel.grid.major = element_line(colour = "transparent"), # hiding graticules
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text = element_text(color="black", size=12),
+        legend.position = "top",
+        legend.title = element_text(color="black", size=12),
+        legend.text = element_text(color="black", size=14, face="bold"),
+        panel.border = element_rect(colour="black", fill=NA, linewidth=1), # border
+        plot.margin = unit(c(0,0.5,0.5,0), "cm")) + # shrinking margins
+  north(land, symbol=12, location="topleft") +
+  ggsn::scalebar(land,
+                 location = "bottomright",
+                 transform = F,
+                 st.bottom = F,
+                 st.size = 3,
+                 height = 0.02,
+                 dist = 50,
+                 dist_unit = "km",
+                 model = 'NAD83')
+data_map
+
+dev.off()
+
+
+
 
 #### Paper Fig. 1 ----
 
