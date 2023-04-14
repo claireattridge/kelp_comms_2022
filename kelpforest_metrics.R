@@ -304,6 +304,36 @@ ggarrange(d1, c1, b1, a1, ncol=1, align="v", heights=c(1,1,1,1.4)) # Generating 
 dev.off() 
 
 
+#### Silly plot for a presentation ----
+# 
+# # fxn to generate sequential exponential values
+# future_value = function(years, x = 1, increase = 0.2) {
+#   x * (1 + increase) ^ (1:length(years))
+# }
+# # test line
+# future_value(1:23)
+# 
+# # adding fake exponential column
+# kelpsilly <- kelpdat %>%
+#   arrange(DensityM, desc=T) %>%
+#   mutate(Frustration = future_value(1:23))
+# 
+# tiff(file="C:/Users/Claire/Desktop/sillykelp.tiff", height = 5, width = 7, units = "in", res=600)
+# 
+# # plotting out exponential curve to density
+# silly <- ggplot(data=kelpsilly, size=2, aes(x=as.numeric(DensityM), y=as.numeric(Frustration))) +
+#   geom_point(data=kelpsilly, size=2, aes(x=as.numeric(DensityM), y=as.numeric(Frustration))) +
+#   geom_smooth(method="lm", formula = (y ~ x + I(x^2)), se=T) +
+#   theme_classic() +
+#   theme(
+#     axis.text.x = element_text(color="black", size="9.5"),
+#     axis.text.y = element_text(color="black", size="10"),
+#     axis.title.y = element_text(color="black", size="12", vjust=1)) +
+#   xlab(expression("Kelp density (stipes /m"^2*")")) + ylab("Frustration (swears /min)")
+# silly
+# 
+# dev.off()
+
 #### Test regressions of the data ----
 
 # Pulling from the 'RLS_species_code.R' sheet
