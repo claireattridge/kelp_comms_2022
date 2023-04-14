@@ -45,33 +45,33 @@ temp <- as.data.frame(temp) # Making into a data frame
 
 # Cleaning up the lead & butt ends based on deployment timelines
 tempf <- temp %>%
-  filter(fifelse(SiteName == "Ohiat", Date >= as.POSIXct("2022-06-22") & Date <= as.POSIXct("2022-09-21"),
-          fifelse(SiteName == "Tzartus 116", Date >= as.POSIXct("2022-06-30") & Date <= as.POSIXct("2022-09-18"),
-            fifelse(SiteName == "Nanat Bay", Date >= as.POSIXct("2022-06-30") & Date <= as.POSIXct("2022-09-17"),
-              fifelse(SiteName == "Between Scotts and Bradys", Date >= as.POSIXct("2022-06-24") & Date <= as.POSIXct("2022-09-20"),
-                fifelse(SiteName == "Bordelais Island", Date >= as.POSIXct("2022-06-24") & Date <= as.POSIXct("2022-09-20"),
-                  fifelse(SiteName == "Ross Islet 2", Date >= as.POSIXct("2022-06-25") & Date <= as.POSIXct("2022-09-12"),
-                    fifelse(SiteName == "Wizard Islet South", Date >= as.POSIXct("2022-06-22") & Date <= as.POSIXct("2022-09-19"),
-                      fifelse(SiteName == "North Helby Rock", Date >= as.POSIXct("2022-06-22") & Date <= as.POSIXct("2022-09-21"),
-                        fifelse(SiteName == "Turf Island 2", Date >= as.POSIXct("2022-06-30") & Date <= as.POSIXct("2022-09-20"),
-                          fifelse(SiteName == "Robbers Passage 2", Date >= as.POSIXct("2022-06-30") & Date <= as.POSIXct("2022-09-18"),
-                            fifelse(SiteName == "Flemming 114", Date >= as.POSIXct("2022-06-30") & Date <= as.POSIXct("2022-09-19"),
-                              fifelse(SiteName == "Flemming 112", Date >= as.POSIXct("2022-06-30") & Date <= as.POSIXct("2022-09-18"),
-                                fifelse(SiteName == "Dodger Channel 1", Date >= as.POSIXct("2022-06-23") & Date <= as.POSIXct("2022-09-13"),
-                                  fifelse(SiteName == "Cable Beach (Blow Hole)", Date >= as.POSIXct("2022-06-24") & Date <= as.POSIXct("2022-09-14"),
-                                    fifelse(SiteName == "Ed King East Inside", Date >= as.POSIXct("2022-06-25") & Date <= as.POSIXct("2022-09-13"),
-                                      fifelse(SiteName == "Ross Islet Slug Island", Date >= as.POSIXct("2022-06-25") & Date <= as.POSIXct("2022-09-20"),
-                                        fifelse(SiteName == "Taylor Rock", Date >= as.POSIXct("2022-06-23") & Date <= as.POSIXct("2022-09-04"),
-                                          fifelse(SiteName == "Dodger Channel 2", Date >= as.POSIXct("2022-06-23") & Date <= as.POSIXct("2022-09-13"),
-                                            fifelse(SiteName == "Second Beach South", Date >= as.POSIXct("2022-06-24") & Date <= as.POSIXct("2022-09-13"),
-                                              fifelse(SiteName == "3 Tree Island 2", Date >= as.POSIXct("2022-06-25") & Date <= as.POSIXct("2022-09-21"),
-                                                fifelse(SiteName == "Second Beach", Date >= as.POSIXct("2022-06-24") & Date <= as.POSIXct("2022-09-14"),
-                                                  fifelse(SiteName == "Wizard Islet North", Date >= as.POSIXct("2022-06-22") & Date <= as.POSIXct("2022-09-19"),
-                                                    fifelse(SiteName == "Dixon Island Back (Bay)", Date >= as.POSIXct("2022-07-01") & Date <= as.POSIXct("2022-09-19"),
-                                                      fifelse(SiteName == "Past Roquefoil Bay", Date >= as.POSIXct("2022-07-01") & Date <= as.POSIXct("2022-09-19"),
-                                                        fifelse(SiteName == "Danvers Danger Rock", Date >= as.POSIXct("2022-07-01") & Date <= as.POSIXct("2022-09-17"),
-                                                          fifelse(SiteName == "Swiss Boy", Date >= as.POSIXct("2022-07-22") & Date <= as.POSIXct("2022-09-18"),
-                                                            fifelse(SiteName == "Less Dangerous Bay", Date >= as.POSIXct("2022-07-01") & Date <= as.POSIXct("2022-09-17"),
+  filter(ifelse(SiteName == "Ohiat", Date >= as.POSIXct("2022-06-22") & Date <= as.POSIXct("2022-09-21"),
+          ifelse(SiteName == "Tzartus 116", Date >= as.POSIXct("2022-06-30") & Date <= as.POSIXct("2022-09-18"),
+            ifelse(SiteName == "Nanat Bay", Date >= as.POSIXct("2022-06-30") & Date <= as.POSIXct("2022-09-17"),
+              ifelse(SiteName == "Between Scotts and Bradys", Date >= as.POSIXct("2022-06-24") & Date <= as.POSIXct("2022-09-20"),
+                ifelse(SiteName == "Bordelais Island", Date >= as.POSIXct("2022-06-24") & Date <= as.POSIXct("2022-09-20"),
+                  ifelse(SiteName == "Ross Islet 2", Date >= as.POSIXct("2022-06-25") & Date <= as.POSIXct("2022-09-12"),
+                    ifelse(SiteName == "Wizard Islet South", Date >= as.POSIXct("2022-06-22") & Date <= as.POSIXct("2022-09-19"),
+                      ifelse(SiteName == "North Helby Rock", Date >= as.POSIXct("2022-06-22") & Date <= as.POSIXct("2022-09-21"),
+                        ifelse(SiteName == "Turf Island 2", Date >= as.POSIXct("2022-06-30") & Date <= as.POSIXct("2022-09-20"),
+                          ifelse(SiteName == "Robbers Passage 2", Date >= as.POSIXct("2022-06-30") & Date <= as.POSIXct("2022-09-18"),
+                            ifelse(SiteName == "Flemming 114", Date >= as.POSIXct("2022-06-30") & Date <= as.POSIXct("2022-09-19"),
+                              ifelse(SiteName == "Flemming 112", Date >= as.POSIXct("2022-06-30") & Date <= as.POSIXct("2022-09-18"),
+                                ifelse(SiteName == "Dodger Channel 1", Date >= as.POSIXct("2022-06-23") & Date <= as.POSIXct("2022-09-13"),
+                                  ifelse(SiteName == "Cable Beach (Blow Hole)", Date >= as.POSIXct("2022-06-24") & Date <= as.POSIXct("2022-09-14"),
+                                    ifelse(SiteName == "Ed King East Inside", Date >= as.POSIXct("2022-06-25") & Date <= as.POSIXct("2022-09-13"),
+                                      ifelse(SiteName == "Ross Islet Slug Island", Date >= as.POSIXct("2022-06-25") & Date <= as.POSIXct("2022-09-20"),
+                                        ifelse(SiteName == "Taylor Rock", Date >= as.POSIXct("2022-06-23") & Date <= as.POSIXct("2022-09-04"),
+                                          ifelse(SiteName == "Dodger Channel 2", Date >= as.POSIXct("2022-06-23") & Date <= as.POSIXct("2022-09-13"),
+                                            ifelse(SiteName == "Second Beach South", Date >= as.POSIXct("2022-06-24") & Date <= as.POSIXct("2022-09-13"),
+                                              ifelse(SiteName == "3 Tree Island 2", Date >= as.POSIXct("2022-06-25") & Date <= as.POSIXct("2022-09-21"),
+                                                ifelse(SiteName == "Second Beach", Date >= as.POSIXct("2022-06-24") & Date <= as.POSIXct("2022-09-14"),
+                                                  ifelse(SiteName == "Wizard Islet North", Date >= as.POSIXct("2022-06-22") & Date <= as.POSIXct("2022-09-19"),
+                                                    ifelse(SiteName == "Dixon Island Back (Bay)", Date >= as.POSIXct("2022-07-01") & Date <= as.POSIXct("2022-09-19"),
+                                                      ifelse(SiteName == "Past Roquefoil Bay", Date >= as.POSIXct("2022-07-01") & Date <= as.POSIXct("2022-09-19"),
+                                                        ifelse(SiteName == "Danvers Danger Rock", Date >= as.POSIXct("2022-07-01") & Date <= as.POSIXct("2022-09-17"),
+                                                          ifelse(SiteName == "Swiss Boy", Date >= as.POSIXct("2022-07-22") & Date <= as.POSIXct("2022-09-18"),
+                                                            ifelse(SiteName == "Less Dangerous Bay", Date >= as.POSIXct("2022-07-01") & Date <= as.POSIXct("2022-09-17"),
                                                                     Date == Date))))))))))))))))))))))))))))
                          
 
@@ -85,6 +85,11 @@ tempgrp <- tempf %>%
 
 tempgrp <- as.data.frame(tempgrp) # Making into a data frame
 
+
+# saving a .csv file of the site temp groupings
+write.csv(tempgrp, "./MSc_data/Data_new/temps_2022.csv", row.names=F)
+
+
 ## Loading temp logger info sheet
 info <- read_csv("./MSc_data/Data_new/temp_logger_info.csv") %>%
   dplyr::select(c(ID, SiteName, Depth_logger_m, Depth_logger_datum_m)) %>%
@@ -93,6 +98,10 @@ info <- read_csv("./MSc_data/Data_new/temp_logger_info.csv") %>%
   as.data.frame()
 
 tempgrp <- merge(tempgrp, info, by= "SiteName", all = TRUE) # Adding info the the logger data frame
+  
+
+# saving a .csv file of the site temp groupings
+write.csv(tempgrp_sites, "./MSc_data/Data_new/temps_2022.csv", row.names=F)
 
 
 #### Regressions of data ----
@@ -422,31 +431,4 @@ plot(plotdata, add=T, pch=21, cex=1.5, col="black", bg=plotdata$Composition) # p
 legend("topleft", pch=21, legend=c(expression(italic("M. pyrifera")), "Mixed", expression(italic("N. luetkeana")), "None"), title = "", pt.bg = fill, bty="n", cex=1)
 
 dev.off()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

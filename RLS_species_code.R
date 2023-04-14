@@ -1,6 +1,7 @@
 # Code to play with RLS data
-# Em Lim
-# updated Oct 11, 2022
+# Author: Em Lim
+# Editor: Claire Attridge
+# Updated CMA - Feb 2023
 
 # Load packages
 library(tidyverse)
@@ -11,12 +12,10 @@ library(ggeffects)
 theme_set(theme_bw())
 
 # Load data -------------
-# This is a combo file of Jasmin/Em/Siobhan 2021 data and KCCA 2022 data
-# If you just download your RLS data from google drive as a csv this should work
 
 rls <- read_csv("./MSc_data/Data_new/RLS_2022_KDC_CMA.csv") %>%
-  select(-1) %>% # cuts the first column which is blank
-  select(-Inverts) %>% # cuts the inverts column which is just NAs
+  dplyr::select(-1) %>% # cuts the first column which is blank
+  dplyr::select(-Inverts) %>% # cuts the inverts column which is just NAs
   filter(Method != 0) %>% # get rid of all method 0's
   slice(2:n()) %>% # cuts the first blank row
   rename(
@@ -37,6 +36,10 @@ rls <- read_csv("./MSc_data/Data_new/RLS_2022_KDC_CMA.csv") %>%
 
 # Neat data manipulations ------
 
+# Cleaning 
+rls <- rls %>%
+  mutate(Species = as.factor(Species)) 
+
 # What's the most abundant species?
 rls_abundant_species <- rls %>% group_by(Species) %>%
   summarise(sum = sum(Total))  %>% arrange(desc(sum))
@@ -49,6 +52,8 @@ rls_richness <- rls %>%
 rls_richness <- rls_richness %>%
   rename(SiteName = "site_name")
 
+length(unique(rls$Species))
+
 # where are the most urchins???
 # Can swap for any species
 rls_urchins <- rls %>%
@@ -58,7 +63,20 @@ rls_urchins <- rls %>%
   arrange(desc(urchins))
 
 
-## Total counts for any species at all sites
+## Total counts for all given species at all sites
+rls_all <- rls %>%
+  as.data.frame() %>%
+  ungroup() %>%
+  group_by(site_name, Species, common_name) %>%
+  summarise(Total = sum(Total)) %>%
+  rename(SiteName = "site_name")
+
+
+# saving a .csv file of the total species abundances by site
+write.csv(rls_all, "./MSc_data/Data_new/RLS_2022.csv", row.names=F)
+
+
+## Total counts for any given species at all sites
 rls_sp <- rls %>%
   as.data.frame() %>%
   filter(Species == "Haliotis kamtschatkana") %>%
@@ -68,7 +86,6 @@ rls_sp <- rls %>%
 rls_sp <- rls_sp %>%
   rename(SiteName = "site_name")
   
-
 
 
 # So basically you can manipulate the data to summarize whatever thing you're interested in, and then you can join that summarized data with another df of interest by the common site code/site name :)

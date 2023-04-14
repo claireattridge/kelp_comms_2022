@@ -234,8 +234,11 @@ exp_summary <- exp_df %>%
          y = st_coordinates(geometry)[2]) %>%
   dplyr::ungroup()
 
+exp_summary_df <- data.frame(exp_summary) %>% # returning to a dataframe from sf
+  dplyr::select(-geometry)
+
 # saving a .csv file of the final REI site values
-write.csv(exp_summary, "./MSc_data/Data_new/REI_2022.csv", row.names=F)
+write.csv(exp_summary_df, "./MSc_data/Data_new/REI_2022.csv", row.names=F)
 
 ## plotting out the trend in site specific REI
 ggplot() +
