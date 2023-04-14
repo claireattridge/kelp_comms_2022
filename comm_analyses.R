@@ -11,6 +11,7 @@ library(stats)
 library(car)
 library(factoextra)
 library(wesanderson)
+library(vegan)
 
 #### Loading all data sheets ----
 
@@ -208,8 +209,6 @@ imgstk <- magick::image_append(image_scale(imgs, "480"), stack=TRUE) # Stacking 
 
 #### Community data cleaning ----
 
-library(vegan)
-
 # Cleaning the RLS 'comms' frame
 
 comms <- read_csv("./MSc_data/Data_new/RLS_2022_KDC_CMA_final.csv") %>%
@@ -235,19 +234,19 @@ comms <- read_csv("./MSc_data/Data_new/RLS_2022_KDC_CMA_final.csv") %>%
 
 # Cleaning up the frame columns
 comms <- comms %>%
-  mutate(Species = as.factor(Species), common_name = as.factor(common_name), SiteName = as.factor(site_name),abundance = as.numeric(Total), Date = as.POSIXct(Date, format="%m/%d/%Y")) %>%
-  dplyr::select(-c(site_name, Total)) 
+  mutate(Species = as.factor(Species), common_name = as.factor(common_name), SiteName = as.factor(site_name),abundance = as.numeric(Total), Date = as.POSIXct(Date, format="%d/%m/%Y")) %>% # Changing column formats
+  dplyr::select(-c(site_name, Total)) # Removing unnecessary columns
 
-# Filtering out the site redos at Ross Islet 2, Less Dangerous Bay, & Second Beach S in Sept 2022
+# Filtering out the site redo surveys at Ross Islet 2, Less Dangerous Bay, & Second Beach S in Sept 2022
 # Also removing the acoustic baseline site of 'Sand Town'
 comms <- comms %>%
-  filter(Date <= as.POSIXct("2022-09-08") & SiteName != "Sand Town")
+  filter(Date <= as.POSIXct("2022-09-08") & SiteName != "Sand Town") %>%
+  droplevels()
   
 
 ## Base done, ready to go!
 
 ## Let's look into some questions:
-
 
 # Which site has the most species?
 richness <- comms %>%
@@ -265,13 +264,14 @@ abun <- comms %>%
 # Which species had the most site observations?
 obvs <- comms %>%
   group_by(common_name) %>%
-  summarize(observs = length(common_name)) %>%
-  arrange(desc(observs)) %>%
+  summarize(observs = length(common_name)) %>% # The number of rows (observations) per spp common name
+  arrange(desc(observs)) %>% # Arranging in descending order
   ungroup() %>%
   as.data.frame()
 
+
 # Plot for species observations - Supp Fig
-pdf(file="./MSc_plots/SuppFigs/SpeciesAbCutoff.pdf", height=10, width=7)
+pdf(file="./MSc_plots/SuppFigs/SpeciesAbCutoff.pdf", height=10, width=7.5)
 
 obvsplot <- ggplot(data=obvs, aes(x=observs, y=(fct_reorder(common_name, desc(observs))), fill=observs)) + 
   geom_bar(stat="identity", position="dodge") +
@@ -284,16 +284,17 @@ obvsplot <- ggplot(data=obvs, aes(x=observs, y=(fct_reorder(common_name, desc(ob
     plot.margin = unit(c(0.5,1,0.5,0), "cm"), 
     ) +
   xlab("Unique sightings") + ylab("") +
-  geom_hline(yintercept = 55.5, linetype=2) # Adding in the cutoff line
+  geom_hline(yintercept = 56.5, linetype=2) # Adding in the cutoff line for =< 5 obvs
 obvsplot
 
 dev.off()
 
 
-## With this ^^ in mind: Removing uncommon species (< 5 site obvs) from the analysis frame (n = 37)
+## With this ^^ in mind: Removing uncommon species (=< 5 site obvs) from the analysis frame (n = 37 removed)
 sppkeep <- obvs %>%
-  filter(observs > 5)
+  filter(observs >= 5)
 
+# Remaining species (n = 55 retained)
 commsclean <- comms %>%
   filter(common_name %in% sppkeep$common_name)
 
@@ -312,8 +313,7 @@ write.csv(comms_all, "./MSc_data/Data_new/RLS_2022.csv", row.names=F)
 
 #### Community data ordination ----
 
-library(funrar)
-library(vegan)
+# library(funrar)
 library(ecodist)
 
 # Loading the RLS comms file
@@ -322,97 +322,88 @@ taxa <- read_csv("./MSc_data/Data_new/RLS_2022.csv") %>%
   rename(TaxaAb = abundance) %>%
   rename(CommonName = common_name) %>%
   as.data.frame() %>%
-  mutate(SiteName = as.factor(SiteName)) %>%
+  mutate(SiteName = as.factor(SiteName), CommonName = as.factor(CommonName)) %>%
   filter(SiteName != "Second Beach South")
 
-# For all species in community together
+## For all species in community together
 taxa_all <- taxa %>%
   dplyr::select(-Method) %>% # Removing RLS method col when using all species together
   group_by(SiteName, CommonName) %>%
   summarise(TaxaAb = sum(TaxaAb)) %>%
   ungroup() %>%
   as.data.frame()
-# For just RLS Method 1 species (pelagic)
-taxap <- taxa %>%
-  filter(Method == 1)
-# For just RLS Method 2 species (benthic)
-taxab <- taxa %>%
-  filter(Method == 2)
+# Cleaning up the all spp. frame
+taxa_all <- taxa_all %>%
+  mutate(CommonName = fct_recode(CommonName, "Green sea urchin" = "Northern sea urchin"),
+         CommonName = fct_recode(CommonName, "Blood star" = "Unidentified blood star"),
+         CommonName = fct_recode(CommonName, "Chiton" = "Unidentified chiton"),
+         CommonName = fct_recode(CommonName, "Hermit crab" = "Unidentified hermit crab")) %>%
+  filter(CommonName != "Unidentified rockfish") %>% # Removing unidentified rockfish as a spp.
+  droplevels()
 
-# Spreading the data to wide format (CHANGE TO PELAGIC OR BENTHIC HERE)
-taxawide <- taxa_all %>%
+## For just RLS Method 1 species (pelagic fish)
+taxap <- taxa %>%
+  filter(Method == 1) %>%
+  filter(CommonName != "Unidentified rockfish") %>% # Removing unidentified rockfish as a spp.
+  droplevels()
+
+## For just RLS Method 2 species (benthic fish (demersal) & inverts)
+taxab <- taxa %>%
+  filter(Method == 2) %>%
+  mutate(CommonName = fct_recode(CommonName, "Green sea urchin" = "Northern sea urchin"),
+         CommonName = fct_recode(CommonName, "Blood star" = "Unidentified blood star"),
+         CommonName = fct_recode(CommonName, "Chiton" = "Unidentified chiton"),
+         CommonName = fct_recode(CommonName, "Hermit crab" = "Unidentified hermit crab")) %>%
+  droplevels()
+
+## For just spp. complexes of pelagic fish
+taxap_grp <- taxap %>%
+  mutate(CommonName = fct_collapse(CommonName,
+               Rockfish = c("Black rockfish", "Copper rockfish", "Yellowtail rockfish"),
+               Surfperch = c("Kelp perch", "Shiner perch", "Striped seaperch", "Pile perch"),
+               Greenlings = c("Kelp greenling", "Whitespotted greenling", "Lingcod"),
+               Bottomdwelling = c("Blackeye goby", "Longfin sculpin", "Red Irish lord", "Painted greenling"),
+               Schooling = c("Tube-snout", "Pacific Herring"))) %>%
+  group_by(SiteName, CommonName) %>%
+  summarise(TaxaAb = sum(TaxaAb)) %>%
+  as.data.frame()
+
+## For just spp. of all fish (pelagic + demersal fish)
+  
+## FOr just spp. complexes of all fish (pelagic + demersal fish)
+  
+## For just spp. of all inverts (benthic - demersal fish)
+
+## For just spp. complexes of all inverts (benthic - demersal fish)
+  
+## For just spp. complexes of all spp (pelagic + benthic)
+
+
+### Spreading the data to wide format (using any of the above input dataframe options!)
+taxawide <- taxap_grp %>% # Swap dataframes here in this line, then run the code below
   spread(key = CommonName, value = TaxaAb)
+
 
 # Making table of relative abundances
 rownames(taxawide) <- taxawide$SiteName
 taxamat <- as.matrix(taxawide[,-1])
 taxamat[is.na(taxamat)] <- 0
-
-# Abundance matrix to a relative abundance matrix
 taxarel <- make_relative(taxamat)
 
-# Bray-curtis dissimilarity matrix calculations (with double wisconsin transform first)
-taxabray <- vegan::vegdist(wisconsin(taxarel^(1/4)), method = "bray")
+
+# # Bray-curtis dissimilarity matrix of the relative abundance table (double wisconsin & 4th root transforms first)
+# taxabray <- vegan::vegdist(wisconsin(taxarel^(1/4)), method = "bray")
 
 
+## dbRDA (CAP)
+# Applying double wisconsin & 4th root transforms to relative abundance table
+# Using Hellinger distance (best accounting for rare species - i.e., zero inflated datasets)
+dbmodel <- capscale(wisconsin(taxarel^(1/4))~Cluster, data=preds_cap, comm=taxawide, add=FALSE, dist="hellinger") 
 
-##PCOA??
-pcoa.meio.bray <- cmdscale(taxabray, k = 2, eig = T)
-
-pcoa.meio.bray.plotting <- as.data.frame(pcoa.meio.bray$points)
-colnames(pcoa.meio.bray.plotting) <- c("axis_1", "axis_2")
-pcoa.meio.bray.plotting$site <- rownames(pcoa.meio.bray.plotting)
-
-# Adding on a column to identify the cluster groups (see 'comm_analyses.R' for details)
-pcoa.meio.bray.plotting <- pcoa.meio.bray.plotting %>%
-  mutate(Cluster = case_when(site == "Between Scotts and Bradys" | site == "Danvers Danger Rock" | site == "Dixon Island Back (Bay)" | site == "Dodger Channel 1" | site == "Flemming 112" | site == "Flemming 114" | site == "North Helby Rock" | site == "Tzartus 116" ~ "C2",
-                             site == "Ed King East Inside" | site == "Ross Islet 2" | site == "Ross Islet Slug Island" | site == "Taylor Rock" | site == "Turf Island 2" | site == "Wizard Islet South" ~ "C1",
-                             site == "Bordelais Island" | site == "Second Beach" | site == "Dodger Channel 2" | site == "Nanat Bay" ~ "C4",
-                             site == "Cable Beach (Blow Hole)" | site == "Less Dangerous Bay" | site == "Swiss Boy" | site == "Wizard Islet North" ~ "C3",
-                             TRUE ~ "Aux"))
-
-
-pcoa.meio.bray$eig[1]/(sum(pcoa.meio.bray$eig))
-pcoa.meio.bray$eig[2]/(sum(pcoa.meio.bray$eig))
-
-
-colsmap <- c("#225555", "#4477aa", "#997700", "#e4632d")
-
-pcoa.meio.bray.plot <- ggplot(pcoa.meio.bray.plotting, aes(x = axis_1, y = axis_2, color = Cluster, shape = Cluster, label=site)) +
-  geom_point(size = 3) +
-  geom_text(hjust=0, vjust=0) +
-  scale_color_manual(values=colsmap, name="") +
-  theme_bw() + 
-  xlab("PCoA 1") +
-  ylab("PCoA 2") +
-  annotate(geom = 'text', label = 'Bray-Curtis', x = Inf, y = -Inf, hjust = 1.15, vjust = -1) 
-  
-pcoa.meio.bray.plot
-
-
-##CAP??
-
-library(BiodiversityR)
-
-preds_cap <- preds %>%
-  mutate(Cluster = case_when(SiteName == "Between Scotts and Bradys" | SiteName == "Danvers Danger Rock" | SiteName == "Dixon Island Back (Bay)" | SiteName == "Dodger Channel 1" | SiteName == "Flemming 112" | SiteName == "Flemming 114" | SiteName == "North Helby Rock" | SiteName == "Tzartus 116" ~ "C2",
-                             SiteName == "Ed King East Inside" | SiteName == "Ross Islet 2" | SiteName == "Ross Islet Slug Island" | SiteName == "Taylor Rock" | SiteName == "Turf Island 2" | SiteName == "Wizard Islet South" ~ "C1",
-                             SiteName == "Bordelais Island" | SiteName == "Second Beach" | SiteName == "Dodger Channel 2" | SiteName == "Nanat Bay" ~ "C4",
-                             SiteName == "Cable Beach (Blow Hole)" | SiteName == "Less Dangerous Bay" | SiteName == "Swiss Boy" | SiteName == "Wizard Islet North" ~ "C3",
-                                              TRUE ~ "Aux")) %>%
-  mutate(Cluster = as.factor(Cluster), Composition = as.factor(Composition))
-
-
-# Inputting my relative abundance (transformed) dataframe, to then apply bray-curtis distances within the CAPdiscrim() function
-capmodel <- CAPdiscrim((wisconsin(taxarel^(1/4)))~Cluster, data=preds_cap, axes=2, m=0, dist="bray", add=FALSE)
-
-plot1 <- ordiplot(capmodel, type="none")
-ordisymbol(plot1, preds_cap, "Cluster", legend=TRUE)
-
-
-
-
-
+plot2 <- ordiplot(dbmodel, type="text", display="sites")
+ordisymbol(plot2, preds_cap, "Cluster", legend=FALSE, colors=TRUE, col=2)
+with(preds_cap, ordiellipse(dbmodel, Cluster, col=colsmap2, kind = "se", conf=0.95, label=TRUE, lwd = 1.75))
+legend("bottomleft", legend=levels(preds_cap$Cluster), bty="n", pch=pchs, col = colsmap2)
 
 
 
