@@ -54,6 +54,20 @@ preds[is.na(preds)] <- 0 # Translating the NAs to zeros for clustering analysis
 
 preds <- preds[-17,] # Removing second beach south as an outlier site 
 
+# Polishing dataframe with environmental data to use for later use in CAP ordination
+preds_cap <- preds %>%
+  mutate(Cluster = case_when(SiteName == "Between Scotts and Bradys" | SiteName == "Danvers Danger Rock" | SiteName == "Dixon Island Back (Bay)" | SiteName == "Dodger Channel 1" | SiteName == "Flemming 112" | SiteName == "Flemming 114" | SiteName == "North Helby Rock" | SiteName == "Tzartus 116" ~ "C2",
+                             SiteName == "Ed King East Inside" | SiteName == "Ross Islet 2" | SiteName == "Ross Islet Slug Island" | SiteName == "Taylor Rock" | SiteName == "Turf Island 2" | SiteName == "Wizard Islet South" ~ "C1",
+                             SiteName == "Bordelais Island" | SiteName == "Second Beach" | SiteName == "Dodger Channel 2" | SiteName == "Nanat Bay" ~ "C3",
+                             SiteName == "Cable Beach (Blow Hole)" | SiteName == "Less Dangerous Bay" | SiteName == "Swiss Boy" | SiteName == "Wizard Islet North" ~ "C4",
+                             TRUE ~ "Aux")) %>%
+  mutate(Cluster = as.factor(Cluster), Composition = as.factor(Composition)) %>%
+  mutate(Kelpdom = case_when(Composition == "Macro" | Composition == "Mixed" ~ "Giant", # Macro is dominant at mixed sites (too few mixed sites to statistically compare)
+                             Composition == "Nereo" ~ "Bull",
+                             Composition == "None" ~ "Giant")) %>% # Re. Starko (2022) - used to have M. pyrifera present around the area of Less Dangerous bay
+  mutate(Kelpdom = as.factor(Kelpdom)) %>%
+  droplevels()
+
 #### Cluster analysis ----
 
 # Checking for collinearity of variables
@@ -67,11 +81,14 @@ plot(BiomassM ~ HeightM, data=preds)
 plot(BiomassM ~ Area_m2, data=preds)
 plot(BiomassM ~ MacroP, data=preds)
 
-# Plotting out the relationship
-mod <- lm(BiomassM ~ DensityM, data=preds)
+# Plotting out the relationships to look for correlations
+mod <- lm(HeightM ~ Depth_datum_m, data=preds)
 modpred <- predict(mod)  
-plot(BiomassM ~ DensityM, data=preds)
-lines(preds$DensityM, modpred)
+plot(HeightM ~ Depth_datum_m, data=preds)
+lines(preds$Depth_datum_m, modpred)
+
+## Density & Biomass -> very correlated
+## Height & Depth -> very correlated
 
 
 # ## PCA (for density & biomass)
@@ -87,7 +104,7 @@ lines(preds$DensityM, modpred)
 ## K MEANS
 
 preds <- preds %>% # Scaling all predictors prior to clustering (Euc dists are sens to scale)
-  mutate_at(c(2,3,4,5,6,8,9), funs(c(scale(.))))
+  mutate_at(c(2,3,4,5,6,7,9,10), funs(c(scale(.))))
 
 
 # optimizing for k cluster values
@@ -98,7 +115,7 @@ avg.totw.ss <-integer(length(rng)) #Set up an empty vector to hold all of points
 for(v in rng){ # For each value of the range variable
   v.totw.ss <- integer(tries) # Set up an empty vector to hold the 100 tries
   for(i in 1:tries){
-    k.temp <- kmeans(na.omit(preds[,c(2,4,8,9)]), centers=v) # Run kmeans
+    k.temp <- kmeans(na.omit(preds[,c(3,5,9,10)]), centers=v) # Run kmeans
     v.totw.ss[i] <-k.temp$tot.withinss # Store the total withinss
   }
   avg.totw.ss[v-1] <-mean(v.totw.ss) #Average the 100 total withinss
@@ -112,7 +129,7 @@ plot(rng,avg.totw.ss,type="b", main="Total Within SS by Various K",
 
 
 # only using the kelp forest attributes for clustering sites
-k <- kmeans(na.omit(preds[,c(2,4,8,9)]), centers=4, nstart=15)
+k <- kmeans(na.omit(preds[,c(3,5,9,10)]), centers=4, nstart=20)
 k$centers # looking at the centroid mean values
 table(k$cluster) # looking at # sites per
 
@@ -122,12 +139,12 @@ cols <- c("#997700", "#225555", "#4477aa", "#e4632d")
 tiff(file="./MSc_plots/Clusters_kmeans4.tiff", height = 4.5, width = 8, units = "in", res=400)
 
 # plotting the clustered groups 
-clusts <- fviz_cluster(k, data=na.omit(preds[,c(2,4,8,9)]), pointsize=2, repel=TRUE) +
+clusts <- fviz_cluster(k, data=na.omit(preds[,c(3,5,9,10)]), pointsize=2, repel=TRUE) +
   theme_classic() +
   scale_color_manual(values=cols) +
   scale_fill_manual(values=cols) +
   theme(
-    legend.position="none",
+    legend.position="top",
     axis.text = element_text(color="black", size="12"),
     axis.title = element_text(color="black", size="13", vjust=1),
     plot.margin = unit(c(0,1,0.5,0.85), "cm"), # Selecting margins
@@ -145,6 +162,7 @@ clusts
 
 dev.off()
 
+## Clusters for- density, area, height, macro (proportion)
 
 # # C1:
 # Ed King East Inside, Ross Islet 2, Ross Islet Slug Island, Taylor Rock, Turf Island 2, Wizard Islet South
@@ -154,11 +172,6 @@ dev.off()
 # Cable Beach (Blow Hole), Less Dangerous Bay, Swiss Boy, Wizard Islet North
 # # C4:
 # Bordelais Island, Second Beach, Dodger Channel 2, Nanat Bay
-
-
-# # dataframe of the center outcomes (to look for differences in metrics b/w the clusters)
-# cframe <- as.data.frame(k$centers) %>%
-#   mutate(Cluster = as.factor(c("C1", "C2", "C3", "C4", "C5"))) # Add as needed here
 
 
 ## IMAGE PLOTS FOR CLUSTERS
@@ -203,14 +216,9 @@ imgstk <- magick::image_append(image_scale(imgs, "480"), stack=TRUE) # Stacking 
 # imggrb <- rasterGrob(imgras)
 
 
-
-
-
-
 #### Community data cleaning ----
 
 # Cleaning the RLS 'comms' frame
-
 comms <- read_csv("./MSc_data/Data_new/RLS_2022_KDC_CMA_final.csv") %>%
   dplyr::select(-1) %>% # cuts the first column which is blank
   dplyr::select(-Inverts) %>% # cuts the inverts column which is just NAs
@@ -313,8 +321,11 @@ write.csv(comms_all, "./MSc_data/Data_new/RLS_2022.csv", row.names=F)
 
 #### Community data ordination ----
 
-# library(funrar)
+library(funrar)
 library(ecodist)
+library(BiodiversityR)
+library(ggforce)
+library(ggrepel)
 
 # Loading the RLS comms file
 taxa <- read_csv("./MSc_data/Data_new/RLS_2022.csv") %>%
@@ -345,7 +356,20 @@ taxa_all <- taxa_all %>%
 taxap <- taxa %>%
   filter(Method == 1) %>%
   filter(CommonName != "Unidentified rockfish") %>% # Removing unidentified rockfish as a spp.
-  droplevels()
+  droplevels() %>%
+  dplyr::select(-Method)
+
+## For just spp. complexes of pelagic fish
+taxap_grp <- taxap %>%
+  mutate(CommonName = fct_collapse(CommonName,
+                                   Rockfish = c("Black rockfish", "Copper rockfish", "Yellowtail rockfish"),
+                                   Surfperch = c("Kelp perch", "Shiner perch", "Striped seaperch", "Pile perch"),
+                                   Greenlings = c("Kelp greenling", "Whitespotted greenling", "Lingcod"),
+                                   Bottomdwelling = c("Blackeye goby", "Longfin sculpin", "Red Irish lord", "Painted greenling"),
+                                   Schooling = c("Tube-snout", "Pacific Herring"))) %>%
+  group_by(SiteName, CommonName) %>%
+  summarise(TaxaAb = sum(TaxaAb)) %>%
+  as.data.frame() 
 
 ## For just RLS Method 2 species (benthic fish (demersal) & inverts)
 taxab <- taxa %>%
@@ -354,64 +378,276 @@ taxab <- taxa %>%
          CommonName = fct_recode(CommonName, "Blood star" = "Unidentified blood star"),
          CommonName = fct_recode(CommonName, "Chiton" = "Unidentified chiton"),
          CommonName = fct_recode(CommonName, "Hermit crab" = "Unidentified hermit crab")) %>%
-  droplevels()
+  droplevels() %>%
+  dplyr::select(-Method)
 
-## For just spp. complexes of pelagic fish
-taxap_grp <- taxap %>%
-  mutate(CommonName = fct_collapse(CommonName,
-               Rockfish = c("Black rockfish", "Copper rockfish", "Yellowtail rockfish"),
-               Surfperch = c("Kelp perch", "Shiner perch", "Striped seaperch", "Pile perch"),
-               Greenlings = c("Kelp greenling", "Whitespotted greenling", "Lingcod"),
-               Bottomdwelling = c("Blackeye goby", "Longfin sculpin", "Red Irish lord", "Painted greenling"),
-               Schooling = c("Tube-snout", "Pacific Herring"))) %>%
-  group_by(SiteName, CommonName) %>%
-  summarise(TaxaAb = sum(TaxaAb)) %>%
-  as.data.frame()
+## For just spp. of all inverts (benthic - demersal fish)
+
+M2benthicfish <- c("Blackeye goby", "Crescent gunnel", "Kelp greenling", "Longfin sculpin", "Penpoint gunnel", "Red Irish lord", "Scalyhead sculpin", "Smoothhead sculpin", "Whitespotted greenling")
+
+taxab_inv <- taxab %>%
+  filter(!CommonName %in% M2benthicfish) %>%
+  droplevels() 
+
+## For just spp. of all benthic fish (benthic - inverts)
+taxab_fish <- taxab %>%
+  filter(CommonName %in% M2benthicfish) %>%
+  filter(!CommonName %in% "Whitespotted greenling") %>%
+  filter(!CommonName %in% "Kelp greenling") %>%
+  droplevels() 
+
+## For just spp. complexes of all inverts (benthic - demersal fish)
 
 ## For just spp. of all fish (pelagic + demersal fish)
   
-## FOr just spp. complexes of all fish (pelagic + demersal fish)
-  
-## For just spp. of all inverts (benthic - demersal fish)
-
-## For just spp. complexes of all inverts (benthic - demersal fish)
+## For just spp. complexes of all fish (pelagic + demersal fish)
   
 ## For just spp. complexes of all spp (pelagic + benthic)
 
 
-### Spreading the data to wide format (using any of the above input dataframe options!)
-taxawide <- taxap_grp %>% # Swap dataframes here in this line, then run the code below
+### Spreading the data to wide format
+taxawide <- taxap_grp %>% # Swap for any if the above community dataframes in this line, then run the lines below-
   spread(key = CommonName, value = TaxaAb)
 
 
 # Making table of relative abundances
-rownames(taxawide) <- taxawide$SiteName
-taxamat <- as.matrix(taxawide[,-1])
-taxamat[is.na(taxamat)] <- 0
-taxarel <- make_relative(taxamat)
+rownames(taxawide) <- taxawide$SiteName # Setting col as rownames
+taxawide <- taxawide[,-1] # Removing the col used above
+taxawide[is.na(taxawide)] <- 0 # (no NAs)
+
+taxamat <- as.matrix(taxawide) # As matrix
+taxarel <- make_relative(taxamat) # Relative abundance matrix of community data
 
 
-# # Bray-curtis dissimilarity matrix of the relative abundance table (double wisconsin & 4th root transforms first)
-# taxabray <- vegan::vegdist(wisconsin(taxarel^(1/4)), method = "bray")
+#### CAP ordination (simplified dbRDA) and plots
+
+### BY CLUSTER GROUPS
+
+## OPTION 1: HELLINGER- Balanced emphasis for spp of all abundances (down weighting of highly abundant spp, no emphasis on rare spp)
+capmodel <- capscale(sqrt(taxamat) ~ Cluster+exp_36+Tempave+Depth_datum_m, data=preds_cap, comm=taxawide, add=FALSE, dist="hellinger") 
+# ## OPTION 2: BRAY/WISCONSIN- Emphasis on the influence of most abundant spp (lower weighting for rare species)
+# capmodel <- capscale(wisconsin(taxarel^(1/4)) ~ Cluster, data=preds_cap, comm=taxawide, add=FALSE, dist="bray")
+
+colsmap <- c("#225555", "#4477aa", "#e4632d", "#997700")
+pchs <- c(15:18)
+
+## Quick ordiplot to visualize
+ordplot <- ordiplot(capmodel, type="text", display="all")
+ordisymbol(ordplot, preds_cap, "Cluster", legend=FALSE, colors=TRUE, col=colsmap)
+with(preds_cap, ordiellipse(capmodel, Cluster, col=colsmap2, kind = "se", conf=0.95, label=TRUE, lwd = 1.75))
+legend("bottomleft", legend=levels(preds_cap$Cluster), bty="n", pch=pchs, col = colsmap)
+
+## Clean ggplots 
+# https://rstudio-pubs-static.s3.amazonaws.com/694016_e2d53d65858d4a1985616fa3855d237f.html
+
+# Extracting the axes data from the model
+axis.long <- axis.long(capmodel, choices=c(1,2))
+axis.long
+# Extracting the locations of species from the model
+species.long <- species.long(ordplot)
+head(species.long)
+# Extracting the locations of sites from the model
+sites.long <- sites.long(ordplot, env.data=preds_cap)
+head(sites.long)
+# Extracting the locations of centroids from the sites.long output
+centroids.long <- centroids.long(sites.long, grouping=preds_cap$Cluster, centroids.only=FALSE)
+head(centroids.long)
+# Extracting env biplot correlations from the model
+envfit <- envfit(ord=ordplot, env=preds_cap)
+envvectors <- c("Tempave", "Depth_datum_m", "exp_36") # Defining env vectors of interest
+vectorfit.long <- vectorfit.long(envfit) %>%
+  filter(vector %in% envvectors)
+head(vectorfit.long)
+
+# Extracting the CI ellipses from the model and ordiplot
+ordsimple <- ordiplot(capmodel)
+ordellipses <- with(preds_cap, ordiellipse(ordsimple, groups=Cluster, kind = "se", conf=0.95))
+ellipses <- ordiellipse.long(ordellipses, grouping.name="Cluster")
+
+# Extracting the most influential spp from the model and ordiplot
+species.envfit <- envfit(ordsimple, env=taxahel) # The simple ordiplot above & Hellinger transformed spp data (see previous section)
+species.envfit.table <- data.frame(r=species.envfit$vectors$r, p=species.envfit$vectors$pvals)
+species.long.var <- species.long(ordsimple, spec.data=species.envfit.table)
+species.long.var
+# Selecting for spp that explain > 60% of the observed variance among groups
+species.long.vargrt <- species.long.var[species.long.var$r >= 0.6, ]
+species.long.vargrt
 
 
-## dbRDA (CAP)
-# Applying double wisconsin & 4th root transforms to relative abundance table
-# Using Hellinger distance (best accounting for rare species - i.e., zero inflated datasets)
-dbmodel <- capscale(wisconsin(taxarel^(1/4))~Cluster, data=preds_cap, comm=taxawide, add=FALSE, dist="hellinger") 
+# The ggplot
+plotgg <- ggplot() + 
+  geom_vline(xintercept = c(0), color = "grey70", linetype = 2) +
+  geom_hline(yintercept = c(0), color = "grey70", linetype = 2) +  
+  xlab(axis.long[1, "label"]) +
+  ylab(axis.long[2, "label"]) +  
+  scale_y_continuous(limits=c(-2.3,2)) + 
+  scale_x_continuous(limits=c(-2,2)) + 
+  # geom_mark_ellipse(data=sites.long, # Ellipses hulls for all group points
+  #                   aes(x=axis1, y=axis2, colour=Cluster,
+  #                       fill=after_scale(alpha(colour, 0.2))),
+  #                   expand=0, linewidth=0.2, show.legend=FALSE) +
+  geom_polygon(data=ellipses, # 95% confidence ellipses
+               aes(x=axis1, y=axis2, colour=Cluster,
+                   fill=after_scale(alpha(colour, 0.2))),
+               size=0.2, show.legend=FALSE) +
+  geom_point(data=sites.long, # Adding in the main site data points
+             aes(x=axis1, y=axis2, colour=Cluster, shape=Kelpdom),
+             size=4) +
+  geom_point(data=centroids.long, # Adding in the centroids for groups
+             aes(x=axis1c, y=axis2c, color=Centroid), size=4, shape=4, show.legend=F) +
+  # geom_segment(data=vectorfit.long, # Adding in the biplot correlation arrows
+  #              aes(x=0, y=0, xend=axis1, yend=axis2), 
+  #              colour="red", size=0.7, arrow=arrow()) +
+  # geom_text_repel(data=vectorfit.long, # Adding in the biplot correlation labels
+  #                 aes(x=axis1, y=axis2, label=vector),
+  #                 colour="red") +
+  geom_segment(data=species.long.vargrt, # Adding in the influential species data
+               aes(x=0, y=0, xend=axis1*4, yend=axis2*4), 
+               colour="black", size=0.7, arrow=arrow()) +
+  geom_text_repel(data=species.long.vargrt, # Adding in the species labels
+                  aes(x=axis1*4, y=axis2*4, label=labels),
+                  colour="black") +
+  scale_color_manual(values=colsmap) +
+  scale_shape_manual(values=pchs) +
+  theme_minimal()
+plotgg
 
-plot2 <- ordiplot(dbmodel, type="text", display="sites")
-ordisymbol(plot2, preds_cap, "Cluster", legend=FALSE, colors=TRUE, col=2)
-with(preds_cap, ordiellipse(dbmodel, Cluster, col=colsmap2, kind = "se", conf=0.95, label=TRUE, lwd = 1.75))
-legend("bottomleft", legend=levels(preds_cap$Cluster), bty="n", pch=pchs, col = colsmap2)
+
+#////////////////////////////#
 
 
+### BY KELP SPP GROUPS
+
+## OPTION 1: HELLINGER- Balanced emphasis for spp of all abundances (down weighting of highly abundant spp, no emphasis on rare spp)
+capmodel2 <- capscale(sqrt(taxamat) ~ Kelpdom+exp_36+Tempave+Depth_datum_m, data=preds_cap, comm=taxawide, add=FALSE, dist="hellinger") 
+# ## OPTION 2: BRAY/WISCONSIN- Emphasis on the influence of most abundant spp (lower weighting for rare species)
+# capmodel2 <- capscale(wisconsin(taxarel^(1/4)) ~ Kelpdom, data=preds_cap, comm=taxawide, add=FALSE, dist="bray")
+
+colsmap <- c("#225555", "#4477aa", "#e4632d", "#997700")
+pchs <- c(15:18)
+
+## Quick ordiplot to visualize
+ordplot2 <- ordiplot(capmodel2, type="text", display="all")
+ordisymbol(ordplot2, preds_cap, "Kelpdom", legend=FALSE, colors=TRUE, col=colsmap)
+with(preds_cap, ordiellipse(capmodel2, Kelpdom, col=colsmap2, kind = "se", conf=0.95, label=TRUE, lwd = 1.75))
+legend("bottomleft", legend=levels(preds_cap$Kelpdom), bty="n", pch=pchs, col = colsmap)
 
 
+## Clean ggplots 
+# https://rstudio-pubs-static.s3.amazonaws.com/694016_e2d53d65858d4a1985616fa3855d237f.html
+
+# Extracting the axes data from the model
+axis.long2 <- axis.long(capmodel2, choices=c(1,2))
+axis.long2
+# Extracting the locations of species from the model
+species.long2 <- species.long(ordplot2)
+head(species.long2)
+# Extracting the locations of sites from the model
+sites.long2 <- sites.long(ordplot2, env.data=preds_cap)
+head(sites.long2)
+# Extracting the locations of centroids from the sites.long output
+centroids.long2 <- centroids.long(sites.long2, grouping=preds_cap$Kelpdom, centroids.only=TRUE)
+head(centroids.long2)
+# Extracting env biplot correlations from the model
+envfit2 <- envfit(ord=ordplot2, env=preds_cap)
+envvectors <- c("Tempave", "Depth_datum_m", "exp_36") # Defining env vectors of interest
+vectorfit.long2 <- vectorfit.long(envfit2) %>%
+  filter(vector %in% envvectors)
+head(vectorfit.long2)
+
+# Extracting the CI ellipses from the ordiplot above
+ordsimple2 <- ordiplot(capmodel2)
+ordellipses2 <- with(preds_cap, ordiellipse(ordsimple2, groups=Kelpdom, kind = "se", conf=0.95))
+ellipses2 <- ordiellipse.long(ordellipses2, grouping.name="Kelpdom")
+
+# Extracting the most influential spp from the model and ordiplot
+species.envfit2 <- envfit(ordsimple2, env=taxahel) # The simple ordiplot above & Hellinger transformed spp data (see previous section)
+species.envfit.table2 <- data.frame(r=species.envfit2$vectors$r, p=species.envfit2$vectors$pvals)
+species.long.var2 <- species.long(ordsimple2, spec.data=species.envfit.table2)
+species.long.var2
+# Selecting for spp that explain > 60% of the observed variance among groups
+species.long.vargrt2 <- species.long.var2[species.long.var2$r >= 0.5, ]
+species.long.vargrt2
+
+# The ggplot
+plotgg2 <- ggplot() + 
+  geom_vline(xintercept = c(0), color = "grey70", linetype = 2) +
+  geom_hline(yintercept = c(0), color = "grey70", linetype = 2) +  
+  xlab(axis.long[1, "label"]) +
+  ylab(axis.long[2, "label"]) +  
+  scale_y_continuous(limits=c(-2,2)) + 
+  scale_x_continuous(limits=c(-2,2)) + 
+  geom_mark_ellipse(data=sites.long2, # Ellipses hulls for all group points
+                    aes(x=axis1, y=axis2, colour=Kelpdom,
+                        fill=after_scale(alpha(colour, 0.2))),
+                    expand=0, linewidth=0.2, show.legend=FALSE) +
+  # geom_polygon(data=ellipses2, # 95% confidence ellipses
+  #              aes(x=axis1, y=axis2, colour=Kelpdom,
+  #                  fill=after_scale(alpha(colour, 0.2))),
+  #              size=0.2, show.legend=FALSE) +
+  geom_point(data=sites.long2, # The main site data points
+             aes(x=axis1, y=axis2, colour=Kelpdom, shape=Cluster),
+             size=4) +
+  geom_point(data=centroids.long2, # Adding in the centroids for groups
+             aes(x=axis1c, y=axis2c, color=Centroid), size=4, shape=4, show.legend=F) +
+  # geom_segment(data=vectorfit.long2, # Adding in the biplot correlation arrows
+  #              aes(x=0, y=0, xend=axis1, yend=axis2), 
+  #              colour="red", size=0.7, arrow=arrow()) +
+  # geom_text_repel(data=vectorfit.long2, # Adding in the biplot correlation labels
+  #                 aes(x=axis1, y=axis2, label=vector),
+  #                 colour="red") +
+  geom_segment(data=species.long.vargrt2, # Adding in the influential species data
+               aes(x=0, y=0, xend=axis1*4, yend=axis2*4), 
+               colour="black", size=0.7, arrow=arrow()) +
+  geom_text_repel(data=species.long.vargrt2, # Adding in the species labels
+                  aes(x=axis1*4, y=axis2*4, label=labels),
+                  colour="black") +
+  scale_shape_manual(values=pchs) +
+  scale_color_manual(values=rev(colsmap)) +
+  theme_minimal()
+plotgg2
 
 
+#### Community data stats (SIMPER, Permanova) ----
+
+library(pairwiseAdonis)
+
+## Setting up the matrices
+
+# Hellinger transformation of the raw species abundance matrix
+taxahel <- decostand(sqrt(taxamat), method = "hellinger")
+# Bray curtis transformation of the transformed relative abundance matrix
+taxabray <- vegan::vegdist(wisconsin(taxarel^(1/4)), method="bray")
 
 
+## Running PERMANOVA /or/ general anova-like permutation test (anova.cca())
+
+## HELLINGER
+# Cluster grouping
+permh <- adonis2(sqrt(taxamat) ~ Cluster+exp_36+Tempave+Depth_datum_m, data=preds_cap, permutations = 999, method="hellinger")
+permh_pair <- pairwise.adonis2(sqrt(taxamat) ~ Cluster+exp_36+Tempave+Depth_datum_m, data=preds_cap)
+permh_anova <- anova.cca(capmodel, by="term") # Generalized anova-like permutation test
+
+# Kelp spp grouping
+permh2 <- adonis2(sqrt(taxamat) ~ Kelpdom+exp_36+Tempave+Depth_datum_m, data=preds_cap, permutations = 999, method="hellinger", by="term")
+permh2_pair <- pairwise.adonis2(sqrt(taxamat) ~ Kelpdom, data=preds_cap)
+permh2_anova <- anova.cca(capmodel2, by="term") # Generalized anova-like permutation test
+
+
+# ## BRAY CURTIS
+# # Cluster grouping
+# permb <- adonis2(wisconsin(taxarel^(1/4)) ~ Cluster, data=preds_cap, permutations = 999, method="bray")
+# permb_pair <- pairwise.adonis2(wisconsin(taxarel^(1/4)) ~ Cluster, data=preds_cap)
+# permb_anova <- anova.cca(capmodel, by="term")
+# 
+# # Kelp spp grouping
+# permb2 <- adonis2(wisconsin(taxarel^(1/4)) ~ Kelpdom, data=preds_cap, permutations = 999, method="bray", by="term")
+# permb2_pair <- pairwise.adonis2(wisconsin(taxarel^(1/4)) ~ Kelpdom, data=preds_cap)
+# permb2_anova <- anova.cca(capmodel2, by="term")
+
+
+## Running SIMPER
+simp <- simper()
 
 
 
