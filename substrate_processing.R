@@ -13,18 +13,18 @@ library(cowplot)
 ### Cleaning up the data
 
 # Reading in the raw data
-raw <- read.csv("./MSc_data/Data_new/BenthicCover_TestingSheet_CMA.csv", header=F)
-names(raw) <- raw[2,] # Making second row the header names
-raw <- raw[-c(1:2),] # Removing first two rows
+rawsim <- read.csv("./MSc_data/Data_new/BenthicCover_TestingSheet_CMA.csv", header=F)
+names(rawsim) <- rawsim[2,] # Making second row the header names
+rawsim <- rawsim[-c(1:2),] # Removing first two rows
 
 # Cleaning up column types
-raw <- raw %>%
+rawsim <- rawsim %>%
   mutate(across(.cols=9:16, .fns=as.numeric)) %>%
   mutate(SiteName = as.factor(SiteName), TotalPts = as.factor(TotalPts), Depth_m = as.numeric(Depth_m), Date_photos = as.POSIXct(Date_photos, format="%m/%d/%Y")) %>%
   dplyr::select(-c(Processor, ImageID, ImageWidth_cm, ImageLength_cm, AreaPerPt))
 
 # Calculating proportion cover types
-prop <- raw %>%
+propsim <- rawsim %>%
   rowwise() %>%
   mutate(Pcanopy = (Allcanopy/Total),
          Punder = (Allunderstory/Total),
@@ -35,7 +35,7 @@ prop <- raw %>%
   ungroup() 
 
 # Calculating averages by pt number
-ave <- prop %>%
+avesim <- propsim %>%
   group_by(TotalPts, SiteName) %>%
   summarise(Pcanopy = mean(Pcanopy, na.rm=T),
             Punder = mean(Punder, na.rm=T),
@@ -47,26 +47,26 @@ ave <- prop %>%
   as.data.frame()
   # dplyr::select(-SiteName) # Removing the site names for further manipulations
 
-ave[ave == "NaN"] <- NA # Replacing NaNs with NAs
+avesim[avesim == "NaN"] <- NA # Replacing NaNs with NAs
 
 # Flipping so that dataframe runs from more to fewer pts in row order
-ave <- ave %>%
+avesim <- avesim %>%
   mutate(TotalPts = as.numeric(as.character(TotalPts))) %>%
   arrange(desc(TotalPts)) %>%
   mutate(TotalPts = as.factor(TotalPts)) # Turning back into a factor column
 
 # Splitting dataframe by substrate categories & spreading wider 
-canopy <- ave[,c(1,2,3)] %>%
+canopy <- avesim[,c(1,2,3)] %>%
   spread(TotalPts, Pcanopy)
-under <- ave[,c(1,2,4)] %>%
+under <- avesim[,c(1,2,4)] %>%
   spread(TotalPts, Punder)
-hard <- ave[,c(1,2,5)] %>%
+hard <- avesim[,c(1,2,5)] %>%
   spread(TotalPts, Phard)
-sand <- ave[,c(1,2,6)] %>%
+sand <- avesim[,c(1,2,6)] %>%
   spread(TotalPts, Psand)
-biol <- ave[,c(1,2,7)] %>%
+biol <- avesim[,c(1,2,7)] %>%
   spread(TotalPts, Pbiol)
-other <- ave[,c(1,2,8)] %>%
+other <- avesim[,c(1,2,8)] %>%
   spread(TotalPts, Pother)
 
 # Applying the ccf() function for correlation among columns / point categories
@@ -196,24 +196,109 @@ dev.off()
 
 #### Percent cover processing ----
 
+# Reading in the raw data
+raw <- read.csv("./MSc_data/Data_new/BenthicCover_RawSheet.csv", header=F)
+names(raw) <- raw[2,] # Making second row the header names
+raw <- raw[-c(1:2),] # Removing first two rows
 
-### WILL PROBABLY NEED THIS FOR LATER SUBSTRATE PROCESSING...
+# Cleaning up column types
+raw <- raw %>%
+  mutate(across(.cols=10:47, .fns=as.numeric)) %>%
+  mutate(SiteName = as.factor(SiteName), TotalPts = as.factor(TotalPts), Depth = as.numeric(Depth), Date_photos = as.POSIXct(Date_photos, format="%m/%d/%Y")) %>%
+  dplyr::select(-c(Processor, ImageID, ImageWidth_cm, ImageLength_cm, AreaPerPt, Notes))
 
-# # sorting data categories into broader groupings
-# rawgrp <- raw %>%
-#   rowwise() %>% 
-#   mutate(TotalPoints = sum(raw[,c(10:41)]),
-#          Allbrown = DesmerestiaSpp + SargassumMuticum + EgregiaMenziesii + LaminariaSetchellii + AlariaMarginata + AgarumSpp + SaccharinaLatissima + CostariaCostata + PterygophoraCalifornica + PleurophycusGardneri + FucusSpp + HaplogloiaAndersonii + AnalipusJaponicus + UnknownBrown,
-#          Allred = ChondracanthusExasperatus + MazzaellaSplendens + UnknownRed,
-#          Allgreen = UlvaLactuca + UnknownGreen,
-#          Allunderstory = DesmerestiaSpp + SargassumMuticum + EgregiaMenziesii + LaminariaSetchellii + AlariaMarginata + AgarumSpp + SaccharinaLatissima + CostariaCostata + PterygophoraCalifornica + PleurophycusGardneri + FucusSpp + HaplogloiaAndersonii + AnalipusJaponicus + UnknownBrown + ChondracanthusExasperatus + MazzaellaSplendens + UnknownRed + UlvaLactuca + UnknownGreen,
-#          Allcanopy = MacrocystisPyrifera + NereocystisLuetkeana,
-#          Allcoralline = CorallineStanding + CorallineStanding,
-#          Hardbottom = Bedrock + Boulder + Cobble + Sand + CorallineCrustose, 
-#          AnalyzedPoints = Total - Unknown - Object) 
+# sorting data categories into broader groupings
+rawgrp <- raw %>%
+  rowwise() %>%
+  mutate(TotalPoints = sum(raw[,c(10:41)]),
+         Allbrown = DesmerestiaSpp + SargassumMuticum + EgregiaMenziesii + LaminariaSetchellii + AlariaMarginata + AgarumSpp + SaccharinaLatissima + CostariaCostata + PterygophoraCalifornica + PleurophycusGardneri + FucusSpp + HaplogloiaAndersonii + AnalipusJaponicus + UnknownBrown,
+         Allred = ChondracanthusExasperatus + MazzaellaSplendens + UnknownRed,
+         Allgreen = UlvaLactuca + UnknownGreen,
+         Allunderstory = DesmerestiaSpp + SargassumMuticum + EgregiaMenziesii + LaminariaSetchellii + AlariaMarginata + AgarumSpp + SaccharinaLatissima + CostariaCostata + PterygophoraCalifornica + PleurophycusGardneri + FucusSpp + HaplogloiaAndersonii + AnalipusJaponicus + UnknownBrown + ChondracanthusExasperatus + MazzaellaSplendens + UnknownRed + UlvaLactuca + UnknownGreen,
+         Allcanopy = MacrocystisPyrifera + NereocystisLuetkeana,
+         Allcoralline = CorallineStanding + CorallineStanding,
+         Hardbottom = Bedrock + Boulder + Cobble + CorallineCrustose,
+         Softbottom = Sand + Silt,
+         Sandbottom = Sand,
+         Siltbottom = Silt,
+         Invasive = DesmerestiaSpp,
+         Turf = TurfAlgaeMix,
+         AnalyzedPoints = Total - Unknown - Object) %>%
+  ungroup()
+
+# Calculating proportion cover types
+rawprop <- rawgrp %>%
+  rowwise() %>%
+  mutate(Pbrown = (Allbrown/AnalyzedPoints),
+         Pred = (Allred/AnalyzedPoints),
+         Pgreen = (Allgreen/AnalyzedPoints),
+         Punderstory = (Allunderstory/AnalyzedPoints),
+         Pcanopy = (Allcanopy/AnalyzedPoints),
+         Pcoralline = (Allcoralline/AnalyzedPoints),
+         Pharbottom = (Hardbottom/AnalyzedPoints),
+         Psoftbottom = (Softbottom/AnalyzedPoints),
+         Psandbottom = (Sandbottom/AnalyzedPoints),
+         Psiltbottom = (Siltbottom/AnalyzedPoints),
+         Panimal = (AnimalMacro/AnalyzedPoints),
+         Pinvasive = (DesmerestiaSpp/AnalyzedPoints),
+         Pturf = (TurfAlgaeMix/AnalyzedPoints)) %>%
+  ungroup() 
+
+# Calculating site averages by proportion (to percent) cover
+rawsite <- rawprop %>%
+  group_by(SiteName) %>%
+  summarise(Pbrown = mean(Pbrown*100, na.rm=T),
+            Pred = mean(Pred*100, na.rm=T),
+            Pgreen = mean(Pgreen*100, na.rm=T),
+            Punderstory = mean(Punderstory*100, na.rm=T),
+            Pcanopy = mean(Pcanopy*100, na.rm=T),
+            Pcoralline = mean(Pcoralline*100, na.rm=T),
+            Phardbottom = mean(Pharbottom*100, na.rm=T),
+            Psoftbottom = mean(Psoftbottom*100, na.rm=T),
+            Psandbottom = mean(Psandbottom*100, na.rm=T),
+            Psiltbottom = mean(Psiltbottom*100, na.rm=T),
+            Panimal = mean(Panimal*100, na.rm=T),
+            Pinvasive = mean(Pinvasive*100, na.rm=T),
+            Pturf = mean(Pturf*100, na.rm=T))
 
 
+# saving a .csv file of the substrate types (%s) at all sites
+write.csv(rawsite, "./MSc_data/Data_new/Substrates_2022.csv", row.names=F)
 
+
+# Melting data into long format
+library(reshape2)
+rawplot <- rawsite %>%
+  melt(id.vars="SiteName")
+
+# Pulling out key groups of interest
+subs <- c("Pturf", "Punderstory", "Pcanopy", "Phardbottom", "Psoftbottom", "Panimal")
+rawplot_subs <- rawplot %>%
+  filter(variable %in% subs)
+
+  
+### Plotting by substrate types
+  
+tiff(file="./MSc_plots/SuppFigs/SubstratePercentages.tiff", height = 6, width = 8, units = "in", res=300)
+
+# All bottom types
+plotsubs <- ggplot(rawplot_subs) +
+  geom_col(aes(x = SiteName, 
+               y = value,
+               fill = variable)) +
+  ylab("Mean percent cover") +
+  theme_classic() +
+  scale_fill_manual(values=met.brewer("Redon"),
+                      labels = c("Understory algae", "Canopy kelps", "Hard bottom", "Soft bottom", "Animal", "Turf algae"), name = NULL) +
+  theme(axis.text.x = element_text(angle = 70, hjust = 1, vjust = 1, size = 11),
+        legend.spacing.y = unit(0.25, "cm"),
+        legend.key.size = unit(0.9, "cm"),
+        axis.text = element_text(size = 10),
+        axis.title.x=element_blank(),
+        axis.title.y=element_text(size=12))
+plotsubs
+
+dev.off()
 
 
 
