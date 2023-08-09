@@ -17,17 +17,17 @@ library(MetBrewer)
 proj <- st_crs(3005) # ESPG code for BC Albers projection
 latlong <- st_crs(4326) # for baseline/existing WGS84 ("+proj=longlat +datum=WGS84 +no_defs")
 
-## seting map extent for Bamfield 
-# ymax <- 48.922
-# ymin <- 48.80
-# xmax <- -125.05
-# xmin <- -125.26
+# seting map extent for Bamfield
+ymax <- 48.922
+ymin <- 48.80
+xmax <- -125.05
+xmin <- -125.26
 
-# seting map extent for vancouver Island
-ymax <- 48.0
-ymin <- 51.0
-xmax <- -120.00
-xmin <- -129.00
+# # seting map extent for vancouver Island
+# ymax <- 48.0
+# ymin <- 51.0
+# xmax <- -120.00
+# xmin <- -129.00
 
 ## making corners for the area of interest 
 corners <- st_multipoint(matrix(c(xmax,xmin,ymax,ymin),ncol=2)) %>% 
@@ -143,8 +143,10 @@ sitessf <- sitessf %>%
 ##                       ##
 
 # Adding the kelp data metrics to the mapping data!
-# 'kelpforest_metrics.R' (load the objects in this sheet first)
-plotdata <- merge(sitessf, kelpdat, by = "SiteName", all = TRUE) %>% # Adding on the kelp data
+# Loading the kelp data file first
+kelpdata <- read_csv("./MSc_data/Data_new/kelpmetrics_2022.csv")
+
+plotdata <- merge(sitessf, kelpdata, by = "SiteName", all = TRUE) %>% # Adding on the kelp data
   mutate(Cluster = factor(Cluster, levels=c("C1", "C2", "C3", "C4", "C5", "Aux")))
 
 
@@ -184,15 +186,15 @@ dev.off()
 
 
 
-tiff(file="./MSc_plots/MapDens.tiff", height = 5, width = 10, units = "in", res=600)
+tiff(file="./MSc_plots/MapDepth.tiff", height = 7, width = 10, units = "in", res=600)
 
 ## plotting the kelp density map (continuous fill)
 data_map <- ggplot(land)+
   geom_sf(fill = "grey53", color = NA) + # color = NA will remove country border
   theme_minimal(base_size = 16) +
-  geom_sf(data = plotdata, size=3, shape=21, color="black", aes(fill=KelpM)) +
+  geom_sf(data = plotdata, size=3, shape=21, color="black", aes(fill=Depth_datum_m)) +
   # geom_sf_text(mapping=aes(), data=sitessf, label=sitessf$SiteName, stat="sf_coordinates", inherit.aes=T, size=2.5, nudge_y=100, nudge_x=-1200) +
-  scale_fill_gradientn(colors=met.brewer("VanGogh3"), name=expression("Kelp density (stipes /m"^2*")"), limits=c(0,16)) +
+  scale_fill_gradientn(colors=met.brewer("VanGogh3"), name=expression("Depth (m below datum)"), limits=c(0,5)) +
   theme(panel.grid.major = element_line(colour = "transparent"), # hiding graticules
         axis.title.x = element_blank(),
         axis.title.y = element_blank(),
@@ -201,7 +203,7 @@ data_map <- ggplot(land)+
         legend.title = element_text(color="black", size=11),
         legend.text = element_text(color="black", size=10),
         plot.margin = unit(c(0,0,0.5,0), "cm"), # Selecting margins
-        panel.border = element_rect(colour="black", fill=NA, size=1)) + # Adding in outer border
+        panel.border = element_rect(colour="black", fill=NA, linewidth=1)) + # Adding in outer border
   north(land, symbol=12, location="topleft") +
   ggsn::scalebar(land,
                  location = "bottomright",
@@ -258,6 +260,7 @@ data_map
 dev.off()
 
 
+## Vancouver Island map
 
 tiff(file="./MSc_plots/MapVanIsland.tiff", height = 5.5, width = 8.5, units = "in", res=600)
 
@@ -291,7 +294,7 @@ dev.off()
 
 
 
-#### Paper Fig. 1 ----
+#### Paper Fig. 1 map details ----
 
 # Calling cluster plot as magick image from 'comm_analyses.R'
 mclust <- image_read("./MSc_plots/Clusters_kmeans4.tiff") 

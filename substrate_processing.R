@@ -290,10 +290,10 @@ plotsubs <- ggplot(rawplot_subs) +
   theme_classic() +
   scale_fill_manual(values=met.brewer("Redon"),
                       labels = c("Understory algae", "Canopy kelps", "Hard bottom", "Soft bottom", "Animal", "Turf algae"), name = NULL) +
-  theme(axis.text.x = element_text(angle = 70, hjust = 1, vjust = 1, size = 11),
+  theme(axis.text.x = element_text(angle = 70, hjust = 1, vjust = 1, size = 10),
         legend.spacing.y = unit(0.25, "cm"),
         legend.key.size = unit(0.9, "cm"),
-        axis.text = element_text(size = 10),
+        axis.text.y = element_text(size = 10),
         axis.title.x=element_blank(),
         axis.title.y=element_text(size=12))
 plotsubs

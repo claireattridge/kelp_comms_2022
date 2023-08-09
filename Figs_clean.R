@@ -9,3 +9,5 @@
 #### Fig 2: Dot & Whisker plots of kelp forest attributes ----
 #### Fig 3: Boxplot of relative spp (fxnl group) abundances ----
 #### Fig 4: NMDS plot of kelp forest communities on env & biotic gradients ----
+
+library(dplyr)

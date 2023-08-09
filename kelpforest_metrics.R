@@ -23,7 +23,7 @@ dens <- dens %>%
 
 # Dataframe for site-specific density averages 
 densgrp <- dens %>%
-  group_by(SiteName) %>% # Averaging to site
+  group_by(SiteName, Depth_datum_m) %>% # Averaging to site
   summarise(KelpM = mean(Kelp), KelpSD = sd(Kelp))
 
 
@@ -79,7 +79,7 @@ kelptog[sapply(kelptog, is.nan)] <- NA # NaNs to NAs for working with
 # Grouping/averaging from transect to site level
 kelpgrp <- kelptog %>%
   mutate(SiteName = as.factor(SiteName)) %>%
-  group_by(SiteName) %>% # Averaging to site
+  group_by(SiteName, Depth_datum_m) %>% # Averaging to site & keeping depth (m)
   summarise(HeightM = mean(HeightT, na.rm=T), HeightSD = sd(HeightT, na.rm=T), # Ave height (m)
             BiomassM = mean(Biomassm2kg, na.rm=T), BiomassSD = sd(Biomassm2kg, na.rm=T), # Ave biomass (kg / m2)
             DensityM = mean(Kelp), DensitySD = sd(Kelp, na.rm=T), # Ave density any kelp (m2)
@@ -224,6 +224,8 @@ kelpdat <- merge(kelpgrp, areagrp, by = "SiteName", all=TRUE)
 
 # saving a .csv file of the kelp metrics by site
 write.csv(kelpdat, "./MSc_data/Data_new/kelpmetrics_2022.csv", row.names=F)
+
+#
 
 #### Plotting out the data ----
 
