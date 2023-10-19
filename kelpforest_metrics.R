@@ -73,7 +73,7 @@ kelptog <- kelptog %>%
   mutate(BiomassTkg = ((BiomassTind/1000)*Kelp)) %>% # Convert ave ind biomass (g to kg) and multiply by transect density
   ungroup() %>% # Stop rowwise 
   mutate(Biomassm2kg = (BiomassTkg/5)) # From ave transect area biomass (/5m2) to /m2 area
-kelptog[sapply(kelptog, is.nan)] <- NA # NaNs to NAs for working with
+kelptog[sapply(kelptog, is.nan)] <- 0 # NaNs to 0s for working with
 
 
 # Grouping/averaging from transect to site level
@@ -223,7 +223,7 @@ areagrp <- areagrp %>%
 kelpdat <- merge(kelpgrp, areagrp, by = "SiteName", all=TRUE)
 
 # saving a .csv file of the kelp metrics by site
-write.csv(kelpdat, "./MSc_data/Data_new/kelpmetrics_2022.csv", row.names=F)
+write.csv(kelpdat, "./MSc_data/Data_new/kelp_metrics_2022.csv", row.names=F)
 
 #
 
