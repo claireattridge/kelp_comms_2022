@@ -8,14 +8,12 @@ library(MetBrewer)
 library(reader)
 library(lubridate)
 library(ggpubr)
+library(ggspatial)
 library(sf)
-library(ggsn)
 library(rgeos)
 library(windfetch)
 
-#### Fetch calculations ----
-
-### Map prep
+#### Map prep ----
 
 ## setting projections at outset
 proj <- st_crs(3005) # ESPG code for BC Albers projection
@@ -38,30 +36,34 @@ plot(corners)
 land <- sf::st_read("./Maps_BC/Hakai_BC/COAST_TEST2.shp") %>%
   st_sf() %>%
   st_transform(proj)
-land <- land %>% # cropping to the Bamfield corners
+land_bs <- land %>% # cropping to the Bamfield corners
   st_crop(st_bbox(corners))
 
 ## converting from land area to sea area (because this map is the land not the water)
-mask <- st_bbox(land) %>% # generating a box that covers the cropped multipolygon area
+mask <- st_bbox(land_bs) %>% # generating a box that covers the cropped multipolygon area
   st_as_sfc() # making a simple geometry feature
 
-land <- st_union(land) # unionizing the sea layer
+land_bs <- st_union(land_bs) # unionizing the land layer
 
-sea <- st_difference(mask, land) # removing the intersecting area (i.e., removing sea and leaving land)
-sea <- sea %>%
+sea_bs <- st_difference(mask, land_bs) # removing the intersecting area (i.e., removing sea and leaving land)
+sea_bs <- sea_bs %>%
   st_sf() %>% # making into sf object 
   st_transform(proj) # projecting back into ESPG 3005
 
 
-### Data prep
-sites <- read.csv("./MSc_data/Data_new/Final_site_list_2022.csv") %>%
-  mutate_all(na_if, "") %>%
-  mutate(Lat = as.numeric(Lat), Lon = as.numeric(Lon), Estimated_dens=factor(Estimated_dens, levels=c("High", "Med", "Low", "None"))) %>%
-  mutate(Deploy = as.factor(ifelse(!is.na(Temp_logger), "YES", "NO")))
+#### Site data prep ----
 
-# selecting for only the used study sites
+# Reading in general site data
+sites <- read.csv("./MSc_data/Data_new/Final_site_list_2022.csv") %>%
+  mutate(Lat = as.numeric(Lat), Lon = as.numeric(Lon), 
+         Estimated_dens=factor(Estimated_dens, levels=c("High", "Med", "Low", "None")),
+         Surveyed = as.factor(Surveyed))
+
+
+# selecting for only the surveyed study sites
 sites <- sites %>%
   filter(Surveyed == "YES")
+
 
 # nudging the lat & lon values for sites that register as 'on land' in the high res coastal map
 sites <- sites %>%
@@ -77,10 +79,12 @@ sites <- sites %>%
   mutate(Lat = ifelse(sites$SiteName == "Less Dangerous Bay", as.numeric(48.87545), sites$Lat)) %>%
   mutate(Lon = ifelse(sites$SiteName == "Less Dangerous Bay", as.numeric(-125.0908), sites$Lon))
 
+
+
 # converting location data to sf object
 sitessf <- sites %>%
   drop_na(Lat) %>%
-  dplyr::select(c(SiteName, Lat, Lon, Estimated_dens, Composition, Deploy)) %>%
+  dplyr::select(c(SiteName, Lat, Lon, Estimated_dens, Composition, Surveyed)) %>%
   st_as_sf(coords = c(3,2))
 
 st_crs(sitessf) <- latlong # setting 
@@ -92,28 +96,35 @@ sitessf <- sitessf %>%
 
 # locking in factor level order
 sitessf <- sitessf %>%
-  mutate(Names = as.factor(SiteName)) # renaming so the windfetch package registers them
+  mutate(SiteName = as.factor(SiteName),
+         Composition = as.factor(Composition)) # renaming so the windfetch package registers them
+
+#### Fetch calculation ----
 
 ### Running the fetch function (windfetch)
-fetch <- windfetch(polygon_layer=land, site_layer=sitessf, max_dist=60, n_directions=9)
+fetch <- windfetch(polygon_layer=land_bs, site_layer=sitessf, max_dist=60, n_directions=8)
 # 60 km max dist (the offshore wind buoy we will use is ~ 60 km offshore -> 'La Perouse')
-# 36 directions (9/quadrant of N, E, S, W)
+# 36 directions (9 fetch measures / quadrant of 90 deg. - N, E, S, W)
+# *Fetch output is in meters though
+
 
 ## visualizing the fetch
-plot(land, col="darkgrey")
+plot(land_bs, col="darkgrey")
 plot(fetch, col="black", add=TRUE)
 
 
 fetch_sf <- as_sf(fetch) # turning into sf object to capture all 36 directional measures
 
 fetchtab <- as.data.frame(fetch_sf) %>% # into a standard dataframe
-  dplyr::select(-geometry) # will add the geometry back in later by site name
+  dplyr::select(-geometry) %>% # will add the geometry back in later by site name
+  mutate(site_name = as.factor(site_name))
 
+# Saving fetch info as a .csv file
 write.csv(fetchtab, "./MSc_data/Data_new/fetch_2022.csv", row.names=F)
 
 
 #### Wave & wind processing ----
-
+ 
 ## uploading wind and wave data from offshore buoy (La Perouse Bank)
 weather <- read.csv("./MSc_data/Data_sourced/Wind_wave/c46206.csv") %>%
                 mutate(DATE = as.POSIXct(DATE, format="%m/%d/%Y %H:%M")) %>% # makes date format
@@ -197,6 +208,8 @@ openair::windRose(wavey_deg,
          ws.int = 3,
          breaks = 5,
          grid.line = 5)
+
+
 
 #### REI calculations ----
 
