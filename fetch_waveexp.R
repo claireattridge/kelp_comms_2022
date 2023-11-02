@@ -13,6 +13,8 @@ library(sf)
 library(rgeos)
 library(windfetch)
 
+#
+
 #### Map prep ----
 
 ## setting projections at outset
@@ -94,17 +96,32 @@ sitessf <- st_transform(sitessf,proj) # make sure you assign this, otherwise it 
 sitessf <- sitessf %>%
   st_crop(st_bbox(corners))
 
-# locking in factor level order
+
+
+### Filtering out the 'no kelp' sites (Less Dangerous Bay, Wizard Islet N)
+### And the outlier site 'Second Beach South'
+### Should go from 23 to 20 sites
 sitessf <- sitessf %>%
-  mutate(SiteName = as.factor(SiteName),
-         Composition = as.factor(Composition)) # renaming so the windfetch package registers them
+  mutate(SiteName = as.factor(SiteName)) %>%
+  filter(SiteName != "Less Dangerous Bay") %>%
+  filter(SiteName != "Wizard Islet North") %>%
+  filter(SiteName != "Second Beach South")
+
+
+
+# locking in factor level order
+# renaming 'SiteName' to 'Names' so that the windfetch package registers the names
+sitessf <- sitessf %>%
+  mutate(Names = as.factor(SiteName), 
+         Composition = as.factor(Composition)) 
+
 
 #### Fetch calculation ----
 
 ### Running the fetch function (windfetch)
 fetch <- windfetch(polygon_layer=land_bs, site_layer=sitessf, max_dist=60, n_directions=8)
 # 60 km max dist (the offshore wind buoy we will use is ~ 60 km offshore -> 'La Perouse')
-# 36 directions (9 fetch measures / quadrant of 90 deg. - N, E, S, W)
+# 32 directions (8 fetch measures / quadrant of 90 deg. - N, E, S, W)
 # *Fetch output is in meters though
 
 
@@ -213,7 +230,7 @@ openair::windRose(wavey_deg,
 
 #### REI calculations ----
 
-## loading fetch data and wind data for the 23 study sites!
+## loading fetch data and wind data for the study sites!
 
 # loading & mutating fetch data frame to have coordinates associated
 fetch_df <- read_csv("./MSc_data/Data_new/fetch_2022.csv") %>% # loading the fetch by site
@@ -253,6 +270,10 @@ exp_summary_df <- data.frame(exp_summary) %>% # returning to a dataframe from sf
 # saving a .csv file of the final REI site values
 write.csv(exp_summary_df, "./MSc_data/Data_new/REI_2022.csv", row.names=F)
 
+
+
+tiff(file="./MSc_plots/SuppFigs/SiteREI.tiff", height = 6, width = 9, units = "in", res=400)
+
 ## plotting out the trend in site specific REI
 ggplot() +
   geom_point(data=exp_summary, size=3, alpha=0.9, aes(x=reorder(SiteName,exp_36), y=exp_36)) +
@@ -264,3 +285,4 @@ ggplot() +
     axis.title.y = element_text(color="black", size="11", vjust=3)) +
   ylab("REI") + xlab("Site")
 
+dev.off()
