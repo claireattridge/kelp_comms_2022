@@ -11,6 +11,30 @@ library(raster)
 library(rgeos)
 library(MetBrewer)
 
+
+#
+
+#### Spatial package prep work ----
+
+## Have to do this section because maptools and gssn were retired/archived
+## There currently (2023) isn't a better replacement package for the tools
+## Used for map features such as scale bars and north arrows
+
+## Installing map tools & ggsn & rgeos (from archived versions bc they've been retired as of 2023)
+## Maptools is a dependency that needs to be loaded prior to ggsn
+url1 <- "https://cran.r-project.org/src/contrib/Archive/maptools/maptools_1.1-8.tar.gz"
+url2 <- "https://cran.r-project.org/src/contrib/Archive/ggsn/ggsn_0.5.0.tar.gz"
+url3 <- "https://cran.r-project.org/src/contrib/Archive/rgeos/rgeos_0.6-4.tar.gz"
+
+# repos=NULL indicates that you're not using a repository for installation
+# type=source specifies that it is a source package
+install.packages(url1, type="source", repos=NULL)  
+install.packages(url2, type="source", repos=NULL)  
+install.packages(url3, type="source", repos=NULL)  
+
+#
+
+
 #### Map prep work ----
 
 ## setting projections at outset
@@ -36,27 +60,34 @@ corners <- st_multipoint(matrix(c(xmax,xmin,ymax,ymin),ncol=2)) %>%
   st_transform(proj) 
 plot(corners)
 
-## reading in BC sea map (eez)
-sea <- sf::st_read("./Maps_BC/eez_bc/eez.shp") %>%
+## reading in high res map of BC coast from Hakai
+land <- sf::st_read("./Maps_BC/Hakai_BC/COAST_TEST2.shp") %>%
   st_sf() %>%
   st_transform(proj)
-sea <- sea %>% # cropping to the Bamfield corners
+land_bs <- land %>% # cropping to the Bamfield corners
   st_crop(st_bbox(corners))
 
-## converting from sea area to land area (because this map is the water not the land)
-mask <- st_bbox(sea) %>% # generating a box that covers the cropped multipolygon area
+## converting from land area to sea area (because this map is the land not the water)
+mask <- st_bbox(land_bs) %>% # generating a box that covers the cropped multipolygon area
   st_as_sfc() # making a simple geometry feature
 
-sea <- st_union(sea) # unionizing the sea layer
+land_bs <- st_union(land_bs) # unionizing the land layer
 
-land <- st_difference(mask, sea) # removing the intersecting area (i.e., removing sea and leaving land)
-land <- land %>%
+sea_bs <- st_difference(mask, land_bs) # removing the intersecting area (i.e., removing sea and leaving land)
+sea_bs <- sea_bs %>%
+  st_sf() %>% # making into sf object 
+  st_transform(proj) # projecting back into ESPG 3005
+
+## making the land back into an sf object
+land_bs <- land_bs %>%
   st_sf() %>% # making into sf object 
   st_transform(proj) # projecting back into ESPG 3005
 
 
-# ## saving the cropped size map of land *Should be able to use this going forward now!
-# write_sf(land, "./Maps_BC/eez_bc/land_crop_BarkleyS.shp", overwrite=T)
+## saving the cropped size map of land 
+## saving the cropped size map of sea
+write_sf(land_bs, "./Maps_BC/land_Hakai_BarkleyS.shp", overwrite=T)
+write_sf(sea_bs, "./Maps_BC/sea_Hakai_BarkleyS.shp", overwrite=T)
 
 
 #### Data prep work ----
@@ -108,28 +139,28 @@ land <- land %>%
 ## Our finalized survey sites ##
 ##                            ##
 
+# Loading site list and filtering for only those surveyed
 sites <- read.csv("./MSc_data/Data_new/Final_site_list_2022.csv") %>%
-  mutate_all(na_if, "") %>%
-  mutate(Lat = as.numeric(Lat), Lon = as.numeric(Lon), Estimated_dens=factor(Estimated_dens, levels=c("High", "Med", "Low", "None"))) %>%
-  mutate(Deploy = as.factor(ifelse(!is.na(Temp_logger), "YES", "NO")))
+  mutate(Lat = as.numeric(Lat), Lon = as.numeric(Lon), Estimated_dens=factor(Estimated_dens, levels=c("High", "Med", "Low", "None")),
+         Kelpdom = as.factor(ifelse(Composition == "Macro" | Composition == "Mixed", "Macro", "Nereo"))) %>%
+  filter(Surveyed == "YES")
 
-# Adding on a column to identify the cluster groups (see 'comm_analyses.R' for details)
+# Removing the outlier site (Second Beach South) and no kelp sites (Less Dangerous Bay & Wizard I North)
 sites <- sites %>%
-mutate(SiteName = as.character(SiteName)) %>% 
-  mutate(Cluster = case_when(SiteName == "Between Scotts and Bradys" | SiteName == "Danvers Danger Rock" | SiteName == "Dixon Island Back (Bay)" | SiteName == "Dodger Channel 1" | SiteName == "Flemming 112" | SiteName == "Flemming 114" | SiteName == "North Helby Rock" | SiteName == "Tzartus 116" ~ "C2",
-                             SiteName == "Ed King East Inside" | SiteName == "Ross Islet 2" | SiteName == "Ross Islet Slug Island" | SiteName == "Taylor Rock" | SiteName == "Turf Island 2" | SiteName == "Wizard Islet South" ~ "C1",
-                             SiteName == "Bordelais Island" | SiteName == "Second Beach" | SiteName == "Dodger Channel 2" | SiteName == "Nanat Bay" ~ "C4",
-                             SiteName == "Cable Beach (Blow Hole)" | SiteName == "Less Dangerous Bay" | SiteName == "Swiss Boy" | SiteName == "Wizard Islet North" ~ "C3",
-                             TRUE ~ "Aux"))
+  filter(SiteName != "Second Beach South") %>%
+  filter(SiteName != "Less Dangerous Bay") %>%
+  filter(SiteName != "Wizard Islet North")
+# Should leave the 20 study sites remaining
 
 
-#converting location data to sf object
+#converting site location data to sf object
 sitessf <- sites %>%
   drop_na(Lat) %>%
-  dplyr::select(c(SiteName, Lat, Lon, Estimated_dens, Composition, Deploy, Cluster)) %>%
+  dplyr::select(c(SiteName, Lat, Lon, Estimated_dens, Surveyed, Kelpdom)) %>%
   st_as_sf(coords = c(3,2))
 
-st_crs(sitessf) <- latlong # setting 
+# Setting the initial crs, then reprojecting to BC/Albers crs
+st_crs(sitessf) <- latlong
 sitessf <- st_transform(sitessf,proj) # make sure you assign this, otherwise it won't use the transformed project crs
 
 #cropping to only points within map limits
@@ -142,36 +173,38 @@ sitessf <- sitessf %>%
 ## Our kelp metric data  ##
 ##                       ##
 
-# Adding the kelp data metrics to the mapping data!
 # Loading the kelp data file first
-kelpdata <- read_csv("./MSc_data/Data_new/kelpmetrics_2022.csv")
-
-plotdata <- merge(sitessf, kelpdata, by = "SiteName", all = TRUE) %>% # Adding on the kelp data
-  mutate(Cluster = factor(Cluster, levels=c("C1", "C2", "C3", "C4", "C5", "Aux")))
+kelpdata <- read_csv("./MSc_data/Data_new/kelp_metrics_2022.csv")
 
 
-#### Plotting the maps ----
+# Adding the kelp data to the site location data
+# Reversing level order for the Kandinsky colors to fill in correctly (gold to Macro teal to Nereo)
+plotdata <- merge(sitessf, kelpdata, by = "SiteName", all = TRUE) %>%
+  mutate(Kelpdom = factor(Kelpdom, levels=c("Nereo", "Macro"))) 
 
-tiff(file="./MSc_plots/MapForests.tiff", height = 5.5, width = 8.5, units = "in", res=600)
 
-## plotting the kelp composition map (discrete fill)
-data_map <- ggplot(land)+
-  geom_sf(fill = "grey53", color = NA) + # color = NA will remove country border
+#### Plotting the Barkley Sound map ----
+
+tiff(file="./MSc_plots/MapForests.tiff", height = 5.5, width = 8.5, units = "in", res=400)
+
+## plotting the kelp species map (discrete fill)
+data_map <- ggplot(land_bs)+
+  geom_sf(fill = "grey65", color = NA) + # color = NA will remove country border
   theme_minimal(base_size = 16) +
-  geom_sf(data = plotdata, size=4, shape=21, color="black", aes(fill=Composition)) + 
+  geom_sf(data = plotdata, size=4, shape=21, color="black", aes(fill=Kelpdom)) + 
   # geom_sf_text(mapping=aes(), data=sitessf, label=sitessf$SiteName, stat="sf_coordinates", inherit.aes=T, size=2.5, nudge_y=100, nudge_x=-1200) + # provides site names at points
-  scale_fill_manual(values=met.brewer("Degas", 4), name="Canopy composition") +
+  scale_fill_manual(values=met.brewer("Kandinsky", 2), name="") +
   theme(panel.grid.major = element_line(colour = "transparent"), # hiding graticules
         axis.title.x = element_blank(),
         axis.title.y = element_blank(),
-        legend.position = "top",
+        legend.position = "none",
         axis.text = element_text(color="black", size=12),
         legend.title = element_text(color="black", size=12),
         legend.text = element_text(color="black", size=11),
-        plot.margin = unit(c(0,0,0.5,0), "cm"), # Selecting margins
+        plot.margin = unit(c(0.5,0.5,0.2,0), "cm"), # Selecting margins
         panel.border = element_rect(colour="black", fill=NA, linewidth=1)) + # Adding in outer border
   north(land, symbol=12, location="topleft") +
-  ggsn::scalebar(land,
+  ggsn::scalebar(land_bs,
                location = "bottomright",
                transform = F,
                st.bottom = F,
@@ -260,6 +293,8 @@ data_map
 dev.off()
 
 
+
+
 ## Vancouver Island map
 
 tiff(file="./MSc_plots/MapVanIsland.tiff", height = 5.5, width = 8.5, units = "in", res=600)
@@ -294,7 +329,81 @@ dev.off()
 
 
 
-#### Paper Fig. 1 map details ----
+#### Plotting the broader map inset ----
+
+
+# Loading the additional required packages
+library(rnaturalearth)
+library(rnaturalearthdata)
+
+
+# Loading and defining the world map as sf of countries
+world <- ne_countries(scale = "medium", returnclass = "sf")
+class(world)
+
+## setting projections at outset
+proj <- st_crs(4269) # ESPG code for NAD1983
+latlong <- st_crs(4326) # for baseline/existing WGS84 ("+proj=longlat +datum=WGS84 +no_defs")
+
+## setting map extent for BC -> Cali
+ymax <- 51.00
+ymin <- 20.00
+xmax <- -127.00
+xmin <- -116.00
+
+## making corners for the area of interest 
+corners <- st_multipoint(matrix(c(xmax,xmin,ymax,ymin),ncol=2)) %>% 
+  st_sfc(crs=latlong) %>%
+  st_sf() %>%
+  st_transform(proj) 
+plot(corners)
+
+
+# projecting the world map
+world_proj <- world %>%
+  st_as_sfc(crs=latlong) %>%
+  st_sf() %>%
+  st_transform(proj)
+
+# Rebuilding to a valid geometry
+world_proj <- world_proj %>%
+  st_make_valid()
+
+# cropping to the corners
+world_crop <- world_proj %>% 
+  st_crop(st_bbox(corners))
+
+
+
+# Plotting the map inset 
+tiff(file="./MSc_plots/MapInset.tiff", height = 10, width = 4, units = "in", res=400)
+
+data_map <- ggplot(world_crop)+
+  geom_sf(fill = "grey65", color = "black") + # color = NA will remove country border
+  theme_minimal(base_size = 16) +
+  theme(panel.grid.major = element_line(colour = "transparent"), # hiding graticules
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        # axis.text = element_text(color="black", size=12),
+        legend.position = "top",
+        legend.title = element_text(color="black", size=12),
+        legend.text = element_text(color="black", size=14, face="bold"),
+        # panel.border = element_rect(colour="black", fill=NA, linewidth=1), # border
+        plot.margin = unit(c(0.2,0,0,0), "cm"),
+        axis.text = element_blank()) # shrinking margins
+# north(world_crop, symbol=12, location="topright") +
+# ggsn::scalebar(world_crop,
+#                location = "bottomleft",
+#                dist=100,
+#                dist_unit="km",
+#                transform=TRUE,
+#                height=0.01,
+#                model = 'WGS84')
+data_map
+
+dev.off()
+
+#### Putting together Fig. 1 map figure ----
 
 # Calling cluster plot as magick image from 'comm_analyses.R'
 mclust <- image_read("./MSc_plots/Clusters_kmeans4.tiff") 
