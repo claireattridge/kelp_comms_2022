@@ -2,21 +2,21 @@
 ## Author: Claire Attridge
 ## Origin date: Feb 2023
 
-# Loading base packages
+# Loading necessary base packages
 library(tidyverse)
 library(ggpubr)
+library(cowplot)
+library(vegan)
+library(MetBrewer)
+library(ggforce)
 library(grid)
 library(gridExtra)
-library(MetBrewer)
-library(wesanderson)
-library(vegan)
-library(cowplot)
-library(funrar)
-library(ecodist)
 library(BiodiversityR)
-library(ggforce)
+library(png)
 library(ggrepel)
+library(ecodist)
 library(magick)
+
 
 #
 
@@ -62,14 +62,8 @@ preds <- reduce(dfs1, dplyr::left_join, by="SiteName")
 preds[is.na(preds)] <- 0 # Translating any NAs to zeros
 
 
-# Removing second beach south as an outlier site 
-preds_sites <- preds %>%
-  filter(SiteName != "Second Beach South")
-#### Removing the 'kelp free sites'
-preds_sites <- preds_sites %>%
-  filter(SiteName != "Wizard Islet North" & SiteName != "Less Dangerous Bay")
 
-# Adding Cluster column to dataframe for later use (see section below for determination of Cluster groups C1-C4) & dominant kelp column
+# Adding dominant kelp column (category) to the frame
 preds_ord <- preds %>%
   # mutate(Cluster = case_when(SiteName == "Between Scotts and Bradys" | SiteName == "Danvers Danger Rock" | SiteName == "Dixon Island Back (Bay)" | SiteName == "Dodger Channel 1" | SiteName == "Flemming 112" | SiteName == "Flemming 114" | SiteName == "North Helby Rock" | SiteName == "Tzartus 116" ~ "C2",
   #                            SiteName == "Ed King East Inside" | SiteName == "Ross Islet 2" | SiteName == "Ross Islet Slug Island" | SiteName == "Taylor Rock" | SiteName == "Turf Island 2" | SiteName == "Wizard Islet South" ~ "C1",
@@ -84,18 +78,36 @@ preds_ord <- preds %>%
   droplevels()
 
 
-# Removing second beach south as an outlier site 
+###
+## Removing second beach south as an outlier site 
 preds_ord <- preds_ord %>%
   filter(SiteName != "Second Beach South") %>%
   droplevels()
-#### Removing the 'kelp free sites'
+## Removing the 'no kelp sites'
 preds_ord <- preds_ord %>%
   filter(SiteName != "Wizard Islet North" & SiteName != "Less Dangerous Bay") %>%
   droplevels()
+###
 
 
-# saving a .csv file of the ecological and environmental predictors of interest for our community abundance data
+## saving a .csv file of the ecological and environmental predictors
 write.csv(preds_ord, "./MSc_data/Data_new/AllPredictors_2022.csv", row.names=F)
+
+
+
+# Removing the less important predictors
+# Scaling all remaining variables
+preds_ord_scale <- preds_ord %>%
+  dplyr::select(-c(MacroM, NereoM, MacroP, ID, Depth_logger_m, Depth_logger_datum_m)) %>%
+  ungroup() %>%
+  mutate(across(c(2:5,7:10,12:18), scale))
+
+
+## saving a .csv file of the scaled ecological and environmental predictors
+write.csv(preds_ord_scale, "./MSc_data/Data_new/AllPredictors_scaled_2022.csv", row.names=F)
+
+
+#
 
 
 #### Cluster analysis (kelp forest structure) *IGNORE* ----
@@ -269,48 +281,55 @@ comms <- read_csv("./MSc_data/Data_new/RLS_2022_KDC_CMA_final.csv") %>%
   filter(Species != "No species found") %>%
   filter(Species != "NOT PRESENT") # Cut the non-animal species
 
+
 # Cleaning up the frame columns
 comms <- comms %>%
   mutate(Species = as.factor(Species), common_name = as.factor(common_name), SiteName = as.factor(site_name),abundance = as.numeric(Total), Date = as.POSIXct(Date, format="%d/%m/%Y")) %>% # Changing column formats
   dplyr::select(-c(site_name, Total)) # Removing unnecessary columns
 
-# Filtering out the site redo surveys at Ross Islet 2, Less Dangerous Bay, & Second Beach S in Sept 2022, and the acoustic baseline acoustic baseline site 'Sand Town'
+# Filtering out the site redo surveys at Ross Islet 2, Less Dangerous Bay, & Second Beach S in Sept 2022
+# and the acoustic baseline acoustic baseline site 'Sand Town'
 comms <- comms %>%
   filter(Date <= as.POSIXct("2022-09-08") & SiteName != "Sand Town") %>%
   droplevels()
 
-# Removing second beach south as an outlier site 
+
+
+###
+## Removing second beach south as an outlier site 
 comms <- comms %>%
   filter(SiteName != "Second Beach South") %>%
   droplevels()
-#### Removing the 'kelp free sites'
+## Removing the 'no kelp sites'
 comms <- comms %>%
   filter(SiteName != "Wizard Islet North" & SiteName != "Less Dangerous Bay") %>%
   droplevels()
 
 # Grouping Henricia spp. and Henricia leviuscula to a combined Henricia spp. as we can't be confident in the separation of these groups
-comms <- comms %>%
+comms_cleaned <- comms %>%
   mutate(Species = fct_collapse(Species, 'Henricia spp.'= c("Henricia spp.", "Henricia leviuscula")),
          common_name = fct_collapse(common_name, 'Blood star' = c("Pacific blood star", "Unidentified blood star"))) %>%
   droplevels()
+###
 
 
-## Looking into some general questions first:
+
+## Exploring some general questions first:
 
 # Which site has the most species?
-richness <- comms %>%
+richness <- comms_cleaned %>%
   group_by(SiteName) %>%
   summarize(spp_rich = n_distinct(Species))%>%
   arrange(desc(spp_rich))
 
 # Which species were most abundant overall?
-abun <- comms %>%
+abun <- comms_cleaned %>%
   group_by(Species) %>%
   summarize(totalab = sum(abundance)) %>%
   arrange(desc(totalab))
 
 # Which species had the most site observations?
-obvs <- comms %>%
+obvs <- comms_cleaned %>%
   group_by(Species) %>%
   summarize(observs = length(Species)) %>% # The number of rows (observations) per spp common name
   arrange(desc(observs)) %>% # Arranging in descending order
@@ -332,10 +351,11 @@ obvsplot <- ggplot(data=obvs, aes(x=observs, y=(fct_reorder(Species, desc(-obser
     plot.margin = unit(c(0.5,1,0.5,0), "cm"), 
     ) +
   xlab("Observations") + ylab("") +
-  geom_hline(yintercept = 55.5, linetype=2) # Adding in the cutoff line for =< 5 obvs
+  geom_hline(yintercept = 38.5, linetype=2) # Adding in the cutoff line for < 5 obvs
 obvsplot
 
 dev.off()
+
 
 
 ## With this ^^ in mind: Removing rarely sighted species (< 5 site obvs) from the analysis frame (n = 38 removed)
@@ -356,11 +376,15 @@ comms_all <- commsclean %>%
   summarise(abundance = sum(abundance))
 
 
+
 # saving a .csv file of the clean total taxa abundances by site
 write.csv(comms_all, "./MSc_data/Data_new/RLS_2022.csv", row.names=F)
 
+#
+
 
 #### Community data: Site/Species groupings ----
+
 
 # Loading the RLS comms file
 taxa <- read_csv("./MSc_data/Data_new/RLS_2022.csv") %>%
@@ -368,8 +392,7 @@ taxa <- read_csv("./MSc_data/Data_new/RLS_2022.csv") %>%
   rename(TaxaAb = abundance) %>%
   rename(CommonName = common_name) %>%
   as.data.frame() %>%
-  mutate(SiteName = as.factor(SiteName), CommonName = as.factor(CommonName), Species = as.factor(Species)) %>%
-  filter(SiteName != "Second Beach South")
+  mutate(SiteName = as.factor(SiteName), CommonName = as.factor(CommonName), Species = as.factor(Species))
 
 
 ### For all species in community together
@@ -448,6 +471,7 @@ taxa_fish <- taxap %>%
 
 #### Community data: Relative abundance tables & transformations ----
 
+
 ## ALL SPP
 allspp_wide <- taxa_all %>% # Spreading the data to wide format
   dplyr::select(-CommonName) %>% # Removing common names for now
@@ -455,11 +479,13 @@ allspp_wide <- taxa_all %>% # Spreading the data to wide format
   as.data.frame()
 rownames(allspp_wide) <- allspp_wide$SiteName # Setting col as rownames
 allspp_wide <- allspp_wide[,-1] # Removing the col used above
-allspp_wide[is.na(allspp_wide)] <- 0 # (no NAs)
+allspp_wide[is.na(allspp_wide)] <- 0 # NAs to zeros for calculations
 allspp_mat <- as.matrix(allspp_wide) # As matrix
 
-allspp_rel <- make_relative(allspp_mat) # Relative abundance matrix of community data
+# allspp_rel <- make_relative(allspp_mat) # Relative abundance matrix of community data
 allspp_hel <- decostand(allspp_mat, method = "hellinger") # Hellinger transformation of data
+
+
 
 ## PELAGIC FISH SPP
 pfish_wide <- taxap %>% # Spreading the data to wide format
@@ -468,11 +494,13 @@ pfish_wide <- taxap %>% # Spreading the data to wide format
   as.data.frame()
 rownames(pfish_wide) <- pfish_wide$SiteName # Setting col as rownames
 pfish_wide <- pfish_wide[,-1] # Removing the col used above
-pfish_wide[is.na(pfish_wide)] <- 0 # (no NAs)
+pfish_wide[is.na(pfish_wide)] <- 0 # NAs to zeros for calculations
 pfish_mat <- as.matrix(pfish_wide) # As matrix
 
-pfish_rel <- make_relative(pfish_mat) # Relative abundance matrix of community data
+# pfish_rel <- make_relative(pfish_mat) # Relative abundance matrix of community data
 pfish_hel <- decostand(pfish_mat, method = "hellinger") # Hellinger transformation of data
+
+
 
 ## BENTHIC FISH SPP
 bfish_wide <- taxab_fish %>% # Spreading the data to wide format
@@ -481,11 +509,13 @@ bfish_wide <- taxab_fish %>% # Spreading the data to wide format
   as.data.frame()
 rownames(bfish_wide) <- bfish_wide$SiteName # Setting col as rownames
 bfish_wide <- bfish_wide[,-1] # Removing the col used above
-bfish_wide[is.na(bfish_wide)] <- 0 # (no NAs)
+bfish_wide[is.na(bfish_wide)] <- 0 # NAs to zeros for calculations
 bfish_mat <- as.matrix(bfish_wide) # As matrix
 
-bfish_rel <- make_relative(bfish_mat) # Relative abundance matrix of community data
+# bfish_rel <- make_relative(bfish_mat) # Relative abundance matrix of community data
 bfish_hel <- decostand(bfish_mat, method = "hellinger") # Hellinger transformation of square root
+
+
 
 ## ALL FISH SPP
 fish_wide <- taxa_fish %>% # Spreading the data to wide format
@@ -494,11 +524,13 @@ fish_wide <- taxa_fish %>% # Spreading the data to wide format
   as.data.frame()
 rownames(fish_wide) <- fish_wide$SiteName # Setting col as rownames
 fish_wide <- fish_wide[,-1] # Removing the col used above
-fish_wide[is.na(fish_wide)] <- 0 # (no NAs)
+fish_wide[is.na(fish_wide)] <- 0 # NAs to zeros for calculations
 fish_mat <- as.matrix(fish_wide) # As matrix
 
-fish_rel <- make_relative(fish_mat) # Relative abundance matrix of community data
+# fish_rel <- make_relative(fish_mat) # Relative abundance matrix of community data
 fish_hel <- decostand(fish_mat, method = "hellinger") # Hellinger transformation of square root
+
+
 
 ## BENTHIC INVERT SPP
 binv_wide <- taxab_inv %>% # Spreading the data to wide format
@@ -507,11 +539,13 @@ binv_wide <- taxab_inv %>% # Spreading the data to wide format
   as.data.frame()
 rownames(binv_wide) <- binv_wide$SiteName # Setting col as rownames
 binv_wide <- binv_wide[,-1] # Removing the col used above
-binv_wide[is.na(binv_wide)] <- 0 # (no NAs)
+binv_wide[is.na(binv_wide)] <- 0 # NAs to zeros for calculations
 binv_mat <- as.matrix(binv_wide) # As matrix
 
-binv_rel <- make_relative(binv_mat) # Relative abundance matrix of community data
+## binv_rel <- make_relative(binv_mat) # Relative abundance matrix of community data
 binv_hel <- decostand(binv_mat, method = "hellinger") # Hellinger transformation of data
+
+#
 
 
 #### Community data: Abundance & rel abundance plots ----
@@ -549,7 +583,7 @@ taxap_fish_occ <- taxap_fish_frame %>%
   ungroup() %>%
   mutate(Prop = round((SiteNum/22)*100, digits=1))
 
-# Making the prop occurrence plot for pelagic fish
+# Making the prop. of occurrence plot for pelagic fish
 ocPfish <- ggplot(taxap_fish_occ, aes(x=Species, y=Prop)) +
   geom_segment( aes(x=reorder(Species, Prop), xend=Species, y=0, yend=Prop), color="#453781FF", linewidth=1) +
   geom_point(color="#453781FF", size=3) +
@@ -559,7 +593,7 @@ ocPfish <- ggplot(taxap_fish_occ, aes(x=Species, y=Prop)) +
     panel.grid.major.x = element_blank(),
     panel.border = element_blank(),
     axis.ticks.x = element_blank(),
-    axis.text.x = element_text(color="black", angle=60, hjust=1, size=9),
+    axis.text.x = element_text(color="black", angle=70, hjust=1, size=9),
     axis.text.y = element_text(color="black", size=9),
     axis.title = element_blank()
   ) +
@@ -600,7 +634,7 @@ taxab_fish_occ <- taxab_fish_frame %>%
   ungroup() %>%
   mutate(Prop = round((SiteNum/22)*100, digits=1))
 
-# Making the prop occurrence plot for demersal fish
+# Making the prop. of occurrence plot for demersal fish
 ocBfish <- ggplot(taxab_fish_occ, aes(x=Species, y=Prop)) +
   geom_segment( aes(x=reorder(Species, Prop), xend=Species, y=0, yend=Prop), color="#1F9A8AFF", linewidth=1) +
   geom_point(color="#1F9A8AFF", size=3) +
@@ -610,7 +644,7 @@ ocBfish <- ggplot(taxab_fish_occ, aes(x=Species, y=Prop)) +
     panel.grid.major.x = element_blank(),
     panel.border = element_blank(),
     axis.ticks.x = element_blank(),
-    axis.text.x = element_text(color="black", angle=60, hjust=1, size=9),
+    axis.text.x = element_text(color="black", angle=70, hjust=1, size=9),
     axis.text.y = element_text(color="black", size=9),
     axis.title = element_blank()
   ) +
@@ -629,6 +663,7 @@ getPalette = colorRampPalette(met.brewer(name="Redon", n=12))
 
 
 # Making the regional abundance plot for benthic inverts
+# Setting the highly abundant spp on separate axis to visualize the data more clearly
 abBinv <- ggplot(taxab_inv_frame, 
        aes(y=as.factor(reorder(Species, TaxaAb, FUN=median)), x=TaxaAb, fill=as.factor(Species))) + 
   geom_jitter(position=position_jitter(width=0.3, height=0.2),
@@ -640,6 +675,7 @@ abBinv <- ggplot(taxab_inv_frame,
   theme(axis.text.x = element_text(size=10, color="black"),
         axis.text.y = element_text(size=9, color="black"),
         axis.title.y = element_blank(),
+        plot.margin = margin(r = 10),
         axis.title.x = element_blank(),
         strip.background = element_blank(), # removing the facet boxes
         strip.text = element_blank(), # removing the facet text
@@ -655,7 +691,7 @@ taxab_inv_occ <- taxab_inv_frame %>%
   ungroup() %>%
   mutate(Prop = round((SiteNum/22)*100, digits=1))
 
-# Making the prop occurrence plot for demersal fish
+# Making the prop. of occurrence plot for demersal fish
 ocBinv <- ggplot(taxab_inv_occ, aes(x=Species, y=Prop)) +
   geom_segment( aes(x=reorder(Species, Prop), xend=Species, y=0, yend=Prop), color="#31688EFF", linewidth=1) +
   geom_point(color="#31688EFF", size=3) +
@@ -664,8 +700,9 @@ ocBinv <- ggplot(taxab_inv_occ, aes(x=Species, y=Prop)) +
   theme(
     panel.grid.major.x = element_blank(),
     panel.border = element_blank(),
+    plot.margin = margin(l = 20),
     axis.ticks.x = element_blank(),
-    axis.text.x = element_text(color="black", angle=60, hjust=1, size=9),
+    axis.text.x = element_text(color="black", angle=70, hjust=1, size=9),
     axis.text.y = element_text(color="black", size=9),
     axis.title = element_blank()
   ) +
@@ -688,7 +725,7 @@ grid.arrange(grobs=gs,
 
 
 # Saving as an image object
-tiff(file="./MSc_plots/SuppFigs/Ab_plots.tiff", height=8, width=8.5, units="in", res=400)
+tiff(file="./MSc_plots/SuppFigs/Ab_plots.tiff", height=8, width=9.5, units="in", res=400)
 
 # End ggplot arrangement
 grid <- grid.arrange(abfish, abBinv,
@@ -698,7 +735,8 @@ dev.off()
 
 
 # Arranging the smaller plots together (OCCURRENCE)
-ocfish <- ggarrange(ocPfish, ocBfish, ncol=2, align="hv")
+ocfish <- ggarrange(ocPfish, ocBfish, ncol=2, align="hv") +
+                      theme(plot.margin = margin(l = 20))
 ocfish
 
 # Setting up the layout
@@ -720,23 +758,27 @@ tiff(file="./MSc_plots/SuppFigs/Occurr_plots.tiff", height=9, width=10, units="i
 
 # End ggplot arrangement
 grid <- grid.arrange(ocfish, ocBinv, 
-                     layout_matrix = lay, left=textGrob("Occurrence (% of 22 sites)", rot=90, vjust=1, hjust=0.02))
+                     layout_matrix = lay, left=textGrob("Occurrence (% of 20 sites)", rot=90, vjust=1, hjust=0.02))
 
 dev.off()
 
 
-#### Community data: Variable selection *IGNORE* ----
+#### Community data: Forward variable selection *IGNORE* ----
 
-## ALL SPECIES
+##
+### ENVIRONMENTAL PREDICTORS
+##
 
-# Specifying the full and null models
-fullord <- dbrda(binv_hel ~ Kelpdom+DensityM+Area_m2+HeightM+Tempave+exp_36+Depth_datum_m+Punderstory+Psoftbottom+Phardbottom, data=preds_ord, comm=binv_wide, add=FALSE, distance="bray")
-nullord <- dbrda(binv_hel ~ 1, data=preds_ord, comm=binv_wide, add=FALSE, distance="bray")
+### PELAGIC FISH SPP
+
+# Specifying the full and null environmental models
+fullord <- dbrda(pfish_hel ~ Kelpdom+Tempave+Tempmax+Tempmin+exp_scaled+Depth_datum_m+Punderstory+Psoftbottom+Phardbottom+Panimal+Pturf, data=preds_ord, comm=pfish_wide, add=FALSE, distance="bray")
+nullord <- dbrda(pfish_hel ~ 1, data=preds_ord, comm=pfish_wide, add=FALSE, distance="bray")
 
 # Testing whether the full model is significant
-anova.cca(fullord) # Significant (p=0.007)
+anova.cca(fullord) 
 adjR2_ord <- RsquareAdj(fullord)$adj.r.squared
-adjR2_ord # The adj R2 explained by all variables is 23.7%
+adjR2_ord # The adj R2 explained by all variables is 5.07%
 
 # Running forward selection for all ecological/environmental variables
 sel.ord <- ordiR2step(nullord, scope = formula(fullord), R2scope =
@@ -744,11 +786,100 @@ sel.ord <- ordiR2step(nullord, scope = formula(fullord), R2scope =
 sel.ord$anova # Looking at the summary table
 
 
-## PELAGIC FISH SPP
 
-## BENTHIC FISH SPP
+### DEMERSAL FISH SPP
+
+# Specifying the full and null environmental models
+fullord <- dbrda(bfish_hel ~ Kelpdom+Tempave+Tempmax+Tempmin+exp_scaled+Depth_datum_m+Punderstory+Psoftbottom+Phardbottom+Panimal+Pturf, data=preds_ord, comm=bfish_wide, add=FALSE, distance="bray")
+nullord <- dbrda(bfish_hel ~ 1, data=preds_ord, comm=bfish_wide, add=FALSE, distance="bray")
+
+# Testing whether the full model is significant
+anova.cca(fullord) # Sig (p=0.031)
+adjR2_ord <- RsquareAdj(fullord)$adj.r.squared
+adjR2_ord # The adj R2 explained by all variables is 46.2%
+
+# Running forward selection for all ecological/environmental variables
+sel.ord <- ordiR2step(nullord, scope = formula(fullord), R2scope =
+                        adjR2_ord, direction = 'forward', permutations = 999)
+sel.ord$anova # Looking at the summary table
 
 
+
+### BENTHIC INV SPP
+
+# Specifying the full and null models
+fullord <- dbrda(binv_hel ~ Kelpdom+Tempave+Tempmax+Tempmin+exp_scaled+Depth_datum_m+Punderstory+Psoftbottom+Phardbottom+Panimal+Pturf, data=preds_ord, comm=binv_wide, add=FALSE, distance="bray")
+nullord <- dbrda(binv_hel ~ 1, data=preds_ord, comm=binv_wide, add=FALSE, distance="bray")
+
+# Testing whether the full model is significant
+anova.cca(fullord) # Sig (p=0.01)
+adjR2_ord <- RsquareAdj(fullord)$adj.r.squared
+adjR2_ord # The adj R2 explained by all variables is 33.9%
+
+# Running forward selection for all ecological/environmental variables
+sel.ord <- ordiR2step(nullord, scope = formula(fullord), R2scope =
+                        adjR2_ord, direction = 'forward', permutations = 999)
+sel.ord$anova # Looking at the summary table
+
+
+
+##
+### KELP FOREST PREDICTORS
+##
+
+
+### PELAGIC FISH SPP
+
+# Specifying the full and null environmental models
+fullord <- dbrda(pfish_hel ~ Kelpdom+HeightM+BiomassM+DensityM+Area_m2, data=preds_ord, comm=pfish_wide, add=FALSE, distance="bray")
+nullord <- dbrda(pfish_hel ~ 1, data=preds_ord, comm=pfish_wide, add=FALSE, distance="bray")
+
+# Testing whether the full model is significant
+anova.cca(fullord) # Sig (p=0.04)
+adjR2_ord <- RsquareAdj(fullord)$adj.r.squared
+adjR2_ord # The adj R2 explained by all variables is 15.8%
+
+# Running forward selection for all ecological/environmental variables
+sel.ord <- ordiR2step(nullord, scope = formula(fullord), R2scope =
+                        adjR2_ord, direction = 'forward', permutations = 999)
+sel.ord$anova # Looking at the summary table
+
+
+
+### DEMERSAL FISH SPP
+
+# Specifying the full and null environmental models
+fullord <- dbrda(bfish_hel ~ Kelpdom+HeightM+BiomassM+DensityM+Area_m2, data=preds_ord, comm=bfish_wide, add=FALSE, distance="bray")
+nullord <- dbrda(bfish_hel ~ 1, data=preds_ord, comm=bfish_wide, add=FALSE, distance="bray")
+
+# Testing whether the full model is significant
+anova.cca(fullord) # Sig (p=0.03)
+adjR2_ord <- RsquareAdj(fullord)$adj.r.squared
+adjR2_ord # The adj R2 explained by all variables is 26.9%
+
+# Running forward selection for all ecological/environmental variables
+sel.ord <- ordiR2step(nullord, scope = formula(fullord), R2scope =
+                        adjR2_ord, direction = 'forward', permutations = 999)
+sel.ord$anova # Looking at the summary table
+
+
+
+
+### BENTHIC INV SPP
+
+# Specifying the full and null models
+fullord <- dbrda(binv_hel ~ Kelpdom+HeightM+BiomassM+DensityM+Area_m2, data=preds_ord, comm=binv_wide, add=FALSE, distance="bray")
+nullord <- dbrda(binv_hel ~ 1, data=preds_ord, comm=binv_wide, add=FALSE, distance="bray")
+
+# Testing whether the full model is significant
+anova.cca(fullord) # Sig (p=0.01)
+adjR2_ord <- RsquareAdj(fullord)$adj.r.squared
+adjR2_ord # The adj R2 explained by all variables is 26.5%
+
+# Running forward selection for all ecological/environmental variables
+sel.ord <- ordiR2step(nullord, scope = formula(fullord), R2scope =
+                        adjR2_ord, direction = 'forward', permutations = 999)
+sel.ord$anova # Looking at the summary table
 
 
 
@@ -759,20 +890,18 @@ sel.ord$anova # Looking at the summary table
 # For anova.cca() by term: https://stats.stackexchange.com/questions/405024/what-null-hypothesis-does-vegananova-ccaby-terms-test-against
 
 ## Calling the predictor variables sheet
-preds_ord <- read_csv("./MSc_data/Data_new/AllPredictors_2022.csv") %>%
+preds_ord <- read_csv("./MSc_data/Data_new/AllPredictors_scaled_2022.csv") %>%
   mutate(Kelpdom = as.factor(Kelpdom))
 
-# Running PERMANOVA to test for initial grouping factors
-allspp_perm <- adonis2(allspp_hel ~ Kelpdom+Cluster+Kelpdom:Cluster, data=preds_ord, permutations = 999, method="bray") # Kelpdom significant (0.002)
-
-
-### CAP (kelp spp)
 
 ### CAP (kelp spp)
 allspp_1 <- capscale(allspp_hel ~ Kelpdom, data=preds_ord, comm=allspp_wide, add=FALSE, distance="bray") 
 RsquareAdj(allspp_1)
+anova.cca(allspp_1)
 ## Only the environmental variables explain 11.2% of variation (constrained axes)
-# Adjusted R squared of this model is: 6.1%
+# Adjusted R squared of this model is: 8.6%
+
+
 
 ## SIMPER for dissimilarity
 # Running SIMPER to test between groups (limiting to 10 most influential)
@@ -780,14 +909,15 @@ allspp_simp <- with(preds_ord, simper(allspp_hel, group=Kelpdom, permutations=99
 
 # Making table of the SIMPER output
 allspp_simp_df <- as.data.frame(allspp_simp$Giant_Bull)
-sum(allspp_simp_df$average) # Total dissimilarity b/w kelp spp groups = 0.5023465
-# Partitioned among the 55 spp = 0.009133573 (assuming all contribute equally)
+sum(allspp_simp_df$average) # Total dissimilarity b/w kelp spp groups = 0.505013
+# Partitioned among the 50 spp = 0.01010026 (assuming all contribute equally)
 
 # Filter for spp that contribute >= 2x their expected dissimilarity among groups
 allspp_simp_filt <- allspp_simp_df %>%
-  filter(average > (2*0.009133573))
+  filter(average > (2*0.01010026))
 
-allspp_simpSPP <- c("Clupea pallasii", "Cymatogaster aggregata", "Mesocentrotus franciscanus", "Patiria miniata", "Pomaulax gibberosus", "Rhinogobiops nicholsii", "Strongylocentrotus purpuratus")
+allspp_simpSPP <- c("Cymatogaster aggregata", "Mesocentrotus franciscanus", "Pomaulax gibberosus", "Rhinogobiops nicholsii", "Strongylocentrotus purpuratus")
+
 
 
 ### RDA (kelp forest structure)
@@ -796,13 +926,14 @@ allspp_simpSPP <- c("Clupea pallasii", "Cymatogaster aggregata", "Mesocentrotus 
 allspp_2 <- capscale(allspp_hel ~ Kelpdom+DensityM+Area_m2+HeightM+BiomassM, data=preds_ord, comm=allspp_wide, add=FALSE, distance="bray") 
 RsquareAdj(allspp_2)
 ## The structural and environmental variables explain 37.3% of variation (constrained axes)
-# Adjusted R squared of this model is: 18.7%
+# Adjusted R squared of this model is: 23.3%
 vif.cca(allspp_2) # low vif scores
 
 # Exploring model significance
 anova.cca(allspp_2, permutations=999) # significance of model
-anova.cca(allspp_2, step = 1000, by = "term", permutations=999) # significance of predictor terms
-anova.cca(allspp_2, step = 1000, by = "axis", permutations=999) # significance by model axes
+anova.cca(allspp_2, by = "margin", permutations=999) # significance of predictor terms
+anova.cca(allspp_2, by = "axis", permutations=999) # significance by model axes
+
 
 
 ### RDA (environmental vars)
@@ -811,13 +942,13 @@ anova.cca(allspp_2, step = 1000, by = "axis", permutations=999) # significance b
 allspp_3 <- capscale(allspp_hel ~ Kelpdom+Tempave+exp_36+Depth_datum_m+Punderstory+Psoftbottom+Phardbottom, data=preds_ord, comm=allspp_wide, add=FALSE, distance="bray")
 RsquareAdj(allspp_3)
 ## Only the environmental variables explain explain 46.4% of variation (constrained axes)
-# Adjusted R squared of this model is: 21.0%
+# Adjusted R squared of this model is: 19.6%
 vif.cca(allspp_3) # low vif scores
 
 # Exploring model significance
 anova.cca(allspp_3) # significance of model
-anova.cca(allspp_3, step = 1000, by = "term") # significance of predictor terms
-anova.cca(allspp_3, step = 1000, by = "axis") # significance by model axes
+anova.cca(allspp_3, permutations = 999, by = "term") # significance of predictor terms
+anova.cca(allspp_3, permutations = 999, by = "axis") # significance by model axes
 
 
 ### ### ###
@@ -844,11 +975,8 @@ dev.off()
 #### Pelagic fish: Generating models, stats ----
 
 ## Calling the predictor variables sheet
-preds_ord <- read_csv("./MSc_data/Data_new/AllPredictors_2022.csv") %>%
+preds_ord <- read_csv("./MSc_data/Data_new/AllPredictors_scaled_2022.csv") %>%
   mutate(Kelpdom = as.factor(Kelpdom))
-
-# # Running PERMANOVA to test for initial grouping factors
-# pfish_perm <- adonis2(pfish_hel ~ Kelpdom+Cluster+Kelpdom:Cluster, data=preds_ord, permutations = 999, method="bray") # Kelpdom not significant (marginally)
 
 
 ### CAP (kelp spp)
@@ -856,6 +984,8 @@ pfish_1 <- capscale(pfish_hel ~ Kelpdom, data=preds_ord, comm=pfish_wide, add=FA
 anova.cca(pfish_1) # Model is sig
 RsquareAdj(pfish_1)
 # Adjusted R squared of this model is: 11.6%
+
+
 
 ## SIMPER for dissimilarity
 # Running SIMPER to test between groups
@@ -869,8 +999,11 @@ sum(pfish_simp_df$average) # Total dissimilarity b/w kelp spp groups = 0.6027097
 # Filter for spp that contribute >= 2x their expected dissimilarity among groups
 pfish_simp_filt <- pfish_simp_df %>%
   filter(average > (2*0.06027097))
+pfish_simp_filt
 
 pfish_simpSPP <- "Embiotoca lateralis"
+
+
 
 
 ### RDA (kelp forest structure)
@@ -888,19 +1021,24 @@ anova.cca(pfish_2, by = "margin", permutations=999) # significance of predictor 
 anova.cca(pfish_2, by = "axis", permutations=999) # significance by model axes
 
 
+
 ### RDA (environmental vars)
 
 # Generating the environmental model
-pfish_3 <- capscale(pfish_hel ~ Kelpdom+Tempave+Depth_datum_m+exp_36+Phardbottom+Psoftbottom+Punderstory, data=preds_ord, comm=pfish_wide, add=FALSE, distance="bray")
+pfish_3 <- capscale(pfish_hel ~ Kelpdom+Tempmin+Depth_datum_m+exp_36+Phardbottom+Psoftbottom+Punderstory+Pturf, data=preds_ord, comm=pfish_wide, add=FALSE, distance="bray")
 RsquareAdj(pfish_3)
 ## Only the environmental variables explain explain 40.7% of variation (constrained axes)
-# Adjusted R squared of this model is: 13.7%
+# Adjusted R squared of this model is: 13.2%
 vif.cca(pfish_2)
 
 # Exploring significance
-anova.cca(pfish_3, permutations=999) # significance of model
+anova.cca(pfish_3, permutations = 999) # significance of model
 anova.cca(pfish_3, permutations = 999, by = "margin") # significance of predictor terms
 anova.cca(pfish_3, permutations = 999, by = "axis") # significance by model axes
+
+
+#
+
 
 #### Pelagic fish: Plots ----
 
@@ -939,8 +1077,8 @@ pfish1_ordplot <- ggplot(pfish1_sites.long) +
   geom_hline(yintercept = c(0), color = "grey70", linetype = 5, linewidth=0.3) +  
   xlab("CAP 1 (14.6%)") +
   ylab("MDS 1 (25.1%)") +  
-  scale_y_continuous(limits=c(-3,3)) + 
-  scale_x_continuous(limits=c(-3,3)) + 
+  scale_y_continuous(limits=c(-2.2,2.2)) + 
+  scale_x_continuous(limits=c(-2.2,2.2)) + 
   geom_point(data=pfish1_sites.long, # Adding in the main site data points
              aes(x=axis1, y=axis2, fill=Kelpdom),
              size=2.5, shape=23, stroke=0.2) +
@@ -954,9 +1092,9 @@ pfish1_ordplot <- ggplot(pfish1_sites.long) +
         legend.spacing.y = unit(0, "lines"),
         axis.text=element_text(size=9, color="black"),
         axis.title=element_text(size=9.5, color="black"),
-        axis.line=element_line(size=0.3),
-        axis.ticks=element_line(size=0.3)) +
-  annotate("text", x = -3, y = 3, label = "a", size=5, fontface=2)
+        axis.line=element_line(size=0.5),
+        axis.ticks=element_line(size=0.5)) +
+  annotate("text", x = -2.1, y = 2.2, label = "b", size=5, fontface=2)
 pfish1_ordplot
 
 
@@ -968,29 +1106,6 @@ pfish1_ordplot
 
 dev.off()
 
-
-
-### SIMPER PLOT (to go with CAP plot)
-
-pfish_simp_arr <- pfish_simp_filt %>%
-  arrange(desc(average)) %>%
-  # mutate(ava = ava*(-1)) %>% # Making the macro relative ab column neg for plotting purposes
-  dplyr::select(species, average, sd, ava, avb) %>%
-  pivot_longer(cols=c(ava, avb)) %>% # Pivoting the ava (macro) & avb (nereo) columns into one
-  ungroup() %>%
-  as.data.frame() %>%
-  mutate(name = as.factor(name), species = as.factor(species))
-
-
-# pfish_simplot <- 
-ggplot(data=pfish_simp_arr, aes(x=species, y=value, group=name)) +
-  geom_errorbar(aes(ymin=value+sd, ymax=(value+sd), group=name), position=position_dodge(width=0.2)) +
-  geom_point(aes(color=name), position=position_dodge(0.5)) +
-  theme_classic()
-
-
-ggplot(data=pfish_simp_arr, aes(x=species, y=value, group=name)) +
-  geom_pointrange(aes(ymin=(value-sd), ymax=(value+sd), color=name), position=position_dodge(0.3))
 
 
 
@@ -1005,40 +1120,36 @@ legend("bottomleft", legend=levels(preds_ord$Kelpdom), bty="n", pch=pchs, col = 
 
 ## Prepping for the ggplot biplots
 
-# Extracting the axes data from the model
-pfish2_axis.long <- axis.long(pfish_2, choices=c(1,2))
-pfish2_axis.long
 # Extracting the locations of species from the model
 pfish2_species.long <- species.long(pfish2_ordplot)
 head(pfish2_species.long)
+
 # Extracting the locations of sites from the model
 pfish2_sites.long <- sites.long(pfish2_ordplot, env.data=preds_ord)
 head(pfish2_sites.long)
+
 # Extracting the locations of centroids from the sites.long output
 pfish2_centroids.long <- centroids.long(pfish2_sites.long, grouping=preds_ord$Kelpdom, centroids.only=FALSE)
 head(pfish2_centroids.long)
-# Extracting env biplot correlations from the model
-pfish2_envfit <- envfit(ord=pfish2_ordplot, env=preds_ord)
-# Defining env vectors of interest
-pfish2_envvectors <- c("DensityM", "Area_m2", "HeightM", "BiomassM")
-pfish2_vectorfit.long <- vectorfit.long(pfish2_envfit) %>%
-  filter(vector %in% pfish2_envvectors)
-head(pfish2_vectorfit.long)
+
+# Extracting locations for env biplot correlations
+pfish2_scrs <- as.data.frame(scores(pfish2_ordplot, display = "biplot"))
+
+# # Defining env vectors of interest
+# pfish2_envvectors <- c("DensityM", "Area_m2", "HeightM", "BiomassM")
+# pfish2_vectorfit.long <- vectorfit.long(pfish2_envfit) %>%
+#   filter(vector %in% pfish2_envvectors)
+# head(pfish2_vectorfit.long)
+
 
 # Recoding spp fct levels to be shorthand scientific names
-pfish2_vectorfit.long <- pfish2_vectorfit.long %>%
+pfish2_scrs <- pfish2_scrs %>%
+  mutate(vector = rownames(pfish2_scrs)) %>%
   mutate(vector = fct_recode(vector,
                              "Density" = "DensityM",
                              "Area" = "Area_m2",
                              "Height" = "HeightM",
-                             "Biomass" = "BiomassM"
-                             # "Ave Temp" = "Tempave",
-                             # "Depth" = "Depth_datum_m",
-                             # "Wave Exp" = "exp_36",
-                             # "Understory %" = "Punderstory",
-                             # "Hard %" = "Phardbottom",
-                             # "Soft %" = "Psoftbottom"
-  ))
+                             "Biomass" = "BiomassM"))
 
 
 # Extracting the ellipses from the model and ordiplot
@@ -1055,10 +1166,6 @@ pfish2_species.long.var
 pfish2_species.long.vargrt <- pfish2_species.long.var[pfish2_species.long.var$r >= 0.5, ]
 pfish2_species.long.vargrt
 
-# # Selecting for SIMPER spp that explain > 70% of the total observed variation among groups
-# binv_species_SIMPER <- binv_species.long.var %>%
-#   filter(labels %in% binv_simpSPP)
-# binv_species_SIMPER
 
 # Recoding spp fct levels to be shorthand scientific names
 pfish2_species.long.vargrt <- pfish2_species.long.vargrt %>%
@@ -1071,36 +1178,37 @@ pfish2_species.long.vargrt <- pfish2_species.long.vargrt %>%
 ## The biplot for structure vars
 
 # Radial shift function for arrow text
-rshift = function(r, theta, a=0.04, b=0.08) {
+rshift = function(r, theta, a=0.02, b=0.08) {
   r + a + b*abs(cos(theta))
 }
 
 # Calculate shift of text from arrows
-env.arrows = pfish2_vectorfit.long %>% 
-  mutate(r = sqrt(axis1^2 + axis2^2),
-         theta = atan2(axis2,axis1),
+env.arrows = pfish2_scrs %>% 
+  mutate(r = sqrt(CAP1^2 + CAP2^2),
+         theta = atan2(CAP2,CAP1),
          rnew = rshift(r, theta),
          xnew = rnew*cos(theta),
          ynew = rnew*sin(theta))
+
 
 
 # The full structural plot 
 pfish2_ordplot_str <- ggplot() + 
   geom_vline(xintercept = c(0), color = "grey70", linetype = 5, linewidth=0.3) +
   geom_hline(yintercept = c(0), color = "grey70", linetype = 5, linewidth=0.3) +  
-  xlab(pfish2_axis.long[1, "label"]) +
-  ylab(pfish2_axis.long[2, "label"]) +  
-  scale_y_continuous(limits=c(-3.5,3.5)) + 
-  scale_x_continuous(limits=c(-3.5,3.5)) + 
+  xlab("CAP 1 (15.5%)") +
+  ylab("CAP 2 (12.8%)") +  
+  scale_y_continuous(limits=c(-2.2,2.2)) + 
+  scale_x_continuous(limits=c(-2.2,2.2)) + 
   geom_point(data=pfish2_sites.long, # Adding in the main site data points
              aes(x=axis1, y=axis2, fill=Kelpdom),
              size=2.5, shape=23, stroke=0.2, alpha=0.8) +
-  geom_segment(data=pfish2_vectorfit.long, # Adding in the biplot correlation arrows
-               aes(x=0, y=0, xend=axis1*2.5, yend=axis2*2.5),
+  geom_segment(data=pfish2_scrs, # Adding in the biplot correlation arrows
+               aes(x=0, y=0, xend=CAP1*2.2, yend=CAP2*2.2),
                colour="grey20", linewidth=0.3, arrow=arrow(length = unit(0.1, "cm"), type="closed")) +
-  geom_text(data=pfish2_vectorfit.long, # Adding in the biplot correlation labels
-            aes(x=axis1*3.15, y=axis2*2.9, label=vector),
-            colour="black", size=2) +
+  geom_text(data=env.arrows, # Adding in the biplot correlation labels
+            aes(x=xnew*2.2, y=ynew*2.2, label=vector),
+            colour="black", size=3) +
   scale_fill_manual(values=met.brewer("Kandinsky"), name=NULL, labels=c(expression(italic("N. luetkeana")), expression(italic("M. pyrifera")))) +
   guides(fill = guide_legend(override.aes = list(shape=23))) +
   theme_classic() +
@@ -1113,8 +1221,10 @@ pfish2_ordplot_str <- ggplot() +
         axis.title=element_text(size=9.5, color="black"),
         axis.line=element_line(size=0.3),
         axis.ticks=element_line(size=0.3)) +
-  annotate("text", x = -3.5, y = 3.5, label = "b", size=5, fontface=2)
+  annotate("text", x = -2.2, y = 2.2, label = "a", size=5, fontface=2)
 pfish2_ordplot_str
+
+
 
 
 ## The biplot for influential spp
@@ -1127,23 +1237,24 @@ spp.arrows = pfish2_species.long.vargrt %>%
          xnew = rnew*cos(theta),
          ynew = rnew*sin(theta))
 
+
 # The full species plot
 pfish2_ordplot_spp <- ggplot() + 
   geom_vline(xintercept = c(0), color = "grey70", linetype = 5, linewidth=0.3) +
   geom_hline(yintercept = c(0), color = "grey70", linetype = 5, linewidth=0.3) +  
-  xlab(pfish2_axis.long[1, "label"]) +
-  ylab(pfish2_axis.long[2, "label"]) +  
-  scale_y_continuous(limits=c(-3.5,3.5)) + 
-  scale_x_continuous(limits=c(-3.5,3.5)) + 
+  xlab("CAP 1 (15.5%)") +
+  ylab("CAP 2 (12.8%)") +  
+  scale_y_continuous(limits=c(-2.2,2.2)) + 
+  scale_x_continuous(limits=c(-2.2,2.2)) + 
   geom_point(data=pfish2_sites.long, # Adding in the main site data points
              aes(x=axis1, y=axis2, fill=Kelpdom),
              size=2.5, shape=23, stroke=0.2, alpha=0.8) +
   geom_segment(data=pfish2_species.long.vargrt, # Adding in the SIMPER arrows
-               aes(x=0, y=0, xend=axis1*3.5, yend=axis2*3.5),
+               aes(x=0, y=0, xend=axis1*1.9, yend=axis2*1.9),
                colour="grey20", linewidth=0.3, arrow = arrow(length = unit(0.1, "cm"), type="closed")) +
   geom_text_repel(data=pfish2_species.long.vargrt, # Adding in the SIMPER species labels
-                  aes(x=axis1*3.5, y=axis2*3.5, label=labels),
-                  colour="black", fontface="italic", size=2, angle=0, nudge_x=0.35, nudge_y=0.1, box.padding=0.5, segment.linetype=2, segment.size=0.3, segment.color="grey40") +
+                  aes(x=axis1*1.9, y=axis2*1.9, label=labels),
+                  colour="black", fontface="italic", size=2, angle=0, nudge_x=-0.2, nudge_y=0.4, box.padding=0, segment.linetype=2, segment.size=0.3, segment.color="grey40") +
   scale_fill_manual(values=met.brewer("Kandinsky"), name=NULL, labels=c(expression(italic("N. luetkeana")), expression(italic("M. pyrifera")))) +
   guides(fill = guide_legend(override.aes = list(shape=21))) +
   theme_classic() +
@@ -1155,8 +1266,9 @@ pfish2_ordplot_spp <- ggplot() +
         axis.title=element_text(size=9.5, color="black"),
         axis.line=element_line(size=0.3),
         axis.ticks=element_line(size=0.3)) +
-  annotate("text", x = -3.5, y = 3.5, label = "c", size=5, fontface=2)
+  annotate("text", x = -2.2, y = 2.2, label = "b", size=5, fontface=2)
 pfish2_ordplot_spp
+
 
 
 ## Putting the two together
@@ -1167,6 +1279,7 @@ pfish2_ordplots <- ggarrange(pfish2_ordplot_str, pfish2_ordplot_spp, ncol=2, com
 pfish2_ordplots
 
 dev.off()
+
 
 
 
@@ -1181,36 +1294,38 @@ legend("bottomleft", legend=levels(preds_ord$Kelpdom), bty="n", pch=pchs, col = 
 
 ## Prepping for the ggplot biplots
 
-# Extracting the axes data from the model
-pfish3_axis.long <- axis.long(pfish_3, choices=c(1,2))
-pfish3_axis.long
 # Extracting the locations of species from the model
 pfish3_species.long <- species.long(pfish3_ordplot)
 head(pfish3_species.long)
+
 # Extracting the locations of sites from the model
 pfish3_sites.long <- sites.long(pfish3_ordplot, env.data=preds_ord)
 head(pfish3_sites.long)
+
 # Extracting the locations of centroids from the sites.long output
 pfish3_centroids.long <- centroids.long(pfish3_sites.long, grouping=preds_ord$Kelpdom, centroids.only=FALSE)
 head(pfish3_centroids.long)
-# Extracting env biplot correlations from the model
-pfish3_envfit <- envfit(ord=pfish3_ordplot, env=preds_ord)
-# Defining env vectors of interest
-pfish3_envvectors <- c("Tempave", "Depth_datum_m", "exp_36", "Punderstory", "Phardbottom", "Psoftbottom")
-pfish3_vectorfit.long <- vectorfit.long(pfish3_envfit) %>%
-  filter(vector %in% pfish3_envvectors)
-head(pfish3_vectorfit.long)
+
+# Extracting locations for env biplot correlations
+pfish3_env <- as.data.frame(scores(pfish3_ordplot, display = "biplot"))
+
+# # Defining env vectors of interest
+# pfish3_envvectors <- c("Tempmin", "Depth_datum_m", "exp_36", "Punderstory", "Phardbottom", "Psoftbottom", "Panimal", "Pturf")
+# pfish3_vectorfit.long <- vectorfit.long(pfish3_envfit) %>%
+#   filter(vector %in% pfish3_envvectors)
+# head(pfish3_vectorfit.long)
 
 # Recoding spp fct levels to be shorthand scientific names
-pfish3_vectorfit.long <- pfish3_vectorfit.long %>%
+pfish3_env <- pfish3_env %>%
+  mutate(vector = rownames(pfish3_env)) %>%
   mutate(vector = fct_recode(vector,
-                             "Ave Temp" = "Tempave",
+                             "Min temp" = "Tempmin",
                              "Depth" = "Depth_datum_m",
                              "Wave Exp" = "exp_36",
                              "Understory %" = "Punderstory",
                              "Hard %" = "Phardbottom",
-                             "Soft %" = "Psoftbottom"
-  ))
+                             "Soft %" = "Psoftbottom",
+                             "Turf %" = "Pturf"))
 
 
 # Extracting the ellipses from the model and ordiplot
@@ -1227,31 +1342,26 @@ pfish3_species.long.var
 pfish3_species.long.vargrt <- pfish3_species.long.var[pfish3_species.long.var$r >= 0.5, ]
 pfish3_species.long.vargrt
 
-# # Selecting for SIMPER spp that explain > 70% of the total observed variation among groups
-# pfish_species_SIMPER <- pfish_species.long.var %>%
-#   filter(labels %in% pfish_simpSPP)
-# pfish_species_SIMPER
 
 # Recoding spp fct levels to be shorthand scientific names
 pfish3_species.long.vargrt <- pfish3_species.long.vargrt %>%
   mutate(labels = fct_recode(labels,
-                             "B. frenatus" = "Brachyistius frenatus",
-                             "C. pallasii" = "Clupea pallasii",
-                             "E. lateralis" = "Embiotoca lateralis",
-                             "S. caurinus" = "Sebastes caurinus"))
+                             "Shiner perch" = "Cymatogaster aggregata",
+                             "Striped surfperch" = "Embiotoca lateralis",
+                             ))
 
 
 ## The biplot for structure vars
 
 # Radial shift function for arrow text
-rshift = function(r, theta, a=0.04, b=0.08) {
+rshift = function(r, theta, a=0.14, b=0.03) {
   r + a + b*abs(cos(theta))
 }
 
 # Calculate shift of text from arrows
-env.arrows = pfish3_vectorfit.long %>% 
-  mutate(r = sqrt(axis1^2 + axis2^2),
-         theta = atan2(axis2,axis1),
+env.arrows = pfish3_env %>% 
+  mutate(r = sqrt(CAP1^2 + CAP2^2),
+         theta = atan2(CAP2,CAP1),
          rnew = rshift(r, theta),
          xnew = rnew*cos(theta),
          ynew = rnew*sin(theta))
@@ -1261,19 +1371,19 @@ env.arrows = pfish3_vectorfit.long %>%
 pfish3_ordplot_env <- ggplot() + 
   geom_vline(xintercept = c(0), color = "grey70", linetype = 5, linewidth=0.3) +
   geom_hline(yintercept = c(0), color = "grey70", linetype = 5, linewidth=0.3) +  
-  xlab(pfish3_axis.long[1, "label"]) + 
-  ylab(pfish3_axis.long[2, "label"]) +  
-  scale_y_continuous(limits=c(-3.5,3.5)) + 
-  scale_x_continuous(limits=c(-3.5,3.5)) + 
+  xlab("CAP 1 (18.7%)") +
+  ylab("CAP 2 (10.6%)") +   
+  scale_y_continuous(limits=c(-2.2,2.2)) + 
+  scale_x_continuous(limits=c(-2.2,2.2)) + 
   geom_point(data=pfish3_sites.long, # Adding in the main site data points
              aes(x=axis1, y=axis2, fill=Kelpdom),
              size=2.5, shape=23, stroke=0.2, alpha=0.8) +
-  geom_segment(data=pfish3_vectorfit.long, # Adding in the biplot correlation arrows
-               aes(x=0, y=0, xend=axis1*2.5, yend=axis2*2.5),
+  geom_segment(data=pfish3_env, # Adding in the biplot correlation arrows
+               aes(x=0, y=0, xend=CAP1*2, yend=CAP2*2),
                colour="grey20", linewidth=0.3, arrow=arrow(length = unit(0.1, "cm"), type="closed")) +
-  geom_text(data=pfish3_vectorfit.long, # Adding in the biplot correlation labels
-            aes(x=axis1*3.25, y=axis2*2.9, label=vector),
-            colour="black", size=2, hjust=0.4, vjust=0.6) +
+  geom_text(data=env.arrows, # Adding in the biplot correlation labels
+            aes(x=xnew*2, y=ynew*2, label=vector),
+            colour="black", size=2.5) +
   scale_fill_manual(values=met.brewer("Kandinsky"), name=NULL, labels=c(expression(italic("N. luetkeana")), expression(italic("M. pyrifera")))) +
   guides(fill = guide_legend(override.aes = list(shape=23))) +
   theme_classic() +
@@ -1286,7 +1396,7 @@ pfish3_ordplot_env <- ggplot() +
         axis.title=element_text(size=9.5, color="black"),
         axis.line=element_line(size=0.3),
         axis.ticks=element_line(size=0.3)) +
-  annotate("text", x = -3.5, y = 3.5, label = "d", size=5, fontface=2)
+  annotate("text", x = -2.2, y = 2.2, label = "c", size=5, fontface=2)
 pfish3_ordplot_env
 
 
@@ -1304,19 +1414,20 @@ spp.arrows = pfish3_species.long.vargrt %>%
 pfish3_ordplot_spp <- ggplot() + 
   geom_vline(xintercept = c(0), color = "grey70", linetype = 5, linewidth=0.3) +
   geom_hline(yintercept = c(0), color = "grey70", linetype = 5, linewidth=0.3) +  
-  xlab(pfish3_axis.long[1, "label"]) +
-  ylab(pfish3_axis.long[2, "label"]) +  
-  scale_y_continuous(limits=c(-3.5,3.5)) + 
-  scale_x_continuous(limits=c(-3.5,3.5)) + 
+  xlab("CAP 1 (18.7%)") +
+  ylab("CAP 2 (10.6%)") +   
+  scale_y_continuous(limits=c(-2.2,2.2)) + 
+  scale_x_continuous(limits=c(-2.2,2.2)) + 
   geom_point(data=pfish3_sites.long, # Adding in the main site data points
              aes(x=axis1, y=axis2, shape=Cluster, fill=Kelpdom),
              size=2.5, shape=23, stroke=0.2, alpha=0.8) +
-  geom_segment(data=pfish3_species.long.vargrt, # Adding in the SIMPER arrows
-               aes(x=0, y=0, xend=axis1*3.5, yend=axis2*3.5),
-               colour="grey20", linewidth=0.3, arrow = arrow(length = unit(0.1, "cm"), type="closed")) +
-  geom_text_repel(data=pfish3_species.long.vargrt, # Adding in the SIMPER species labels
-                  aes(x=axis1*3.5, y=axis2*3.5, label=labels),
-                  colour="black", fontface="italic", size=2, angle=0, box.padding=0.4, nudge_y=-0.9, nudge_x=-0.05, segment.linetype=2, segment.size=0.3, segment.color="grey40") +
+  # geom_segment(data=pfish3_species.long.vargrt, # Adding in the SIMPER arrows
+  #              aes(x=0, y=0, xend=axis1*2, yend=axis2*2),
+  #              colour="grey20", linewidth=0.3, arrow = arrow(length = unit(0.1, "cm"), type="closed")) +
+  # geom_text_repel(data=pfish3_species.long.vargrt, # Adding in the SIMPER species labels
+  #                 aes(x=axis1*2.1, y=axis2*2.1, label=labels),
+  #                 colour="black", fontface="italic", size=2, angle=0, box.padding=0, 
+  #                 nudge_y=0.2, nudge_x=0.1, segment.linetype=2, segment.size=0.3, segment.color="grey40") +
   scale_fill_manual(values=met.brewer("Kandinsky"), name=NULL, labels=c(expression(italic("N. luetkeana")), expression(italic("M. pyrifera")))) +
   guides(fill = guide_legend(override.aes = list(shape=21))) +
   theme_classic() +
@@ -1328,7 +1439,7 @@ pfish3_ordplot_spp <- ggplot() +
         axis.title=element_text(size=9.5, color="black"),
         axis.line=element_line(size=0.3),
         axis.ticks=element_line(size=0.3)) +
-  annotate("text", x = -3.5, y = 3.5, label = "e", size=5, fontface=2)
+  annotate("text", x = -2.2, y = 2.2, label = "d", size=5, fontface=2)
 pfish3_ordplot_spp
 
 
@@ -1347,22 +1458,25 @@ dev.off()
 ### FINAL ARRANGEMENT
 
 # Setting up the layout
-lay <- rbind(c(1,1,2,2,2,2),
-             c(1,1,2,2,2,2),
-             c(1,1,3,3,3,3),
-             c(4,5,3,3,3,3))
+lay <- rbind(c(3,3,3), # Leaving room for images
+             c(1,1,1),
+             c(1,1,1),
+             c(1,1,1),
+             c(2,2,2),
+             c(2,2,2),
+             c(2,2,2))
 # Rectangles to help visualize
-gs <- lapply(1:5, function(ii) 
+gs <- lapply(1:3, function(ii) 
   grobTree(rectGrob(gp=gpar(fill=ii, alpha=0.5)), textGrob(ii)))
 grid.arrange(grobs=gs,
              layout_matrix = lay)
 
 # Saving as an image object
-pdf(file="./MSc_plots/PaperFigs/Pfish/Pfish_ords_combined.pdf", height=5.5, width=10)
-tiff(file="./MSc_plots/PaperFigs/Pfish/Pfish_ords_combined.tiff", height=12, width=21, units="cm", res=300)
+# pdf(file="./MSc_plots/PaperFigs/Pfish/Pfish_ords_combined.pdf", height=5.5, width=10)
+tiff(file="./MSc_plots/PaperFigs/Pfish/Pfish_ords_combined.tiff", height=14, width=17, units="cm", res=300)
 
 # End ggplot arrangement
-grid <- grid.arrange(pfish1_ordplot, pfish2_ordplots, pfish3_ordplots,
+grid <- grid.arrange(pfish2_ordplots, pfish3_ordplots,
              layout_matrix = lay)
 
 dev.off()
@@ -1378,8 +1492,8 @@ sperch <- image_read('./Phylopic/Fish/surfperch.png')
 mplot <- image_read("./MSc_plots/PaperFigs/Pfish/Pfish_ords_combined.tiff") 
 
 # Adding in the animal outlines (scaling & location)
-mmap <- image_composite(mplot, image_scale(rfish, "x100"), offset="+200+1100")
-mmap <- image_composite(mmap, image_scale(sperch, "x120"), offset="+500+1200")
+mmap <- image_composite(mplot, image_scale(rfish, "x100"), offset="+750+80")
+mmap <- image_composite(mmap, image_scale(sperch, "x120"), offset="+1100+60")
 
 # Saving the final fig
 image_write(mmap, path = "./MSc_plots/PaperFigs/Pfish/Pfish_ords_combined_outlines.tiff", format = "tiff", density=400)
@@ -1388,12 +1502,11 @@ image_write(mmap, path = "./MSc_plots/PaperFigs/Pfish/Pfish_ords_combined_outlin
 
 #### Demersal fish: Generating ordination models, stats ----
 
+
 ## Calling the predictor variables sheet
-preds_ord <- read_csv("./MSc_data/Data_new/AllPredictors_2022.csv") %>%
+preds_ord <- read_csv("./MSc_data/Data_new/AllPredictors_scaled_2022.csv") %>%
   mutate(Kelpdom = as.factor(Kelpdom))
 
-# # Running PERMANOVA to test for initial grouping factors
-# bfish_perm <- adonis2(bfish_hel ~ Kelpdom+Cluster+Kelpdom:Cluster, data=preds_ord, permutations = 999, method="bray")  # Kelpdom significant (0.006)
 
 
 ### CAP (kelp spp)
@@ -1403,12 +1516,14 @@ RsquareAdj(bfish_1)
 ## Only the environmental variables explain 22.1% of variation (constrained axes)
 # Adjusted R squared of this model is: 20.7%
 
+
+
 ## SIMPER for dissimilarity
 # Running SIMPER to test between groups (limiting to 10 most influential)
 bfish_simp <- with(preds_ord, simper(bfish_hel, group=Kelpdom, permutations=999))
 
 # Making table of the SIMPER output
-bfish_simp_df <- as.data.frame(summary(bfish_simp)$Giant_Bull)
+bfish_simp_df <- as.data.frame(bfish_simp$Giant_Bull)
 sum(bfish_simp_df$average) # Total dissimilarity b/w kelp spp groups = 0.4860742
 # Partitioned among the 10 demersal fish spp = 0.04860742 (assuming all contribute equally)
 
@@ -1419,13 +1534,14 @@ bfish_simp_filt <- bfish_simp_df %>%
 bfish_simpSPP <- c("Artedius harringtoni", "Rhinogobiops nicholsii")
 
 
+
 ### RDA (kelp forest structure)
 
 # Generating the kelp forest structure model
 bfish_2 <- capscale(bfish_hel ~ Kelpdom+DensityM+Area_m2+BiomassM+HeightM, data=preds_ord, comm=bfish_wide, add=FALSE, distance="bray") 
 RsquareAdj(bfish_2)
 ## Only the environmental variables explain 43.8% of variation (constrained axes)
-# Adjusted R squared of this model is: 31.0%
+# Adjusted R squared of this model is: 30.9%
 vif.cca(bfish_2) # low vif scores
 
 # Exploring model significance
@@ -1434,13 +1550,14 @@ anova.cca(bfish_2, permutations = 999, by = "margin") # significance of predicto
 anova.cca(bfish_2, permutations = 999, by = "axis") # significance by model axes
 
 
+
 ### RDA (environmental vars)
 
 # Generating the environmental model
-bfish_3 <- capscale(bfish_hel ~ Kelpdom+Tempave+Depth_datum_m+exp_36+Phardbottom+Psoftbottom+Punderstory, data=preds_ord, comm=bfish_wide, add=FALSE, distance="bray")
+bfish_3 <- capscale(bfish_hel ~ Kelpdom+Tempmin+Depth_datum_m+exp_36+Phardbottom+Psoftbottom+Punderstory+Pturf, data=preds_ord, comm=bfish_wide, add=FALSE, distance="bray")
 RsquareAdj(bfish_3)
 ## The structural and environmental variables explain explain 43.8% of variation (constrained axes)
-# Adjusted R squared of this model is: 45.3%
+# Adjusted R squared of this model is: 57.4%
 vif.cca(bfish_3) # low vif scores
 
 # Exploring model significance
@@ -1449,11 +1566,33 @@ anova.cca(bfish_3, permutations = 999, by = "margin") # significance of predicto
 anova.cca(bfish_3, permutations = 999, by = "axis") # significance by model axes
 
 
+
+
+### Checking for more specific correlations
+
+library(psych)
+
+# merging the demersal fish comm dataset with the predictors
+bfish_corrcheck <- cbind(bfish_wide, preds_ord)
+
+
+# checking/visualizing correlations
+# correlation coefficients in the upper right hand (size scaled to their |r|)
+pairs.panels(bfish_corrcheck[,c(1:10,12:15)], scale=T) 
+pairs.panels(bfish_corrcheck[,c(1:10,21:23)], scale=T) 
+pairs.panels(bfish_corrcheck[,c(1:10,28:34)], scale=T) 
+
+
+#
+
+
 #### Demersal fish: Plots ----
+
 
 # Pelagic Fish 1 = CAP model (by kelp spp)
 # Pelagic Fish 2 = RDA model (by kelp forest structure)
 # Pelagic Fish 3 = RDA model (by environmental vars)
+
 
 ### PLOT 1: CAP (kelp spp)
 
@@ -1486,8 +1625,8 @@ bfish1_ordplot <- ggplot(bfish1_sites.long) +
   geom_hline(yintercept = c(0), color = "grey70", linetype = 5, linewidth=0.3) +  
   xlab("CAP 1 (19.9%)") +
   ylab("MDS 1 (4.4%)") +  
-  scale_y_continuous(limits=c(-3,3)) + 
-  scale_x_continuous(limits=c(-3,3)) + 
+  scale_y_continuous(limits=c(-2.2,2.2)) + 
+  scale_x_continuous(limits=c(-2.2,2.2)) + 
   geom_point(data=bfish1_sites.long, # Adding in the main site data points
              aes(x=axis1, y=axis2, fill=Kelpdom),
              size=2.5, shape=23, stroke=0.2) +
@@ -1501,9 +1640,9 @@ bfish1_ordplot <- ggplot(bfish1_sites.long) +
         legend.spacing.y = unit(0, "lines"),
         axis.text=element_text(size=9, color="black"),
         axis.title=element_text(size=9.5, color="black"),
-        axis.line=element_line(size=0.3),
-        axis.ticks=element_line(size=0.3)) +
-  annotate("text", x = -3, y = 3, label = "a", size=5, fontface=2)
+        axis.line=element_line(size=0.5),
+        axis.ticks=element_line(size=0.5)) +
+  annotate("text", x = -2.1, y = 2.2, label = "c", size=5, fontface=2)
 bfish1_ordplot
 
 
@@ -1515,29 +1654,6 @@ bfish1_ordplot
 
 dev.off()
 
-
-
-### SIMPER PLOT (to go with CAP plot)
-
-bfish_simp_arr <- bfish_simp_filt %>%
-  arrange(desc(average)) %>%
-  # mutate(ava = ava*(-1)) %>% # Making the macro relative ab column neg for plotting purposes
-  dplyr::select(species, average, sd, ava, avb) %>%
-  pivot_longer(cols=c(ava, avb)) %>% # Pivoting the ava (macro) & avb (nereo) columns into one
-  ungroup() %>%
-  as.data.frame() %>%
-  mutate(name = as.factor(name), species = as.factor(species))
-
-
-# pfish_simplot <- 
-ggplot(data=bfish_simp_arr, aes(x=species, y=value, group=name)) +
-  geom_errorbar(aes(ymin=value+sd, ymax=(value+sd), group=name), position=position_dodge(width=0.2)) +
-  geom_point(aes(color=name), position=position_dodge(0.5)) +
-  theme_classic()
-
-
-ggplot(data=bfish_simp_arr, aes(x=species, y=value, group=name)) +
-  geom_pointrange(aes(ymin=(value-sd), ymax=(value+sd), color=name), position=position_dodge(0.3))
 
 
 
@@ -1561,34 +1677,29 @@ head(bfish2_sites.long)
 # Extracting the locations of centroids from the sites.long output
 bfish2_centroids.long <- centroids.long(bfish2_sites.long, grouping=preds_ord$Kelpdom, centroids.only=FALSE)
 head(bfish2_centroids.long)
-# Extracting env biplot correlations from the model
-bfish2_envfit <- envfit(ord=bfish2_ordplot, env=preds_ord)
-# Defining env vectors of interest
-bfish2_envvectors <- c("DensityM", "Area_m2", "HeightM", "BiomassM")
-bfish2_vectorfit.long <- vectorfit.long(bfish2_envfit) %>%
-  filter(vector %in% bfish2_envvectors)
-head(bfish2_vectorfit.long)
+# Extracting locations for env biplot correlations
+bfish2_scrs <- as.data.frame(scores(bfish2_ordplot, display = "biplot"))
+
+# # Defining env vectors of interest
+# bfish2_envvectors <- c("DensityM", "Area_m2", "HeightM", "BiomassM")
+# bfish2_vectorfit.long <- vectorfit.long(bfish2_envfit) %>%
+#   filter(vector %in% bfish2_envvectors)
+# head(bfish2_vectorfit.long)
 
 # Recoding spp fct levels to be shorthand scientific names
-bfish2_vectorfit.long <- bfish2_vectorfit.long %>%
+bfish2_scrs <- bfish2_scrs %>%
+  mutate(vector = rownames(bfish2_scrs)) %>%
   mutate(vector = fct_recode(vector,
                              "Density" = "DensityM",
                              "Area" = "Area_m2",
                              "Height" = "HeightM",
-                             "Biomass" = "BiomassM"
-                             # "Ave Temp" = "Tempave",
-                             # "Depth" = "Depth_datum_m",
-                             # "Wave Exp" = "exp_36",
-                             # "Understory %" = "Punderstory",
-                             # "Hard %" = "Phardbottom",
-                             # "Soft %" = "Psoftbottom"
-  ))
+                             "Biomass" = "BiomassM"))
 
 
-# # Extracting the ellipses from the model and ordiplot
-# bfish2_ordsimple <- ordiplot(bfish_2)
-# bfish2_ordellipses <- with(preds_ord, ordiellipse(bfish2_ordsimple, groups=Kelpdom, kind = "se", conf=0.95))
-# bfish2_ellipses <- ordiellipse.long(bfish2_ordellipses, grouping.name="Kelpdom")
+# Extracting the ellipses from the model and ordiplot
+bfish2_ordsimple <- ordiplot(bfish_2)
+bfish2_ordellipses <- with(preds_ord, ordiellipse(bfish2_ordsimple, groups=Kelpdom, kind = "se", conf=0.95))
+bfish2_ellipses <- ordiellipse.long(bfish2_ordellipses, grouping.name="Kelpdom")
 
 # Extracting the most influential spp from the model and ordiplot
 bfish2_species.envfit <- envfit(bfish2_ordsimple, env=bfish_hel) # For my Bray distance ordiplot of Hellinger transformed spp data
@@ -1607,27 +1718,28 @@ bfish2_species.long.vargrt
 # Recoding spp fct levels to be shorthand scientific names
 bfish2_species.long.vargrt <- bfish2_species.long.vargrt %>%
   mutate(labels = fct_recode(labels,
-                             "A. harringtoni" = "Artedius harringtoni",
-                             "H. decagrammos" = "Hexagrammos decagrammus",
-                             "J. zonope" = "Jordania zonope",
-                             "R. nicholsii" = "Rhinogobiops nicholsii"))
+                             "Scalyhead sculpin" = "Artedius harringtoni",
+                             "Kelp greenling" = "Hexagrammos decagrammus",
+                             "Longfin sculpin" = "Jordania zonope",
+                             "Blackeye goby" = "Rhinogobiops nicholsii"))
 
 
 ## The biplot for structure vars
 
 # Radial shift function for arrow text
-rshift = function(r, theta, a=0.04, b=0.08) {
+rshift = function(r, theta, a=0.08, b=0.1) {
   r + a + b*abs(cos(theta))
 }
 
 # Calculate shift of text from arrows
-env.arrows = bfish2_vectorfit.long %>% 
-  mutate(r = sqrt(axis1^2 + axis2^2),
-         theta = atan2(axis2,axis1),
+env.arrows = bfish2_scrs %>% 
+  mutate(r = sqrt(CAP1^2 + CAP2^2),
+         theta = atan2(CAP2,CAP1),
          rnew = rshift(r, theta),
          xnew = rnew*cos(theta),
          ynew = rnew*sin(theta))
 
+tiff(file="./MSc_plots/PaperFigs/Bfish/Bfish_ord_RDAstr_pres.tiff", height = 3.2, width = 4, units = "in", res=400)
 
 # The full structural plot 
 bfish2_ordplot_str <- ggplot() + 
@@ -1635,17 +1747,17 @@ bfish2_ordplot_str <- ggplot() +
   geom_hline(yintercept = c(0), color = "grey70", linetype = 5, linewidth=0.3) +  
   xlab("CAP 1 (35.6%)") + # CAP 1
   ylab("CAP 2 (2.9%)") + # CAP 2
-  scale_y_continuous(limits=c(-3.5,3.5)) + 
-  scale_x_continuous(limits=c(-3.5,3.5)) + 
+  scale_y_continuous(limits=c(-2.2,2.2)) + 
+  scale_x_continuous(limits=c(-2.2,2.2)) + 
   geom_point(data=bfish2_sites.long, # Adding in the main site data points
              aes(x=axis1, y=axis2, fill=Kelpdom),
              size=2.5, shape=23, stroke=0.2, alpha=0.8) +
-  geom_segment(data=bfish2_vectorfit.long, # Adding in the biplot correlation arrows
-               aes(x=0, y=0, xend=axis1*2, yend=axis2*2),
+  geom_segment(data=bfish2_scrs, # Adding in the biplot correlation arrows
+               aes(x=0, y=0, xend=CAP1*2, yend=CAP2*2),
                colour="grey20", linewidth=0.3, arrow=arrow(length = unit(0.1, "cm"), type="closed")) +
   geom_text(data=env.arrows, # Adding in the biplot correlation labels
-            aes(x=xnew*2.4, y=ynew*2.3, label=vector),
-            colour="black", size=2) +
+            aes(x=xnew*2, y=ynew*2, label=vector),
+            colour="black", size=3) +
   scale_fill_manual(values=met.brewer("Kandinsky"), name=NULL, labels=c(expression(italic("N. luetkeana")), expression(italic("M. pyrifera")))) +
   guides(fill = guide_legend(override.aes = list(shape=23))) +
   theme_classic() +
@@ -1658,8 +1770,10 @@ bfish2_ordplot_str <- ggplot() +
         axis.title=element_text(size=9.5, color="black"),
         axis.line=element_line(size=0.3),
         axis.ticks=element_line(size=0.3)) +
-  annotate("text", x = -3.5, y = 3.5, label = "b", size=5, fontface=2)
+  annotate("text", x = -2.2, y = 2.2, label = "a", size=5, fontface=2)
 bfish2_ordplot_str
+
+dev.off()
 
 
 ## The biplot for influential spp
@@ -1678,17 +1792,17 @@ bfish2_ordplot_spp <- ggplot() +
   geom_hline(yintercept = c(0), color = "grey70", linetype = 5, linewidth=0.3) +  
   xlab("CAP 1 (35.6%)") + # CAP 1
   ylab("CAP 2 (2.9%)") + # CAP 2
-  scale_y_continuous(limits=c(-3.5,3.5)) + 
-  scale_x_continuous(limits=c(-3.5,3.5)) + 
+  scale_y_continuous(limits=c(-2.2,2.2)) + 
+  scale_x_continuous(limits=c(-2.2,2.2)) + 
   geom_point(data=bfish2_sites.long, # Adding in the main site data points
              aes(x=axis1, y=axis2, fill=Kelpdom),
              size=2.5, shape=23, stroke=0.2, alpha=0.8) +
   geom_segment(data=bfish2_species.long.vargrt, # Adding in the SIMPER arrows
-               aes(x=0, y=0, xend=axis1*2, yend=axis2*2),
+               aes(x=0, y=0, xend=axis1*1.5, yend=axis2*1.5),
                colour="grey20", linewidth=0.3, arrow = arrow(length = unit(0.1, "cm"), type="closed")) +
   geom_text_repel(data=bfish2_species.long.vargrt, # Adding in the SIMPER species labels
-            aes(x=axis1*2, y=axis2*2, label=labels),
-            colour="black", fontface="italic", size=2, angle=0, box.padding=0.2, nudge_x=1.1, nudge_y=-0.8, segment.linetype=2, segment.size=0.3, segment.color="grey40") +
+            aes(x=axis1*1.5, y=axis2*1.5, label=labels),
+            colour="black", fontface="italic", size=2, angle=0, box.padding=0.2, nudge_x=0.4, nudge_y=-0.4, segment.linetype=2, segment.size=0.3, segment.color="grey40") +
   scale_fill_manual(values=met.brewer("Kandinsky"), name=NULL, labels=c(expression(italic("N. luetkeana")), expression(italic("M. pyrifera")))) +
   guides(fill = guide_legend(override.aes = list(shape=21))) +
   theme_classic() +
@@ -1700,7 +1814,7 @@ bfish2_ordplot_spp <- ggplot() +
         axis.title=element_text(size=9.5, color="black"),
         axis.line=element_line(size=0.3),
         axis.ticks=element_line(size=0.3)) +
-  annotate("text", x = -3.5, y = 3.5, label = "c", size=5, fontface=2)
+  annotate("text", x = -2.2, y = 2.2, label = "b", size=5, fontface=2)
 bfish2_ordplot_spp
 
 
@@ -1712,6 +1826,7 @@ bfish2_ordplots <- ggarrange(bfish2_ordplot_str, bfish2_ordplot_spp, ncol=2, com
 bfish2_ordplots
 
 dev.off()
+
 
 
 
@@ -1729,29 +1844,36 @@ legend("bottomleft", legend=levels(preds_ord$Kelpdom), bty="n", pch=pchs, col = 
 # Extracting the locations of species from the model
 bfish3_species.long <- species.long(bfish3_ordplot)
 head(bfish3_species.long)
+
 # Extracting the locations of sites from the model
 bfish3_sites.long <- sites.long(bfish3_ordplot, env.data=preds_ord)
 head(bfish3_sites.long)
+
 # Extracting the locations of centroids from the sites.long output
 bfish3_centroids.long <- centroids.long(bfish3_sites.long, grouping=preds_ord$Kelpdom, centroids.only=FALSE)
 head(bfish3_centroids.long)
-# Extracting env biplot correlations from the model
-bfish3_envfit <- envfit(ord=bfish3_ordplot, env=preds_ord)
-# Defining env vectors of interest
-bfish3_envvectors <- c("Tempave", "Depth_datum_m", "exp_36", "Punderstory", "Phardbottom", "Psoftbottom")
-bfish3_vectorfit.long <- vectorfit.long(bfish3_envfit) %>%
-  filter(vector %in% bfish3_envvectors)
-head(bfish3_vectorfit.long)
+
+# Extracting locations for env biplot correlations
+bfish3_env <- as.data.frame(scores(bfish3_ordplot, display = "biplot"))
+bfish3_env
+
+# # Defining env vectors of interest
+# bfish3_envvectors <- c("Tempave", "Depth_datum_m", "exp_36", "Punderstory", "Phardbottom", "Psoftbottom", "Panimal", "Pturf")
+# bfish3_vectorfit.long <- vectorfit.long(bfish3_envfit) %>%
+#   filter(vector %in% bfish3_envvectors)
+# head(bfish3_vectorfit.long)
 
 # Recoding spp fct levels to be shorthand scientific names
-bfish3_vectorfit.long <- bfish3_vectorfit.long %>%
+bfish3_env <- bfish3_env %>%
+  mutate(vector = rownames(bfish3_env)) %>%
   mutate(vector = fct_recode(vector,
-                             "Ave Temp" = "Tempave",
+                             "Min Temp" = "Tempmin",
                              "Depth" = "Depth_datum_m",
                              "Wave Exp" = "exp_36",
                              "Understory %" = "Punderstory",
                              "Hard %" = "Phardbottom",
-                             "Soft %" = "Psoftbottom"))
+                             "Soft %" = "Psoftbottom",
+                             "Turf %" = "Pturf"))
 
 
 # Extracting the ellipses from the model and ordiplot
@@ -1772,23 +1894,23 @@ bfish3_species.long.vargrt
 # Recoding spp fct levels to be shorthand scientific names
 bfish3_species.long.vargrt <- bfish3_species.long.vargrt %>%
   mutate(labels = fct_recode(labels,
-                             "A. harringtoni" = "Artedius harringtoni",
-                             "H. decagrammos" = "Hexagrammos decagrammus",
-                             "J. zonope" = "Jordania zonope",
-                             "R. nicholsii" = "Rhinogobiops nicholsii"))
+                             "Scalyhead sculpin" = "Artedius harringtoni",
+                             "Kelp greenling" = "Hexagrammos decagrammus",
+                             "Longfin sculpin" = "Jordania zonope",
+                             "Blackeye goby" = "Rhinogobiops nicholsii"))
 
 
 ## The biplot for structure vars
 
 # Radial shift function for arrow text
-rshift = function(r, theta, a=0.04, b=0.08) {
+rshift = function(r, theta, a=0.08, b=0.04) {
   r + a + b*abs(cos(theta))
 }
 
 # Calculate shift of text from arrows
-env.arrows = bfish3_vectorfit.long %>% 
-  mutate(r = sqrt(axis1^2 + axis2^2),
-         theta = atan2(axis2,axis1),
+env.arrows = bfish3_env %>% 
+  mutate(r = sqrt(CAP1^2 + CAP2^2),
+         theta = atan2(CAP2,CAP1),
          rnew = rshift(r, theta),
          xnew = rnew*cos(theta),
          ynew = rnew*sin(theta))
@@ -1800,17 +1922,17 @@ bfish3_ordplot_env <- ggplot() +
   geom_hline(yintercept = c(0), color = "grey70", linetype = 5, linewidth=0.3) +  
   xlab("CAP 1 (40.1%)") + # CAP 1
   ylab("CAP 2 (7.9%)") + # CAP 2
-  scale_y_continuous(limits=c(-3.5,3.5)) + 
-  scale_x_continuous(limits=c(-3.5,3.5)) + 
+  scale_y_continuous(limits=c(-2.2,2.2)) + 
+  scale_x_continuous(limits=c(-2.2,2.2)) + 
   geom_point(data=bfish3_sites.long, # Adding in the main site data points
              aes(x=axis1, y=axis2, fill=Kelpdom),
              size=2.5, shape=23, stroke=0.2, alpha=0.8) +
-  geom_segment(data=bfish3_vectorfit.long, # Adding in the biplot correlation arrows
-               aes(x=0, y=0, xend=axis1*2.5, yend=axis2*2.5),
+  geom_segment(data=bfish3_env, # Adding in the biplot correlation arrows
+               aes(x=0, y=0, xend=CAP1*2, yend=CAP2*2),
                colour="grey20", linewidth=0.3, arrow=arrow(length = unit(0.1, "cm"), type="closed")) +
-  geom_text_repel(data=bfish3_vectorfit.long, # Adding in the biplot correlation labels
-            aes(x=axis1*2.5, y=axis2*2.5, label=vector),
-            colour="black", size=2, hjust=0, vjust=0, nudge_y=-0.65, nudge_x=-0.22, box.padding=0.93, segment.linetype=2, segment.size=0.3, segment.color="grey40") +
+  geom_text_repel(data=env.arrows, # Adding in the biplot correlation labels
+            aes(x=xnew*2, y=ynew*2, label=vector),
+            colour="black", size=2.5, hjust=0, vjust=0, box.padding=0.05) +
   scale_fill_manual(values=met.brewer("Kandinsky"), name=NULL, labels=c(expression(italic("N. luetkeana")), expression(italic("M. pyrifera")))) +
   guides(fill = guide_legend(override.aes = list(shape=23))) +
   theme_classic() +
@@ -1823,8 +1945,9 @@ bfish3_ordplot_env <- ggplot() +
         axis.title=element_text(size=9.5, color="black"),
         axis.line=element_line(size=0.3),
         axis.ticks=element_line(size=0.3)) +
-  annotate("text", x = -3.5, y = 3.5, label = "d", size=5, fontface=2)
+  annotate("text", x = -2.2, y = 2.2, label = "c", size=5, fontface=2)
 bfish3_ordplot_env
+
 
 
 ## The biplot for influential spp
@@ -1843,17 +1966,17 @@ bfish3_ordplot_spp <- ggplot() +
   geom_hline(yintercept = c(0), color = "grey70", linetype = 5, linewidth=0.3) +  
   xlab("CAP 1 (40.1%)") + # CAP 1
   ylab("CAP 2 (7.9%)") + # CAP 2  
-  scale_y_continuous(limits=c(-3.5,3.5)) + 
-  scale_x_continuous(limits=c(-3.5,3.5)) + 
+  scale_y_continuous(limits=c(-2.2,2.2)) + 
+  scale_x_continuous(limits=c(-2.2,2.2)) + 
   geom_point(data=bfish3_sites.long, # Adding in the main site data points
              aes(x=axis1, y=axis2, shape=Cluster, fill=Kelpdom),
              size=2.5, shape=23, stroke=0.2, alpha=0.8) +
   geom_segment(data=bfish3_species.long.vargrt, # Adding in the SIMPER arrows
-               aes(x=0, y=0, xend=axis1*2, yend=axis2*2),
+               aes(x=0, y=0, xend=axis1*1.5, yend=axis2*1.5),
                colour="grey20", linewidth=0.3, arrow = arrow(length = unit(0.1, "cm"), type="closed")) +
   geom_text_repel(data=bfish3_species.long.vargrt, # Adding in the SIMPER species labels
-            aes(x=axis1*2, y=axis2*2, label=labels),
-            colour="black", fontface="italic", size=2, angle=0, nudge_x=0.8, nudge_y=-0.2, box.padding=0.6, segment.linetype=2, segment.size=0.3, segment.color="grey40") +
+            aes(x=axis1*1.5, y=axis2*1.5, label=labels),
+            colour="black", fontface="italic", size=2, angle=0, nudge_x=0.4, nudge_y=-0.2, box.padding=0.6, segment.linetype=2, segment.size=0.3, segment.color="grey40") +
   scale_fill_manual(values=met.brewer("Kandinsky"), name=NULL, labels=c(expression(italic("N. luetkeana")), expression(italic("M. pyrifera")))) +
   guides(fill = guide_legend(override.aes = list(shape=21))) +
   theme_classic() +
@@ -1865,7 +1988,7 @@ bfish3_ordplot_spp <- ggplot() +
         axis.title=element_text(size=9.5, color="black"),
         axis.line=element_line(size=0.3),
         axis.ticks=element_line(size=0.3)) +
-  annotate("text", x = -3.5, y = 3.5, label = "e", size=5, fontface=2)
+  annotate("text", x = -2.2, y = 2.2, label = "d", size=5, fontface=2)
 bfish3_ordplot_spp
 
 
@@ -1926,12 +2049,9 @@ image_write(mmap, path = "./MSc_plots/PaperFigs/Bfish/Bfish_ords_combined_outlin
 
 #### All fish: Generating ordination models, stats ----
 
-###
-#### Models / stats
-###
 
 ## Calling the predictor variables sheet
-preds_ord <- read_csv("./MSc_data/Data_new/AllPredictors_2022.csv") %>%
+preds_ord <- read_csv("./MSc_data/Data_new/AllPredictors_scaled_2022.csv") %>%
   mutate(Kelpdom = as.factor(Kelpdom), Cluster = as.factor(Cluster))
 
 # Running PERMANOVA to test for grouping factors
@@ -1943,8 +2063,11 @@ fish_perm <- adonis2(fish_hel ~ Kelpdom+Cluster+Kelpdom:Cluster, data=preds_ord,
 # Generating the CAP kelp spp model
 fish_1 <- capscale(fish_hel ~ Kelpdom, data=preds_ord, comm=fish_wide, add=FALSE, distance="bray") 
 RsquareAdj(fish_1)
+anova.cca(pfish_1)
 ## The structural and environmental variables explain 13.2% of variation (constrained axes)
 # Adjusted R squared of this model is: 10.3%
+
+
 
 ## SIMPER for dissimilarity 
 # Running SIMPER to test between groups (limiting to 10 most influential)
@@ -1952,12 +2075,12 @@ fish_simp <- with(preds_ord, simper(fish_hel, group=Kelpdom, permutations=999))
 
 # Making table of the SIMPER output
 fish_simp_df <- as.data.frame(fish_simp$Giant_Bull)
-sum(fish_simp_df$average) # Total dissimilarity b/w kelp spp groups = 0.5705693
-# Partitioned among the 19 fish spp = 0.03002996 (assuming all contribute equally)
+sum(fish_simp_df$average) # Total dissimilarity b/w kelp spp groups = 0.591735
+# Partitioned among the 20 fish spp = 0.02958675 (assuming all contribute equally)
 
 # Filter for spp that contribute >= 2x their expected dissimilarity among groups
 fish_simp_filt <- fish_simp_df %>%
-  filter(average > (2*0.03002996))
+  filter(average > (2*0.02958675))
 
 fish_simpSPP <- c("Embiotoca lateralis", "Rhinogobiops nicholsii")
 
@@ -1968,7 +2091,7 @@ fish_simpSPP <- c("Embiotoca lateralis", "Rhinogobiops nicholsii")
 fish_2 <- capscale(fish_hel ~ Kelpdom+DensityM+Area_m2+HeightM+BiomassM, data=preds_ord, comm=fish_wide, add=FALSE, distance="bray") 
 RsquareAdj(fish_2)
 ## The structural and environmental variables explain 29.4% of variation (constrained axes)
-# Adjusted R squared of this model is: 11.2%
+# Adjusted R squared of this model is: 22.2%
 vif.cca(fish_2) # low vif scores
 
 # Exploring model significance
@@ -1983,7 +2106,7 @@ anova.cca(fish_2, step = 1000, by = "axis") # significance by model axes
 fish_3 <- capscale(fish_hel ~ Kelpdom+Tempave+exp_36+Depth_datum_m+Punderstory+Psoftbottom+Phardbottom, data=preds_ord, comm=fish_wide, add=FALSE, distance="bray")
 RsquareAdj(fish_3)
 ## Only the environmental variables explain explain 39.3% of variation (constrained axes)
-# Adjusted R squared of this model is: 14.8%
+# Adjusted R squared of this model is: 16.8%
 vif.cca(fish_3) # low vif scores
 
 # Exploring model significance
@@ -1994,12 +2117,12 @@ anova.cca(fish_3, step = 1000, by = "axis") # significance by model axes
 #### All fish: Plots
 #### Benthic inverts: Generating ordination models, stats ----
 
+
 ## Calling the predictor variables sheet
-preds_ord <- read_csv("./MSc_data/Data_new/AllPredictors_2022.csv") %>%
+preds_ord <- read_csv("./MSc_data/Data_new/AllPredictors_scaled_2022.csv") %>%
   mutate(Kelpdom = as.factor(Kelpdom))
 
-# # Running PERMANOVA to test for grouping factors
-# binv_perm <- adonis2(binv_hel ~ Kelpdom+Cluster+Kelpdom:Cluster, data=preds_ord, permutations = 999, method="bray") # Kelpdom & Cluster significant
+
 
 ### CAP (kelp spp)
 
@@ -2008,14 +2131,16 @@ binv_1 <- capscale(binv_hel ~ Kelpdom, data=preds_ord, comm=binv_wide, add=FALSE
 anova.cca(binv_1) # model is sig
 RsquareAdj(binv_1)
 ## Only the kelp spp explains 11.7% of variation (constrained axes)
-# Adjusted R squared of this model is: 7.3%
+# Adjusted R squared of this model is: 7.2%
+
+
 
 ## SIMPER for dissimilarity 
 # Running SIMPER to test between groups (limiting to 10 most influential)
 binv_simp <- with(preds_ord, simper(binv_hel, group=Kelpdom, permutations=999))
 
 # Making table of the SIMPER output
-binv_simp_df <- as.data.frame(summary(binv_simp)$Giant_Bull)
+binv_simp_df <- as.data.frame(binv_simp$Giant_Bull)
 sum(binv_simp_df$average) # Total dissimilarity b/w kelp spp groups = 0.4547604
 # Partitioned among the 30 invertebrate spp = 0.01515868 (assuming all contribute equally)
 
@@ -2024,8 +2149,9 @@ binv_simp_filt <- binv_simp_df %>%
   filter(average > (2*0.01515868))
 binv_simp_filt
 
-binv_simps <- c("Pomaulax gibberosus", "Strongylocentrotus purpuratus", "Mesocentrotus franciscanus")
-binv_simpSPP <- c("P. gibberosus", "S. purpuratus", "M. franciscanus")
+binv_simpSPP <- c("Pomaulax gibberosus", "Strongylocentrotus purpuratus", "Mesocentrotus franciscanus")
+
+
 
 
 ### RDA (kelp forest structure)
@@ -2034,7 +2160,7 @@ binv_simpSPP <- c("P. gibberosus", "S. purpuratus", "M. franciscanus")
 binv_2 <- capscale(binv_hel ~ Kelpdom+DensityM+Area_m2+BiomassM+HeightM, data=preds_ord, comm=binv_wide, add=FALSE, distance="bray") 
 RsquareAdj(binv_2)
 ## Only the structural variables explain 45.2% of variation (constrained axes)
-# Adjusted R squared of this model is: 28.2%
+# Adjusted R squared of this model is: 28.1%
 vif.cca(binv_2) # low vif scores
 
 # Exploring model significance
@@ -2043,13 +2169,15 @@ anova.cca(binv_2, step = 1000, by = "margin") # significance of predictor terms
 anova.cca(binv_2, step = 1000, by = "axis") # significance by model axes
 
 
+
+
 ### RDA (environmental vars)
 
 # Generating the environmental model
-binv_3 <- capscale(binv_hel ~ Kelpdom+Tempave+Depth_datum_m+exp_36+Phardbottom+Psoftbottom+Punderstory, data=preds_ord, comm=binv_wide, add=FALSE, distance="bray")
+binv_3 <- capscale(binv_hel ~ Kelpdom+Tempmin+Depth_datum_m+exp_36+Phardbottom+Psoftbottom+Punderstory+Pturf, data=preds_ord, comm=binv_wide, add=FALSE, distance="bray")
 RsquareAdj(binv_3)
 ## The environmental variables explain explain 54.8% of variation (constrained axes)
-# Adjusted R squared of this model is: 32.1%
+# Adjusted R squared of this model is: 38.3%
 vif.cca(binv_3)
 
 # Exploring model significance
@@ -2058,11 +2186,16 @@ anova.cca(binv_3, permutations = 999, by = "margin") # significance of predictor
 anova.cca(binv_3, permutations = 999, by = "axis") # significance by model axes
 
 
+#
+
+
 #### Benthic inverts: Plots ----
+
 
 # Benthic Invert 1 = CAP model (by kelp spp)
 # Benthic Invert 2 = RDA model (by kelp forest structure)
 # Benthic Invert 3 = RDA model (by environmental vars)
+
 
 ### PLOT 1: CAP (kelp spp)
 
@@ -2086,14 +2219,15 @@ hull_cyl <- binv1_sites.long %>%
   group_by(Kelpdom) %>%
   slice(chull(axis1, axis2))
 
+
 # The CAP plot
 binv1_ordplot <- ggplot(binv1_sites.long) + 
   geom_vline(xintercept = c(0), color = "grey70", linetype = 5, linewidth=0.3) +
   geom_hline(yintercept = c(0), color = "grey70", linetype = 5, linewidth=0.3) +  
   xlab("CAP 1 (11.2%)") +
   ylab("MDS 1 (2.6%)") +  
-  scale_y_continuous(limits=c(-3,3)) + 
-  scale_x_continuous(limits=c(-3,3)) + 
+  scale_y_continuous(limits=c(-2.2,2.2)) + 
+  scale_x_continuous(limits=c(-2.2,2.2)) + 
   geom_point(data=binv1_sites.long, # Adding in the main site data points
              aes(x=axis1, y=axis2, fill=Kelpdom),
              size=2.5, shape=23, stroke=0.2) +
@@ -2107,9 +2241,9 @@ binv1_ordplot <- ggplot(binv1_sites.long) +
         legend.spacing.y = unit(0, "lines"),
         axis.text=element_text(size=9, color="black"),
         axis.title=element_text(size=9.5, color="black"),
-        axis.line=element_line(size=0.3),
-        axis.ticks=element_line(size=0.3)) +
-  annotate("text", x = -3, y = 3, label = "a", size=5, fontface=2)
+        axis.line=element_line(size=0.5),
+        axis.ticks=element_line(size=0.5)) +
+  annotate("text", x = -2.1, y = 2.2, label = "d", size=5, fontface=2)
 binv1_ordplot
 
 
@@ -2121,29 +2255,6 @@ binv1_ordplot
 
 dev.off()
 
-
-
-### SIMPER PLOT (to go with CAP plot)
-
-binv_simp_arr <- binv_simp_filt %>%
-  arrange(desc(average)) %>%
-  # mutate(ava = ava*(-1)) %>% # Making the macro relative ab column neg for plotting purposes
-  dplyr::select(species, average, sd, ava, avb) %>%
-  pivot_longer(cols=c(ava, avb)) %>% # Pivoting the ava (macro) & avb (nereo) columns into one
-  ungroup() %>%
-  as.data.frame() %>%
-  mutate(name = as.factor(name), species = as.factor(species))
-
-
-# binv1_simplot <- 
-  ggplot(data=binv_simp_arr, aes(x=species, y=value, group=name)) +
-    geom_errorbar(aes(ymin=value+sd, ymax=(value+sd), group=name), position=position_dodge(width=0.2)) +
-    geom_point(aes(color=name), position=position_dodge(0.5)) +
-    theme_classic()
-  
-
-  ggplot(data=binv_simp_arr, aes(x=species, y=value, group=name)) +
-    geom_pointrange(aes(ymin=(value-sd), ymax=(value+sd), color=name), position=position_dodge(0.3))
 
 
 
@@ -2167,28 +2278,28 @@ head(binv2_sites.long)
 # Extracting the locations of centroids from the sites.long output
 binv2_centroids.long <- centroids.long(binv2_sites.long, grouping=preds_ord$Kelpdom, centroids.only=FALSE)
 head(binv2_centroids.long)
-# Extracting env biplot correlations from the model
-binv2_envfit <- envfit(ord=binv2_ordplot, env=preds_ord)
-# Defining env vectors of interest
-binv2_envvectors <- c("DensityM", "Area_m2", "HeightM", "BiomassM")
-binv2_vectorfit.long <- vectorfit.long(binv2_envfit) %>%
-  filter(vector %in% binv2_envvectors)
-head(binv2_vectorfit.long)
+# Extracting locations for env biplot correlations
+binv2_scrs <- as.data.frame(scores(binv2_ordplot, display = "biplot"))
+
+# # Defining env vectors of interest
+# binv2_envvectors <- c("DensityM", "Area_m2", "HeightM", "BiomassM")
+# binv2_vectorfit.long <- vectorfit.long(binv2_envfit) %>%
+#   filter(vector %in% binv2_envvectors)
+# head(binv2_vectorfit.long)
 
 # Recoding spp fct levels to be shorthand scientific names
-binv2_vectorfit.long <- binv2_vectorfit.long %>%
+binv2_scrs <- binv2_scrs %>%
+  mutate(vector = rownames(binv2_scrs)) %>%
   mutate(vector = fct_recode(vector,
                              "Density" = "DensityM",
                              "Area" = "Area_m2",
                              "Height" = "HeightM",
-                             "Biomass" = "BiomassM"
-                             # "Ave Temp" = "Tempave",
-                             # "Depth" = "Depth_datum_m",
-                             # "Wave Exp" = "exp_36",
-                             # "Understory %" = "Punderstory",
-                             # "Hard %" = "Phardbottom",
-                             # "Soft %" = "Psoftbottom"
-         ))
+                             "Biomass" = "BiomassM"))
+
+# # Filtering for the significant (anova.cca) predictors of composition
+# binv2_vectorfit.long <- binv2_vectorfit.long %>%
+#   mutate(vector = as.factor(vector)) %>%
+#   filter(vector == "Density" | vector == "Biomass" | vector == "Height")
 
 
 # Extracting the ellipses from the model and ordiplot
@@ -2213,14 +2324,16 @@ binv2_species.long.vargrt
 # Recoding spp fct levels to be shorthand scientific names
 binv2_species.long.vargrt <- binv2_species.long.vargrt %>%
   mutate(labels = fct_recode(labels,
-                             "C. foliatum" = "Ceratostoma foliatum",
-                             "D. odonoghuei" = "Diaulula odonoghuei",
-                             "H. leviuscula" = "Henricia leviuscula",
-                             "H. stylus" = "Heptacarpus stylus",
-                             "M. franciscanus" = "Mesocentrotus franciscanus",
-                             "O. gracilis" = "Oregonia gracilis",
-                             "P. gibberosus" = "Pomaulax gibberosus",
-                             "P. helianthoides" = "Pycnopodia helianthoides"))
+                             "Red rock crab" = "Cancer productus",
+                             "Leafy hornmouth" = "Ceratostoma foliatum",
+                             "Leather star" = "Dermasterias imbricata",
+                             "Leopard dorid" = "Diaulula odonoghuei",
+                             "Mottled star" = "Evasterias troschelii",
+                             "Stiletto shrimp" = "Heptacarpus stylus",
+                             "Red sea urchin" = "Mesocentrotus franciscanus",
+                             "Graceful crab" = "Oregonia gracilis",
+                             "Red turban snail" = "Pomaulax gibberosus",
+                             "Sunflower star" = "Pycnopodia helianthoides"))
 
 
 ## The biplot for structure vars
@@ -2231,9 +2344,9 @@ rshift = function(r, theta, a=0.04, b=0.08) {
 }
 
 # Calculate shift of text from arrows
-env.arrows = binv2_vectorfit.long %>% 
-  mutate(r = sqrt(axis1^2 + axis2^2),
-         theta = atan2(axis2,axis1),
+env.arrows = binv2_scrs %>% 
+  mutate(r = sqrt(CAP1^2 + CAP2^2),
+         theta = atan2(CAP2,CAP1),
          rnew = rshift(r, theta),
          xnew = rnew*cos(theta),
          ynew = rnew*sin(theta))
@@ -2245,17 +2358,17 @@ binv2_ordplot_str <- ggplot() +
   geom_hline(yintercept = c(0), color = "grey70", linetype = 5, linewidth=0.3) +  
   xlab("CAP 1 (19.6%)") +
   ylab("CAP 2 (12.3%)") +  
-  scale_y_continuous(limits=c(-3.5,3.5)) + 
-  scale_x_continuous(limits=c(-3.5,3.5)) + 
+  scale_y_continuous(limits=c(-2.2,2.2)) + 
+  scale_x_continuous(limits=c(-2.2,2.2)) + 
   geom_point(data=binv2_sites.long, # Adding in the main site data points
              aes(x=axis1, y=axis2, fill=Kelpdom),
              size=2.5, shape=23, stroke=0.2, alpha=0.8) +
-  geom_segment(data=binv2_vectorfit.long, # Adding in the biplot correlation arrows
-               aes(x=0, y=0, xend=axis1*2, yend=axis2*2),
+  geom_segment(data=binv2_scrs, # Adding in the biplot correlation arrows
+               aes(x=0, y=0, xend=CAP1*2, yend=CAP2*2),
                colour="grey20", linewidth=0.3, arrow=arrow(length = unit(0.1, "cm"), type="closed")) +
-  geom_text(data=binv2_vectorfit.long, # Adding in the biplot correlation labels
-            aes(x=axis1*2.7, y=axis2*2.4, label=vector),
-            colour="black", size=2) +
+  geom_text(data=env.arrows, # Adding in the biplot correlation labels
+            aes(x=xnew*2, y=ynew*2, label=vector),
+            colour="black", size=3) +
   scale_fill_manual(values=met.brewer("Kandinsky"), name=NULL, labels=c(expression(italic("N. luetkeana")), expression(italic("M. pyrifera")))) +
   guides(fill = guide_legend(override.aes = list(shape=23))) +
   theme_classic() +
@@ -2268,8 +2381,9 @@ binv2_ordplot_str <- ggplot() +
         axis.title=element_text(size=9.5, color="black"),
         axis.line=element_line(size=0.3),
         axis.ticks=element_line(size=0.3)) +
-  annotate("text", x = -3.5, y = 3.5, label = "b", size=5, fontface=2)
+  annotate("text", x = -2.2, y = 2.2, label = "a", size=5, fontface=2)
 binv2_ordplot_str
+
 
 
 ## The biplot for influential spp
@@ -2282,23 +2396,29 @@ spp.arrows = binv2_species.long.vargrt %>%
          xnew = rnew*cos(theta),
          ynew = rnew*sin(theta))
 
+
+tiff(file="./MSc_plots/PaperFigs/Invert/Invert_ord_RDAstr_pres_SPP.tiff", height = 3.5, width = 4, units = "in", res=400)
+
+
 # The full species plot
 binv2_ordplot_spp <- ggplot() + 
   geom_vline(xintercept = c(0), color = "grey70", linetype = 5, linewidth=0.3) +
   geom_hline(yintercept = c(0), color = "grey70", linetype = 5, linewidth=0.3) +  
   xlab("CAP 1 (19.6%)") +
   ylab("CAP 2 (12.3%)") +  
-  scale_y_continuous(limits=c(-3.5,3.5)) + 
-  scale_x_continuous(limits=c(-3.5,3.5)) + 
+  scale_y_continuous(limits=c(-2.2,2.2)) + 
+  scale_x_continuous(limits=c(-2.2,2.2)) + 
   geom_point(data=binv2_sites.long, # Adding in the main site data points
              aes(x=axis1, y=axis2, fill=Kelpdom),
              size=2.5, shape=23, stroke=0.2, alpha=0.8) +
   geom_segment(data=binv2_species.long.vargrt, # Adding in the SIMPER arrows
-               aes(x=0, y=0, xend=axis1*3, yend=axis2*3),
+               aes(x=0, y=0, xend=axis1*2, yend=axis2*2),
                colour="grey20", linewidth=0.3, arrow = arrow(length = unit(0.1, "cm"), type="closed")) +
   geom_text_repel(data=binv2_species.long.vargrt, # Adding in the SIMPER species labels
-                  aes(x=axis1*3, y=axis2*3, label=labels),
-                  colour="black", fontface="italic", size=1.8, angle=0, hjust=0, vjust=0, box.padding=0.3, nudge_y=2.2, nudge_x=0.62, segment.linetype=2, segment.size=0.3, segment.color="grey40") +
+                  aes(x=axis1*2, y=axis2*2, label=labels),
+                  colour="black",size=2.5, angle=0, hjust=0, vjust=0,
+                  box.padding=0.4, nudge_y=0.8, nudge_x=0.5, segment.linetype=2,
+                  segment.size=0.3, segment.color="grey40") +
   scale_fill_manual(values=met.brewer("Kandinsky"), name=NULL, labels=c(expression(italic("N. luetkeana")), expression(italic("M. pyrifera")))) +
   guides(fill = guide_legend(override.aes = list(shape=21))) +
   theme_classic() +
@@ -2310,9 +2430,10 @@ binv2_ordplot_spp <- ggplot() +
         axis.title=element_text(size=9.5, color="black"),
         axis.line=element_line(size=0.3),
         axis.ticks=element_line(size=0.3)) +
-  annotate("text", x = -3.5, y = 3.5, label = "c", size=5, fontface=2)
+  annotate("text", x = -2.2, y = 2.2, label = "b", size=5, fontface=2)
 binv2_ordplot_spp
 
+dev.off()
 
 ## Putting the two together
 
@@ -2322,6 +2443,7 @@ binv2_ordplots <- ggarrange(binv2_ordplot_str, binv2_ordplot_spp, ncol=2, common
 binv2_ordplots
 
 dev.off()
+
 
 
 
@@ -2339,30 +2461,36 @@ legend("bottomleft", legend=levels(preds_ord$Kelpdom), bty="n", pch=pchs, col = 
 # Extracting the locations of species from the model
 binv3_species.long <- species.long(binv3_ordplot)
 head(binv3_species.long)
+
 # Extracting the locations of sites from the model
 binv3_sites.long <- sites.long(binv3_ordplot, env.data=preds_ord)
 head(binv3_sites.long)
+
 # Extracting the locations of centroids from the sites.long output
 binv3_centroids.long <- centroids.long(binv3_sites.long, grouping=preds_ord$Kelpdom, centroids.only=FALSE)
 head(binv3_centroids.long)
-# Extracting env biplot correlations from the model
-binv3_envfit <- envfit(ord=binv3_ordplot, env=preds_ord)
-# Defining env vectors of interest
-binv3_envvectors <- c("Tempave", "Depth_datum_m", "exp_36", "Punderstory", "Phardbottom", "Psoftbottom")
-binv3_vectorfit.long <- vectorfit.long(binv3_envfit) %>%
-  filter(vector %in% binv3_envvectors)
-head(binv3_vectorfit.long)
+
+# Extracting locations for env biplot correlations
+binv3_env <- as.data.frame(scores(binv3_ordplot, display = "biplot"))
+binv3_env
+
+# # Defining env vectors of interest
+# binv3_envvectors <- c("Tempave", "Depth_datum_m", "exp_36", "Punderstory", "Phardbottom", "Psoftbottom", "Pturf")
+# binv3_vectorfit.long <- vectorfit.long(binv3_envfit) %>%
+#   filter(vector %in% binv3_envvectors)
+# head(binv3_vectorfit.long)
 
 # Recoding spp fct levels to be shorthand scientific names
-binv3_vectorfit.long <- binv3_vectorfit.long %>%
+binv3_env <- binv3_env %>%
+  mutate(vector = rownames(binv3_env)) %>%
   mutate(vector = fct_recode(vector,
-                             "Ave Temp" = "Tempave",
+                             "Min Temp" = "Tempmin",
                              "Depth" = "Depth_datum_m",
                              "Wave Exp" = "exp_36",
                              "Understory %" = "Punderstory",
                              "Hard %" = "Phardbottom",
-                             "Soft %" = "Psoftbottom"
-  ))
+                             "Soft %" = "Psoftbottom",
+                             "Turf %" = "Pturf"))
 
 
 # Extracting the ellipses from the model and ordiplot
@@ -2387,16 +2515,15 @@ binv3_species.long.vargrt
 # Recoding spp fct levels to be shorthand scientific names
 binv3_species.long.vargrt <- binv3_species.long.vargrt %>%
   mutate(labels = fct_recode(labels,
-                             "C. foliatum" = "Ceratostoma foliatum",
-                             "D. odonoghuei" = "Diaulula odonoghuei",
-                             "H. leviuscula" = "Henricia leviuscula",
-                             "H. stylus" = "Heptacarpus stylus",
-                             "M. franciscanus" = "Mesocentrotus franciscanus",
-                             "O. gracilis" = "Oregonia gracilis",
-                             "P. gibberosus" = "Pomaulax gibberosus",
-                             "P. helianthoides" = "Pycnopodia helianthoides",
-                             "E. troschelii" = "Evasterias troschelii",
-                             "C. productus" = "Cancer productus"
+                             "Leafy hornmouth" = "Ceratostoma foliatum",
+                             "Leopard dorid" = "Diaulula odonoghuei",
+                             "Stiletto shrimp" = "Heptacarpus stylus",
+                             "Red sea urchin" = "Mesocentrotus franciscanus",
+                             "Graceful crab" = "Oregonia gracilis",
+                             "Red turban snail" = "Pomaulax gibberosus",
+                             "Sunflower stars" = "Pycnopodia helianthoides",
+                             "Mottled star" = "Evasterias troschelii",
+                             "Red rock crab" = "Cancer productus"
                              ))
 
 
@@ -2408,13 +2535,15 @@ rshift = function(r, theta, a=0.04, b=0.08) {
 }
 
 # Calculate shift of text from arrows
-env.arrows = binv3_vectorfit.long %>% 
-  mutate(r = sqrt(axis1^2 + axis2^2),
-         theta = atan2(axis2,axis1),
+env.arrows = binv3_env %>% 
+  mutate(r = sqrt(CAP1^2 + CAP2^2),
+         theta = atan2(CAP2,CAP1),
          rnew = rshift(r, theta),
          xnew = rnew*cos(theta),
          ynew = rnew*sin(theta))
 
+
+tiff(file="./MSc_plots/PaperFigs/Invert/Invert_ord_RDAenv_pres.tiff", height = 3.5, width = 4, units = "in", res=400)
 
 # The full environmental plot 
 binv3_ordplot_env <- ggplot() + 
@@ -2422,17 +2551,17 @@ binv3_ordplot_env <- ggplot() +
   geom_hline(yintercept = c(0), color = "grey70", linetype = 5, linewidth=0.3) +  
   xlab("CAP 1 (18.9%)") +
   ylab("CAP 2 (16.0%)") +  
-  scale_y_continuous(limits=c(-3.5,3.5)) + 
-  scale_x_continuous(limits=c(-3.5,3.5)) + 
+  scale_y_continuous(limits=c(-2.2,2.2)) + 
+  scale_x_continuous(limits=c(-2.2,2.2)) + 
   geom_point(data=binv3_sites.long, # Adding in the main site data points
              aes(x=axis1, y=axis2, fill=Kelpdom),
              size=2.5, shape=23, stroke=0.2, alpha=0.8) +
-  geom_segment(data=binv3_vectorfit.long, # Adding in the biplot correlation arrows
-               aes(x=0, y=0, xend=axis1*2, yend=axis2*2),
+  geom_segment(data=binv3_env, # Adding in the biplot correlation arrows
+               aes(x=0, y=0, xend=CAP1*2, yend=CAP2*2),
                colour="grey20", linewidth=0.3, arrow=arrow(length = unit(0.1, "cm"), type="closed")) +
-  geom_text(data=binv3_vectorfit.long, # Adding in the biplot correlation labels
-            aes(x=axis1*2.7, y=axis2*2.3, label=vector),
-            colour="black", size=2) +
+  geom_text(data=env.arrows, # Adding in the biplot correlation labels
+            aes(x=xnew*2, y=ynew*2, label=vector),
+            colour="black", size=2.5) +
   scale_fill_manual(values=met.brewer("Kandinsky"), name=NULL, labels=c(expression(italic("N. luetkeana")), expression(italic("M. pyrifera")))) +
   guides(fill = guide_legend(override.aes = list(shape=23))) +
   theme_classic() +
@@ -2445,8 +2574,10 @@ binv3_ordplot_env <- ggplot() +
         axis.title=element_text(size=9.5, color="black"),
         axis.line=element_line(size=0.3),
         axis.ticks=element_line(size=0.3)) +
-  annotate("text", x = -3.5, y = 3.5, label = "d", size=5, fontface=2)
+  annotate("text", x = -2.2, y = 2.2, label = "d", size=5, fontface=2)
 binv3_ordplot_env
+
+dev.off()
 
 
 ## The biplot for influential spp
@@ -2779,3 +2910,119 @@ annotate_figure(arr, bottom = text_grob("Estimates", size=14, face="bold"))
 dev.off()
 
 
+
+#### Spp trends by abundance ----
+#### SIMPER plots ----
+
+### SIMPER PLOT (to go with CAP plots)
+
+
+# Joining all spp identified as influential by SIMPER
+simp_all <- rbind(pfish_simp_filt, bfish_simp_filt, binv_simp_filt)
+
+
+
+# Arranging by descending order of average dissimilarity 
+# Making the values neg. for spp that are biased to Macro in their dissimilarity (plotting purposes)
+simp_arr <- simp_all %>%
+  arrange(desc(average)) %>%
+  mutate(average_plot = ifelse(ava > avb, average*(-1), average)) %>% 
+  ungroup() %>%
+  as.data.frame() %>%
+  mutate(species = factor(species, levels=c("Embiotoca lateralis", "Artedius harringtoni", "Mesocentrotus franciscanus", "Strongylocentrotus purpuratus",  "Rhinogobiops nicholsii", "Pomaulax gibberosus"), order=TRUE))
+
+
+
+# Recoding the spp to shorthand genus spp
+# Adding new column for faunal groups
+# Adding new column for kelp groups (i.e., which group a spp is more relatively abundant in)
+simp_arr <- simp_arr %>%
+  mutate(species = fct_recode(species,
+                             "Striped surfperch" = "Embiotoca lateralis",
+                             "Scalyhead sculpin" = "Artedius harringtoni",
+                             "Blackeye goby" = "Rhinogobiops nicholsii",
+                             "Red sea urchin" = "Mesocentrotus franciscanus",
+                             "Red turban snail" = "Pomaulax gibberosus",
+                             "Purple sea urchin" = "Strongylocentrotus purpuratus")) %>%
+  mutate(faunalgroup = case_when(species == "Striped surfperch" ~ "Pelagic fish",
+                                 species == "Scalyhead sculpin" | species == "Blackeye goby" ~ "Demersal fish",
+                                 species == "Red sea urchin" | species == "Red turban snail" | species == "S. purpuratus" ~ "Benthic invert")) %>%
+  mutate(faunalgroup = factor(faunalgroup, levels=c("Pelagic fish", "Demersal fish", "Purple sea urchin"), ordered=TRUE)) %>%
+  mutate(kelpgroup = ifelse(ava > avb, "Giant kelp", "Bull kelp"))
+
+
+
+
+# Loading the kelp icon .png files
+macroicon <- readPNG('./Phylopic/EladTrace/macrokelp.png')
+bullicon <- readPNG('./Phylopic/EladTrace/bullkelp.png')
+
+
+tiff(file="./MSc_plots/PaperFigs/simper.tiff", height=4, width=8, units="in", res=500)
+
+# Making the plot of average SIMPER dissimilarities
+# Only the spp that contribute > 2x their expected dissimilarity
+simpplot <- ggplot(data=simp_arr, aes(y=species, x=average_plot, color=kelpgroup)) +
+  # geom_rect(aes(xmin = 0.008,
+  #               xmax = 0.25,
+  #               ymin = 2.9,
+  #               ymax = 6.4), fill = '#3b7c70', alpha = 0.03, color=NA) +
+  # geom_rect(aes(xmin = -0.24,
+  #               xmax = -0.008,
+  #               ymin = 0.5,
+  #               ymax = 2.8), fill = '#ce9642', alpha = 0.03, color=NA) +
+  geom_point(size=3) +
+  geom_errorbarh(aes(xmin=average_plot-sd, xmax=average_plot+sd), height=0.1, linewidth=1) +
+  scale_y_discrete(limits=rev) +
+  scale_x_continuous(limits=c(-0.25, 0.25)) +
+  theme_classic() +
+  theme(axis.title.y = element_blank(),
+        axis.text.y = element_text(color="black", size=9),
+        axis.text.x = element_text(color="black", size=9),
+        axis.title.x = element_text(color="black", size=9.5),
+        legend.position="none",
+        legend.title = element_blank()) +
+  scale_color_manual(values=met.brewer("Kandinsky", n=2)) +
+  geom_vline(xintercept=0, linetype="dashed") +
+  xlab("Average dissimilarity") +
+  annotate("text", x = -0.25, y = 6.5, label = "a", size=7, fontface=2)
+simpplot
+
+dev.off()
+
+
+# Adding in the kelp icons
+simpplot_draw <- simpplot + 
+  annotation_raster(macroicon, ymin = 0.5, ymax= 1.6, xmin = -0.24, xmax = -0.16) +
+  annotation_raster(bullicon, ymin = 0.5, ymax= 1.6, xmin = 0.19, xmax = 0.27)
+simpplot_draw
+
+
+
+## Arranging the CAP plots (loaded from the faunal group code chunks above)
+
+# Arranging the smaller plots together (ABUNDANCE)
+capplots <- ggarrange(pfish1_ordplot + rremove("legend"), bfish1_ordplot + rremove("legend"), 
+                      binv1_ordplot + rremove("legend"), ncol=1, align="hv")
+capplots
+
+# Setting up the layout
+lay <- rbind(c(1,1,1,1,1,1,1,2,2,2,2),
+             c(1,1,1,1,1,1,1,2,2,2,2))
+# Rectangles to help visualize
+gs <- lapply(1:2, function(ii) 
+  grobTree(rectGrob(gp=gpar(fill=ii, alpha=0.5)), textGrob(ii)))
+grid.arrange(grobs=gs,
+             layout_matrix = lay)
+
+
+# Saving as an image object
+tiff(file="./MSc_plots/PaperFigs/cap_ords.tiff", height=6.5, width=8.5, units="in", res=400)
+
+# End ggplot arrangement
+grid <- grid.arrange(simpplot_draw, capplots,
+                     layout_matrix = lay)
+dev.off()
+
+
+#
