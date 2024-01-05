@@ -222,6 +222,13 @@ areagrp <- areagrp %>%
 ### Merging density, canopy height, biomass, and area data 
 kelpdat <- merge(kelpgrp, areagrp, by = "SiteName", all=TRUE)
 
+# Filtering out the outlier site (Second Beach South) and no kelp sites (Less Dangerous Bay & Wizard I North)
+kelpdat <- kelpdat %>%
+  filter(SiteName != "Second Beach South") %>%
+  filter(SiteName != "Less Dangerous Bay") %>%
+  filter(SiteName != "Wizard Islet North")
+
+
 # saving a .csv file of the kelp metrics by site
 write.csv(kelpdat, "./MSc_data/Data_new/kelp_metrics_2022.csv", row.names=F)
 
@@ -229,15 +236,25 @@ write.csv(kelpdat, "./MSc_data/Data_new/kelp_metrics_2022.csv", row.names=F)
 
 #### Plotting out the data ----
 
+# Filtering out the outlier site (Second Beach South) and no kelp sites (Less Dangerous Bay & Wizard I North)
+# from the dataframe retaining all ungrouped data points ('kelptog')
+# the raw data points are needed for the following plots, but these sites need to be excluded
+kelptog_clean <- kelptog %>%
+  filter(SiteName != "Second Beach South") %>%
+  filter(SiteName != "Less Dangerous Bay") %>%
+  filter(SiteName != "Wizard Islet North") %>%
+  droplevels()
+
+
 ## Site specific density (summed Macro & Nereo) # Ordered by increasing density
 
 d1 <- ggplot() +
-  geom_point(data=kelptog, size=2, alpha=0.2, aes(x=reorder(SiteName,Kelp), y=Kelp)) +
   geom_pointrange(data=kelpdat, size=0.5, aes(x=reorder(SiteName,DensityM), y=DensityM, ymin=DensityM-DensitySD, ymax=DensityM+DensitySD)) +
+  geom_point(data=kelptog_clean, size=2, alpha=0.2, aes(x=SiteName, y=Kelp)) +
   scale_y_continuous(limits=c(-0.8,25), breaks=c(0,6,12,18,24)) +
   theme_classic() +
   theme(
-        # axis.text.x = element_text(color="black", size="9.5", angle=45, vjust=0.89, hjust=0.85),
+        # axis.text.x = element_text(color="black", size="9.5", angle=45, vjust=0.89, hjust=0.89),
         axis.text.x = element_blank(),
         axis.text.y = element_text(color="black", size="10"),
         axis.title.y = element_text(color="black", size="12", vjust=1)) +
@@ -249,34 +266,32 @@ d1
 ## Site specific canopy height # Ordered by increasing density
 
 c1 <- ggplot() + 
-  geom_point(data=kelptog, size=2, alpha=0.2, aes(x=reorder(SiteName,Kelp), y=HeightT)) +
   geom_pointrange(data=kelpdat, size=0.5, aes(x=reorder(SiteName,DensityM), y=HeightM, ymin=HeightM-HeightSD, ymax=HeightM+HeightSD)) +
+  geom_point(data=kelptog_clean, size=2, alpha=0.2, aes(x=SiteName, y=HeightT)) +
   scale_y_continuous(limits=c(-0.4,7), breaks=c(0,2,4,6)) +
   theme_classic() +
   theme(
-        # axis.text.x = element_text(color="black", size="9.5", angle=45, vjust=0.89, hjust=0.85),
+        # axis.text.x = element_text(color="black", size="9.5", angle=45, vjust=0.89, hjust=0.89),
         axis.text.x = element_blank(),
         axis.text.y = element_text(color="black", size="10"),
         axis.title.y = element_text(color="black", size="12", vjust=1)) +
-  xlab("") + ylab("Canopy height (m)") +
-  annotate("text", size=3, x=1, y=0.1, label="NA")
+  xlab("") + ylab("Canopy height (m)") 
 c1
 
 
 ## Site specific biomass # Ordered by increasing density
 
 b1 <- ggplot() + 
-  geom_point(data=kelptog, size=2, alpha=0.2, aes(x=reorder(SiteName,Kelp), y=Biomassm2kg)) + # Plotting the background data
   geom_pointrange(data=kelpdat, size=0.5, aes(x=reorder(SiteName,DensityM), y=BiomassM, ymin=BiomassM-BiomassSD, ymax=BiomassM+BiomassSD)) +
+  geom_point(data=kelptog_clean, size=2, alpha=0.2, aes(x=reorder(SiteName,Kelp), y=Biomassm2kg)) +
   scale_y_continuous(limits=c(-0.4,5.5), breaks=c(0,1.5,3,4.5)) +
   theme_classic() +
   theme(
-        # axis.text.x = element_text(color="black", size="9.5", angle=45, vjust=0.89, hjust=0.85),
-        axis.text.x = element_blank(), 
+        # axis.text.x = element_text(color="black", size="9.5", angle=45, vjust=0.89, hjust=0.89),
+        axis.text.x = element_blank(),
         axis.text.y = element_text(color="black", size="10"),
         axis.title.y = element_text(color="black", size="12", vjust=1)) +
-  xlab("") + ylab(expression("Biomass (kg wet weight /m"^2*")")) +
-  annotate("text", size=3, x=1, y=0.1, label="NA")
+  xlab("") + ylab(expression("Biomass (kg wet weight /m"^2*")"))
 b1
 
 
@@ -284,22 +299,19 @@ b1
 
 a1 <- ggplot() + 
   geom_point(data=kelpdat, size=2, aes(x=reorder(SiteName,DensityM), y=Area_m2)) +
-  # scale_y_continuous(limits=c(-0.4,9), breaks=c(0,2,4,6,8)) +
   theme_classic() +
   scale_y_continuous(limits=c(-500,15000)) +
-  theme(axis.text.x = element_text(color="black", size="9.5", angle=45, vjust=0.89, hjust=0.85),
+  theme(axis.text.x = element_text(color="black", size="9.5", angle=45, vjust=0.89, hjust=0.89),
         axis.text.y = element_text(color="black", size="10"),
         axis.title.y = element_text(color="black", size="12", vjust=1)) +
-  xlab("") + ylab(expression("Forest area (/m"^2*")")) +
-  annotate("text", size=3, x=1, y=300, label="NA") +
-  annotate("text", size=3, x=2, y=300, label="NA")
+  xlab("") + ylab(expression("Forest area (/m"^2*")")) 
 a1
 
 
 
 ## Grouped multi-panel plot ##
 
-pdf(file="./MSc_plots/KelpMetricsAll.pdf", height = 12, width = 6)
+tiff(file="./MSc_plots/KelpMetricsAll.tiff", height = 12, width = 6, units = "in", res=400)
 
 ggarrange(d1, c1, b1, a1, ncol=1, align="v", heights=c(1,1,1,1.4)) # Generating the paneled plot
 
