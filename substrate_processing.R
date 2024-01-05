@@ -268,13 +268,22 @@ write.csv(rawsite, "./MSc_data/Data_new/Substrates_2022.csv", row.names=F)
 
 # Melting data into long format
 library(reshape2)
+
 rawplot <- rawsite %>%
   melt(id.vars="SiteName")
+
 
 # Pulling out key groups of interest
 subs <- c("Pturf", "Punderstory", "Pcanopy", "Phardbottom", "Psoftbottom", "Panimal")
 rawplot_subs <- rawplot %>%
   filter(variable %in% subs)
+
+
+# Filtering out the 'no kelp' sites that were not used in analyses
+rawplot_subs <- rawplot_subs %>%
+  filter(SiteName != "Wizard Islet North") %>%
+  filter(SiteName != "Less Dangerous Bay") %>%
+  droplevels()
 
   
 ### Plotting by substrate types
@@ -286,16 +295,18 @@ plotsubs <- ggplot(rawplot_subs) +
   geom_col(aes(x = SiteName, 
                y = value,
                fill = variable)) +
-  ylab("Mean percent cover") +
   theme_classic() +
   scale_fill_manual(values=met.brewer("Redon"),
                       labels = c("Understory algae", "Canopy kelps", "Hard bottom", "Soft bottom", "Animal", "Turf algae"), name = NULL) +
-  theme(axis.text.x = element_text(angle = 70, hjust = 1, vjust = 1, size = 10),
+  theme(axis.text.x = element_text(color="black", angle = 70, hjust = 1, vjust = 1, size = 10),
+        legend.text = element_text(color="black", size = 10),
         legend.spacing.y = unit(0.25, "cm"),
         legend.key.size = unit(0.9, "cm"),
-        axis.text.y = element_text(size = 10),
+        axis.text.y = element_text(color="black", size = 10),
         axis.title.x=element_blank(),
-        axis.title.y=element_text(size=12))
+        axis.title.y=element_text(size=12)) +
+  ylab("Substrate cover (%)")
+
 plotsubs
 
 dev.off()
