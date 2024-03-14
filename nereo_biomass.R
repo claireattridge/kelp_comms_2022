@@ -13,31 +13,34 @@ nereo <- read.csv("./MSc_data/Data_new/nereo_biomass_2022.csv")
 
 # converting from circumference to diameter
 nereo <- nereo %>%
-  mutate(Sub_diam_cm = (Sub_circ_cm/3.14159))
+  mutate(Sub_diam_cm = (Sub_circ_cm/3.14159)) %>%
+  mutate(SiteName = as.factor(SiteName))
 
 #### Plots of relationships ----
 
+## The site-combined model fig for the paper supplement
 
-tiff(file="./MSc_plots/Nereo_relation_tog.tiff", height = 5, width = 7, units = "in", res=600)
+tiff(file="./MSc_plots/SuppFigs/Nereo_relation_tog.tiff", height = 5, width = 7, units = "in", res=600)
 
 ## Plot of sub-bulb (cm) to biomass (g) relationship by all sites
 n0 <- ggplot(data=nereo, aes(x=Sub_diam_cm, y=Biomass_g)) +
-  geom_point(size=3, shape=21) +
+  geom_point(size=3, stroke=0.5, aes(shape=SiteName)) +
   geom_smooth(method="lm", formula = y ~ x + I(x^2), se=T) + # Lm quadratic
+  scale_shape_manual(values = c(21,22,24)) +
   scale_color_manual(values=met.brewer("Lakota", 3)) +
   theme_classic() +
   scale_x_continuous(breaks=c(0,2,4,6), limits=c(0,6.5)) +
   scale_y_continuous(breaks=c(0,2000,4000,6000), limits=c(-500,6300)) +
   theme(
-    legend.position = c(0.2,0.8),
+    legend.position = "top",
     legend.title = element_blank(),
-    legend.text = element_text(color="black", size=11),
+    legend.text = element_text(color="black", size=9),
     axis.text.x = element_text(color="black", size="9.5"),
     axis.text.y = element_text(color="black", size="10"),
     axis.title.x = element_text(color="black", size="11"), # For plotting purposes
     axis.title.y = element_text(color="black", size="11")) +
   guides(color=guide_legend(override.aes=list(fill=NA))) + # Removing the grey background on legend from the 'se'
-  xlab("Sub-bulb diameter (cm)") + ylab("Biomass (g)") +
+  xlab("Sub-bulb diameter (cm)") + ylab("Wet weight biomass (g)") +
   geom_text(aes(1.5,5750, label=(paste(expression("y = 150.7966 x"^2*" - 216.2721 x + 315.0124")))),parse = TRUE, size=3.5) +
   geom_text(aes(1.35,5200, label=(paste(expression("R"^2*" = 0.81")))),parse = TRUE, size=3.5) # Adding in the R squared value
 n0
@@ -47,9 +50,11 @@ dev.off()
 
 
 
-tiff(file="./MSc_plots/Nereo_relation_p1.tiff", height = 5, width = 7, units = "in", res=600)
 
 ## Plot of sub-bulb (cm) to biomass (g) relationship split by sites
+
+tiff(file="./MSc_plots/Nereo_relation_p1.tiff", height = 5, width = 7, units = "in", res=600)
+
 n1 <- ggplot(data=nereo, aes(x=Sub_diam_cm, y=Biomass_g, color=SiteName, group=SiteName, linetype=SiteName)) +
   geom_point(size=3, shape=21) +
   # geom_smooth(method="gam", formula = y ~ s(x, bs="cs", k=3), se=F) + # GAM
@@ -75,7 +80,7 @@ dev.off()
 
 
 
-### So it looks like Second Beach South relationship is unique from the other two sites
+### So it looks like Second Beach South relationship may be unique from the other two sites
 ### This suggests that the sub-bulb relationship is likely depth or temp rather than spatially dependent
 ### We may have to split! 
 
