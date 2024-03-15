@@ -275,6 +275,7 @@ rawplot <- rawsite %>%
 
 # Pulling out key groups of interest
 subs <- c("Pturf", "Punderstory", "Pcanopy", "Phardbottom", "Psoftbottom", "Panimal")
+
 rawplot_subs <- rawplot %>%
   filter(variable %in% subs)
 
@@ -285,16 +286,33 @@ rawplot_subs <- rawplot_subs %>%
   filter(SiteName != "Less Dangerous Bay") %>%
   droplevels()
 
+
+
+# Getting the image sample size per site for plotting
+rawSS <- raw %>% 
+  drop_na("TotalPts") %>%
+  group_by(SiteName) %>%
+  summarise(n = n())
+
+# Joining the sample sizes to the plotting frame
+rawplot_ready <- rawplot_subs %>%
+  left_join(rawSS, by="SiteName") %>%
+  mutate(SiteName = as.factor(SiteName), n=as.character(n))
+
   
+
 ### Plotting by substrate types
   
 tiff(file="./MSc_plots/SuppFigs/SubstratePercentages.tiff", height = 6, width = 8, units = "in", res=300)
 
 # All bottom types
-plotsubs <- ggplot(rawplot_subs) +
+plotsubs <- ggplot(rawplot_ready) +
   geom_col(aes(x = SiteName, 
                y = value,
                fill = variable)) +
+  geom_text(
+    data = distinct(rawplot_ready, SiteName, n),
+    aes(x = SiteName, y = 105, label = n), size=3) +
   theme_classic() +
   scale_fill_manual(values=met.brewer("Redon"),
                       labels = c("Understory algae", "Canopy kelps", "Hard bottom", "Soft bottom", "Animal", "Turf algae"), name = NULL) +
@@ -308,6 +326,7 @@ plotsubs <- ggplot(rawplot_subs) +
   ylab("Substrate cover (%)")
 
 plotsubs
+
 
 dev.off()
 
