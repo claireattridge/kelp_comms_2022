@@ -222,9 +222,8 @@ areagrp <- areagrp %>%
 ### Merging density, canopy height, biomass, and area data 
 kelpdat <- merge(kelpgrp, areagrp, by = "SiteName", all=TRUE)
 
-# Filtering out the outlier site (Second Beach South) and no kelp sites (Less Dangerous Bay & Wizard I North)
+# Filtering out the no kelp sites (Less Dangerous Bay & Wizard I North)
 kelpdat <- kelpdat %>%
-  filter(SiteName != "Second Beach South") %>%
   filter(SiteName != "Less Dangerous Bay") %>%
   filter(SiteName != "Wizard Islet North")
 
@@ -236,14 +235,27 @@ write.csv(kelpdat, "./MSc_data/Data_new/kelp_metrics_2022.csv", row.names=F)
 
 #### Plotting out the data ----
 
-# Filtering out the outlier site (Second Beach South) and no kelp sites (Less Dangerous Bay & Wizard I North)
+
+### CLEANING FRAMES & ADDING COLUMNS FOR PLOTTING
+
+## Calling the kelp data sheet
+kelpdat <- read_csv("./MSc_data/Data_new/kelp_metrics_2022.csv")
+
+
+# Filtering out the no kelp sites (Less Dangerous Bay & Wizard I North)
 # from the dataframe retaining all ungrouped data points ('kelptog')
 # the raw data points are needed for the following plots, but these sites need to be excluded
 kelptog_clean <- kelptog %>%
-  filter(SiteName != "Second Beach South") %>%
   filter(SiteName != "Less Dangerous Bay") %>%
   filter(SiteName != "Wizard Islet North") %>%
   droplevels()
+
+
+# saving a .csv file of the clean raw kelp data points
+write.csv(kelptog_clean, "./MSc_data/Data_new/kelp_rawdata_clean_2022.csv", row.names=F)
+
+
+### SUPPLEMENTAL FIGURE OF KELP FOREST ATTRIBUTES
 
 
 ## Site specific density (summed Macro & Nereo) # Ordered by increasing density
@@ -316,6 +328,7 @@ tiff(file="./MSc_plots/KelpMetricsAll.tiff", height = 12, width = 6, units = "in
 ggarrange(d1, c1, b1, a1, ncol=1, align="v", heights=c(1,1,1,1.4)) # Generating the paneled plot
 
 dev.off() 
+
 
 
 #### Silly plot for a presentation ----
