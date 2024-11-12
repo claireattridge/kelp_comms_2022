@@ -1,829 +1,641 @@
 "site_name","directions","quadrant","fetch"
 "Between Scotts and Bradys",0,"North",60.6900460480126
-"Between Scotts and Bradys",10,"North",47.1612562355426
-"Between Scotts and Bradys",20,"North",41.4506787485074
-"Between Scotts and Bradys",30,"North",39.5948440057853
-"Between Scotts and Bradys",40,"North",39.0332212336167
-"Between Scotts and Bradys",50,"East",39.6759797564256
-"Between Scotts and Bradys",60,"East",42.5359952855228
-"Between Scotts and Bradys",70,"East",49.8387624862773
-"Between Scotts and Bradys",80,"East",59.6164097651783
+"Between Scotts and Bradys",11.25,"North",45.9724594509989
+"Between Scotts and Bradys",22.5,"North",40.8526714389666
+"Between Scotts and Bradys",33.75,"North",39.2416551519938
+"Between Scotts and Bradys",45,"East",39.2022356074877
+"Between Scotts and Bradys",56.25,"East",41.1488801618875
+"Between Scotts and Bradys",67.5,"East",47.5591619248178
+"Between Scotts and Bradys",78.75,"East",59.6327204061319
 "Between Scotts and Bradys",90,"East",56.62562642782
-"Between Scotts and Bradys",100,"East",51.3819408501514
-"Between Scotts and Bradys",110,"East",47.8413889868755
-"Between Scotts and Bradys",120,"East",42.1638357467029
-"Between Scotts and Bradys",130,"East",26.6942141666164
-"Between Scotts and Bradys",140,"South",19.1214120434412
-"Between Scotts and Bradys",150,"South",14.0369508932407
-"Between Scotts and Bradys",160,"South",11.0799020310986
-"Between Scotts and Bradys",170,"South",8.60276326806727
+"Between Scotts and Bradys",101.25,"East",50.8990400582412
+"Between Scotts and Bradys",112.5,"East",46.7599011080474
+"Between Scotts and Bradys",123.75,"East",36.2574110342145
+"Between Scotts and Bradys",135,"South",22.1971756025651
+"Between Scotts and Bradys",146.25,"South",15.6435947562094
+"Between Scotts and Bradys",157.5,"South",11.7746779352998
+"Between Scotts and Bradys",168.75,"South",8.83618808044686
 "Between Scotts and Bradys",180,"South",7.20991847243207
-"Between Scotts and Bradys",190,"South",6.37188178868088
-"Between Scotts and Bradys",200,"South",5.86809979865698
-"Between Scotts and Bradys",210,"South",5.59571188720663
-"Between Scotts and Bradys",220,"South",5.50740703109608
-"Between Scotts and Bradys",230,"West",5.58902796864849
-"Between Scotts and Bradys",240,"West",5.85364061099602
-"Between Scotts and Bradys",250,"West",6.34699060297702
-"Between Scotts and Bradys",260,"West",7.16904070069466
+"Between Scotts and Bradys",191.25,"South",6.29348833683985
+"Between Scotts and Bradys",202.5,"South",5.78085455189251
+"Between Scotts and Bradys",213.75,"South",5.5423939798372
+"Between Scotts and Bradys",225,"West",5.52680570613307
+"Between Scotts and Bradys",236.25,"West",5.73092326658114
+"Between Scotts and Bradys",247.5,"West",6.19801880013943
+"Between Scotts and Bradys",258.75,"West",7.04267902436767
 "Between Scotts and Bradys",270,"West",8.53356183995493
-"Between Scotts and Bradys",280,"West",14.6524068808115
-"Between Scotts and Bradys",290,"West",2771.95726494559
-"Between Scotts and Bradys",300,"West",2914.22668820103
-"Between Scotts and Bradys",310,"West",2873.42887951293
-"Between Scotts and Bradys",320,"North",2055.83927175361
-"Between Scotts and Bradys",330,"North",2005.04881235265
-"Between Scotts and Bradys",340,"North",3815.70813591522
-"Between Scotts and Bradys",350,"North",4520.67941291878
+"Between Scotts and Bradys",281.25,"West",2783.06133383398
+"Between Scotts and Bradys",292.5,"West",2893.66731895064
+"Between Scotts and Bradys",303.75,"West",14616.9326611692
+"Between Scotts and Bradys",315,"North",2389.11328880498
+"Between Scotts and Bradys",326.25,"North",2080.17540937627
+"Between Scotts and Bradys",337.5,"North",3875.95756268367
+"Between Scotts and Bradys",348.75,"North",4192.42497813073
 "Bordelais Island",0,"North",11470.4529894379
-"Bordelais Island",10,"North",16425.9628424309
-"Bordelais Island",20,"North",16110.3186451825
-"Bordelais Island",30,"North",735.350255606082
-"Bordelais Island",40,"North",569.929493239638
-"Bordelais Island",50,"East",619.41378112622
-"Bordelais Island",60,"East",619.327098655079
-"Bordelais Island",70,"East",683.651879356778
-"Bordelais Island",80,"East",5556.56558445886
+"Bordelais Island",11.25,"North",60000.0772767835
+"Bordelais Island",22.5,"North",767.505667790072
+"Bordelais Island",33.75,"North",311.275219357543
+"Bordelais Island",45,"East",583.655239365289
+"Bordelais Island",56.25,"East",647.162664148884
+"Bordelais Island",67.5,"East",636.519284310544
+"Bordelais Island",78.75,"East",5735.16778124752
 "Bordelais Island",90,"East",4406.70745155588
-"Bordelais Island",100,"East",3551.83920190605
-"Bordelais Island",110,"East",3668.13422049286
-"Bordelais Island",120,"East",3835.16167307898
-"Bordelais Island",130,"East",3636.29167312182
-"Bordelais Island",140,"South",2845.13518848539
-"Bordelais Island",150,"South",2668.48759617268
-"Bordelais Island",160,"South",2894.71801354212
-"Bordelais Island",170,"South",60000.0242576618
+"Bordelais Island",101.25,"East",3714.89417302879
+"Bordelais Island",112.5,"East",3934.63903926929
+"Bordelais Island",123.75,"East",3340.60645503434
+"Bordelais Island",135,"South",3119.22837425316
+"Bordelais Island",146.25,"South",2836.1512840471
+"Bordelais Island",157.5,"South",3202.38867396368
+"Bordelais Island",168.75,"South",60000.0772767835
 "Bordelais Island",180,"South",60000.0000020833
-"Bordelais Island",190,"South",59999.8506091474
-"Bordelais Island",200,"South",118.766238150267
-"Bordelais Island",210,"South",106.936113652794
-"Bordelais Island",220,"South",108.687097113495
-"Bordelais Island",230,"West",110.309294018999
-"Bordelais Island",240,"West",124.51380611759
-"Bordelais Island",250,"West",100.112078200818
-"Bordelais Island",260,"West",76.5481498509002
+"Bordelais Island",191.25,"South",59999.8821867177
+"Bordelais Island",202.5,"South",113.153902708263
+"Bordelais Island",213.75,"South",107.35699078849
+"Bordelais Island",225,"West",108.681344261989
+"Bordelais Island",236.25,"West",118.968150666388
+"Bordelais Island",247.5,"West",111.001211020347
+"Bordelais Island",258.75,"West",79.5579005262462
 "Bordelais Island",270,"West",54.876225118991
-"Bordelais Island",280,"West",48.703612210773
-"Bordelais Island",290,"West",47.1866193760054
-"Bordelais Island",300,"West",48.4560985098723
-"Bordelais Island",310,"West",51.4007568974555
-"Bordelais Island",320,"North",57.246854820007
-"Bordelais Island",330,"North",68.9068159980644
-"Bordelais Island",340,"North",87.62764233119
-"Bordelais Island",350,"North",10074.9025929828
+"Bordelais Island",281.25,"West",48.4119596925905
+"Bordelais Island",292.5,"West",47.3626392836265
+"Bordelais Island",303.75,"West",49.3440921365475
+"Bordelais Island",315,"North",53.6503895117037
+"Bordelais Island",326.25,"North",63.7852385576917
+"Bordelais Island",337.5,"North",81.7254862911246
+"Bordelais Island",348.75,"North",10266.1862239165
 "Cable Beach (Blow Hole)",0,"North",3630.9267615055
-"Cable Beach (Blow Hole)",10,"North",6131.90301295449
-"Cable Beach (Blow Hole)",20,"North",6971.58709982734
-"Cable Beach (Blow Hole)",30,"North",9231.1834707023
-"Cable Beach (Blow Hole)",40,"North",14479.404670038
-"Cable Beach (Blow Hole)",50,"East",855.304412542353
-"Cable Beach (Blow Hole)",60,"East",432.631577057197
-"Cable Beach (Blow Hole)",70,"East",449.521865972581
-"Cable Beach (Blow Hole)",80,"East",410.665494094202
+"Cable Beach (Blow Hole)",11.25,"North",6201.20183817498
+"Cable Beach (Blow Hole)",22.5,"North",6987.24322912423
+"Cable Beach (Blow Hole)",33.75,"North",9750.95121499164
+"Cable Beach (Blow Hole)",45,"East",1023.53409743074
+"Cable Beach (Blow Hole)",56.25,"East",759.117299206472
+"Cable Beach (Blow Hole)",67.5,"East",456.945278711862
+"Cable Beach (Blow Hole)",78.75,"East",415.217865845639
 "Cable Beach (Blow Hole)",90,"East",333.449098865036
-"Cable Beach (Blow Hole)",100,"East",247.511415562723
-"Cable Beach (Blow Hole)",110,"East",229.517037452963
-"Cable Beach (Blow Hole)",120,"East",35.7598160806516
-"Cable Beach (Blow Hole)",130,"East",26.598741167088
-"Cable Beach (Blow Hole)",140,"South",26.800499677613
-"Cable Beach (Blow Hole)",150,"South",27.8582737460784
-"Cable Beach (Blow Hole)",160,"South",33.8211515163179
-"Cable Beach (Blow Hole)",170,"South",38.0076793189581
+"Cable Beach (Blow Hole)",101.25,"East",242.142858177538
+"Cable Beach (Blow Hole)",112.5,"East",223.916705387913
+"Cable Beach (Blow Hole)",123.75,"East",29.4601719685526
+"Cable Beach (Blow Hole)",135,"South",26.59764310589
+"Cable Beach (Blow Hole)",146.25,"South",27.3536961131881
+"Cable Beach (Blow Hole)",157.5,"South",31.9443031004709
+"Cable Beach (Blow Hole)",168.75,"South",37.510111296247
 "Cable Beach (Blow Hole)",180,"South",40.3027729703106
-"Cable Beach (Blow Hole)",190,"South",41.1193071706176
-"Cable Beach (Blow Hole)",200,"South",41.3583537131908
-"Cable Beach (Blow Hole)",210,"South",42.9116763940393
-"Cable Beach (Blow Hole)",220,"South",59.968444317676
-"Cable Beach (Blow Hole)",230,"West",4803.44723450182
-"Cable Beach (Blow Hole)",240,"West",59999.6326089585
-"Cable Beach (Blow Hole)",250,"West",59999.6613563776
-"Cable Beach (Blow Hole)",260,"West",5171.22558843858
+"Cable Beach (Blow Hole)",191.25,"South",41.0805084107698
+"Cable Beach (Blow Hole)",202.5,"South",41.6175621160451
+"Cable Beach (Blow Hole)",213.75,"South",46.2382961057647
+"Cable Beach (Blow Hole)",225,"West",1766.96867431544
+"Cable Beach (Blow Hole)",236.25,"West",59999.6789864746
+"Cable Beach (Blow Hole)",247.5,"West",59999.6540886696
+"Cable Beach (Blow Hole)",258.75,"West",59999.5874156647
 "Cable Beach (Blow Hole)",270,"West",3773.21724151308
-"Cable Beach (Blow Hole)",280,"West",2724.10753555344
-"Cable Beach (Blow Hole)",290,"West",2294.56070913256
-"Cable Beach (Blow Hole)",300,"West",2407.01122673932
-"Cable Beach (Blow Hole)",310,"West",2504.51143414776
-"Cable Beach (Blow Hole)",320,"North",2834.2268518857
-"Cable Beach (Blow Hole)",330,"North",12367.1619403014
-"Cable Beach (Blow Hole)",340,"North",2658.06423509948
-"Cable Beach (Blow Hole)",350,"North",2450.62484767396
+"Cable Beach (Blow Hole)",281.25,"West",2696.44095582969
+"Cable Beach (Blow Hole)",292.5,"West",2371.25020718618
+"Cable Beach (Blow Hole)",303.75,"West",2303.3803853104
+"Cable Beach (Blow Hole)",315,"North",2501.58182101207
+"Cable Beach (Blow Hole)",326.25,"North",2949.82898233744
+"Cable Beach (Blow Hole)",337.5,"North",2681.03386491401
+"Cable Beach (Blow Hole)",348.75,"North",2487.31931693872
 "Danvers Danger Rock",0,"North",2141.00976608297
-"Danvers Danger Rock",10,"North",2268.16866354377
-"Danvers Danger Rock",20,"North",3273.31656239539
-"Danvers Danger Rock",30,"North",11007.8285697672
-"Danvers Danger Rock",40,"North",6801.35267770178
-"Danvers Danger Rock",50,"East",1386.48548851564
-"Danvers Danger Rock",60,"East",1508.48664815265
-"Danvers Danger Rock",70,"East",98.1762075347448
-"Danvers Danger Rock",80,"East",108.748119370104
+"Danvers Danger Rock",11.25,"North",2293.57137139709
+"Danvers Danger Rock",22.5,"North",3676.98606679398
+"Danvers Danger Rock",33.75,"North",7967.20903472323
+"Danvers Danger Rock",45,"East",3767.40087176146
+"Danvers Danger Rock",56.25,"East",7713.02486597461
+"Danvers Danger Rock",67.5,"East",107.871030813032
+"Danvers Danger Rock",78.75,"East",102.048968646372
 "Danvers Danger Rock",90,"East",180.644246320473
-"Danvers Danger Rock",100,"East",154.648436600217
-"Danvers Danger Rock",110,"East",139.131328094856
-"Danvers Danger Rock",120,"East",129.193411342677
-"Danvers Danger Rock",130,"East",124.45258930779
-"Danvers Danger Rock",140,"South",125.946665096294
-"Danvers Danger Rock",150,"South",135.113952765533
-"Danvers Danger Rock",160,"South",338.250550944288
-"Danvers Danger Rock",170,"South",363.722989598064
+"Danvers Danger Rock",101.25,"East",152.239819151344
+"Danvers Danger Rock",112.5,"East",136.237030993043
+"Danvers Danger Rock",123.75,"East",126.912557405627
+"Danvers Danger Rock",135,"South",124.182132529639
+"Danvers Danger Rock",146.25,"South",130.818758512521
+"Danvers Danger Rock",157.5,"South",156.883101970202
+"Danvers Danger Rock",168.75,"South",359.676450332709
 "Danvers Danger Rock",180,"South",422.992329574821
-"Danvers Danger Rock",190,"South",504.171044122323
-"Danvers Danger Rock",200,"South",952.847720075501
-"Danvers Danger Rock",210,"South",1469.70581878755
-"Danvers Danger Rock",220,"South",5562.88398872886
-"Danvers Danger Rock",230,"West",60000.2067138106
-"Danvers Danger Rock",240,"West",5920.792437941
-"Danvers Danger Rock",250,"West",60000.2251719109
-"Danvers Danger Rock",260,"West",4994.91247083177
+"Danvers Danger Rock",191.25,"South",519.522832938351
+"Danvers Danger Rock",202.5,"South",1175.43151796549
+"Danvers Danger Rock",213.75,"South",1623.54548487923
+"Danvers Danger Rock",225,"West",60000.2024150752
+"Danvers Danger Rock",236.25,"West",8165.92963660082
+"Danvers Danger Rock",247.5,"West",6687.28558639497
+"Danvers Danger Rock",258.75,"West",5351.20041842558
 "Danvers Danger Rock",270,"West",4162.12428510049
-"Danvers Danger Rock",280,"West",2894.46592281261
-"Danvers Danger Rock",290,"West",2364.13433268967
-"Danvers Danger Rock",300,"West",2365.20673116715
-"Danvers Danger Rock",310,"West",2432.82404885719
-"Danvers Danger Rock",320,"North",2423.62471432766
-"Danvers Danger Rock",330,"North",2144.92523704732
-"Danvers Danger Rock",340,"North",2183.41249234354
-"Danvers Danger Rock",350,"North",2222.54509582447
+"Danvers Danger Rock",281.25,"West",2783.56367806065
+"Danvers Danger Rock",292.5,"West",2327.52060365456
+"Danvers Danger Rock",303.75,"West",2374.23692666008
+"Danvers Danger Rock",315,"North",2384.03412132702
+"Danvers Danger Rock",326.25,"North",2223.68126388316
+"Danvers Danger Rock",337.5,"North",2144.19533673768
+"Danvers Danger Rock",348.75,"North",2292.37152801535
 "Dixon Island Back (Bay)",0,"North",4197.26264049216
-"Dixon Island Back (Bay)",10,"North",4535.50394487666
-"Dixon Island Back (Bay)",20,"North",5026.30475283365
-"Dixon Island Back (Bay)",30,"North",13973.6780330133
-"Dixon Island Back (Bay)",40,"North",1285.45866034598
-"Dixon Island Back (Bay)",50,"East",1017.56384115879
-"Dixon Island Back (Bay)",60,"East",612.829750212005
-"Dixon Island Back (Bay)",70,"East",530.469777007229
-"Dixon Island Back (Bay)",80,"East",468.858207123651
+"Dixon Island Back (Bay)",11.25,"North",4666.04854494447
+"Dixon Island Back (Bay)",22.5,"North",5164.50412250568
+"Dixon Island Back (Bay)",33.75,"North",1076.53658059778
+"Dixon Island Back (Bay)",45,"East",1103.64255822324
+"Dixon Island Back (Bay)",56.25,"East",682.49442092423
+"Dixon Island Back (Bay)",67.5,"East",550.007883886741
+"Dixon Island Back (Bay)",78.75,"East",477.045004195557
 "Dixon Island Back (Bay)",90,"East",438.465256908908
-"Dixon Island Back (Bay)",100,"East",529.922553004547
-"Dixon Island Back (Bay)",110,"East",379.76174517295
-"Dixon Island Back (Bay)",120,"East",410.160918996394
-"Dixon Island Back (Bay)",130,"East",472.37041394547
-"Dixon Island Back (Bay)",140,"South",313.130893189935
-"Dixon Island Back (Bay)",150,"South",297.355161011802
-"Dixon Island Back (Bay)",160,"South",283.003554640911
-"Dixon Island Back (Bay)",170,"South",299.165554192722
+"Dixon Island Back (Bay)",101.25,"East",524.011657520917
+"Dixon Island Back (Bay)",112.5,"East",367.946205939113
+"Dixon Island Back (Bay)",123.75,"East",438.130894993232
+"Dixon Island Back (Bay)",135,"South",354.672324235441
+"Dixon Island Back (Bay)",146.25,"South",300.425339731178
+"Dixon Island Back (Bay)",157.5,"South",287.405594325997
+"Dixon Island Back (Bay)",168.75,"South",295.45226476467
 "Dixon Island Back (Bay)",180,"South",326.90674244921
-"Dixon Island Back (Bay)",190,"South",9.59696655303291
-"Dixon Island Back (Bay)",200,"South",7.38957408121165
-"Dixon Island Back (Bay)",210,"South",6.63093244845907
-"Dixon Island Back (Bay)",220,"South",6.18395980949608
-"Dixon Island Back (Bay)",230,"West",5.96318360146259
-"Dixon Island Back (Bay)",240,"West",5.93164469249175
-"Dixon Island Back (Bay)",250,"West",6.08433076150527
-"Dixon Island Back (Bay)",260,"West",6.44611913738705
+"Dixon Island Back (Bay)",191.25,"South",9.10192823000439
+"Dixon Island Back (Bay)",202.5,"South",7.16319508929247
+"Dixon Island Back (Bay)",213.75,"South",6.43277653907513
+"Dixon Island Back (Bay)",225,"West",6.04846187367726
+"Dixon Island Back (Bay)",236.25,"West",5.92223531963975
+"Dixon Island Back (Bay)",247.5,"West",6.02808715326587
+"Dixon Island Back (Bay)",258.75,"West",6.38773214875568
 "Dixon Island Back (Bay)",270,"West",7.08245108695701
-"Dixon Island Back (Bay)",280,"West",8.13233114591154
-"Dixon Island Back (Bay)",290,"West",13.7760276857145
-"Dixon Island Back (Bay)",300,"West",3890.16736987168
-"Dixon Island Back (Bay)",310,"West",3533.28259079609
-"Dixon Island Back (Bay)",320,"North",3521.91267367042
-"Dixon Island Back (Bay)",330,"North",3557.42146063576
-"Dixon Island Back (Bay)",340,"North",3296.67844671285
-"Dixon Island Back (Bay)",350,"North",3236.41369556478
+"Dixon Island Back (Bay)",281.25,"West",8.30481145908397
+"Dixon Island Back (Bay)",292.5,"West",17.941268347059
+"Dixon Island Back (Bay)",303.75,"West",3752.27114469795
+"Dixon Island Back (Bay)",315,"North",3503.41935520841
+"Dixon Island Back (Bay)",326.25,"North",3534.3771461571
+"Dixon Island Back (Bay)",337.5,"North",3301.19080218335
+"Dixon Island Back (Bay)",348.75,"North",3320.79688484246
 "Dodger Channel 1",0,"North",536.87841322203
-"Dodger Channel 1",10,"North",517.184308560729
-"Dodger Channel 1",20,"North",441.260837472105
-"Dodger Channel 1",30,"North",387.754250735619
-"Dodger Channel 1",40,"North",294.685658879906
-"Dodger Channel 1",50,"East",68.2026623837507
-"Dodger Channel 1",60,"East",52.1972426210885
-"Dodger Channel 1",70,"East",27.2777173705292
-"Dodger Channel 1",80,"East",22.0625706460768
+"Dodger Channel 1",11.25,"North",509.097129613245
+"Dodger Channel 1",22.5,"North",411.479779149451
+"Dodger Channel 1",33.75,"North",368.639281018116
+"Dodger Channel 1",45,"East",74.1954313059565
+"Dodger Channel 1",56.25,"East",61.3095494673833
+"Dodger Channel 1",67.5,"East",29.1473896098645
+"Dodger Channel 1",78.75,"East",22.5668742621254
 "Dodger Channel 1",90,"East",19.0062941215001
-"Dodger Channel 1",100,"East",18.4927680640847
-"Dodger Channel 1",110,"East",18.8794926702408
-"Dodger Channel 1",120,"East",23.5277723740742
-"Dodger Channel 1",130,"East",32.9299792283109
-"Dodger Channel 1",140,"South",2230.61639101183
-"Dodger Channel 1",150,"South",2241.4667694141
-"Dodger Channel 1",160,"South",2474.77439976577
-"Dodger Channel 1",170,"South",3450.08089519816
+"Dodger Channel 1",101.25,"East",18.5094771919391
+"Dodger Channel 1",112.5,"East",19.6944185236951
+"Dodger Channel 1",123.75,"East",26.2574449363771
+"Dodger Channel 1",135,"South",2605.33999249154
+"Dodger Channel 1",146.25,"South",2154.25252873556
+"Dodger Channel 1",157.5,"South",2393.00824668697
+"Dodger Channel 1",168.75,"South",3433.26418701602
 "Dodger Channel 1",180,"South",3704.69218350617
-"Dodger Channel 1",190,"South",3668.55885598351
-"Dodger Channel 1",200,"South",4385.66224779205
-"Dodger Channel 1",210,"South",437.114906869428
-"Dodger Channel 1",220,"South",480.596894538157
-"Dodger Channel 1",230,"West",59999.7470876337
-"Dodger Channel 1",240,"West",174.3290826464
-"Dodger Channel 1",250,"West",130.950474207549
-"Dodger Channel 1",260,"West",117.955493973067
+"Dodger Channel 1",191.25,"South",3672.37165912641
+"Dodger Channel 1",202.5,"South",446.656292703523
+"Dodger Channel 1",213.75,"South",440.976401964943
+"Dodger Channel 1",225,"West",59999.7781510065
+"Dodger Channel 1",236.25,"West",202.465371713352
+"Dodger Channel 1",247.5,"West",132.915531101785
+"Dodger Channel 1",258.75,"West",120.331974808346
 "Dodger Channel 1",270,"West",93.4832350036595
-"Dodger Channel 1",280,"West",88.0408064206342
-"Dodger Channel 1",290,"West",91.3560429849552
-"Dodger Channel 1",300,"West",117.75492710751
-"Dodger Channel 1",310,"West",120.784494214824
-"Dodger Channel 1",320,"North",188.030757490445
-"Dodger Channel 1",330,"North",363.090639477455
-"Dodger Channel 1",340,"North",1010.23758046551
-"Dodger Channel 1",350,"North",601.413344100051
+"Dodger Channel 1",281.25,"West",89.2391379749587
+"Dodger Channel 1",292.5,"West",99.2971302748259
+"Dodger Channel 1",303.75,"West",120.442124120144
+"Dodger Channel 1",315,"North",125.697727443335
+"Dodger Channel 1",326.25,"North",347.316852856679
+"Dodger Channel 1",337.5,"North",1076.98464371952
+"Dodger Channel 1",348.75,"North",624.680779453893
 "Dodger Channel 2",0,"North",112.942470595339
-"Dodger Channel 2",10,"North",97.7225126985401
-"Dodger Channel 2",20,"North",80.5846256930201
-"Dodger Channel 2",30,"North",54.0849978371767
-"Dodger Channel 2",40,"North",50.9771882773546
-"Dodger Channel 2",50,"East",54.736352955511
-"Dodger Channel 2",60,"East",62.5563014241956
-"Dodger Channel 2",70,"East",73.0247661523473
-"Dodger Channel 2",80,"East",78.0210758136592
+"Dodger Channel 2",11.25,"North",95.854311734175
+"Dodger Channel 2",22.5,"North",73.3885738719937
+"Dodger Channel 2",33.75,"North",52.1039810794592
+"Dodger Channel 2",45,"East",51.8672896090984
+"Dodger Channel 2",56.25,"East",59.1610710122161
+"Dodger Channel 2",67.5,"East",71.4965274772926
+"Dodger Channel 2",78.75,"East",77.8059001980023
 "Dodger Channel 2",90,"East",83.8984054783359
-"Dodger Channel 2",100,"East",134.66029930728
-"Dodger Channel 2",110,"East",190.999167393843
-"Dodger Channel 2",120,"East",303.562878513966
-"Dodger Channel 2",130,"East",343.71452116851
-"Dodger Channel 2",140,"South",990.049417740728
-"Dodger Channel 2",150,"South",1029.75912384767
-"Dodger Channel 2",160,"South",493.315236631945
-"Dodger Channel 2",170,"South",436.531631591019
+"Dodger Channel 2",101.25,"East",140.575400283265
+"Dodger Channel 2",112.5,"East",201.850760723915
+"Dodger Channel 2",123.75,"East",310.657925478172
+"Dodger Channel 2",135,"South",388.13088612127
+"Dodger Channel 2",146.25,"South",1164.05352685263
+"Dodger Channel 2",157.5,"South",525.881345386963
+"Dodger Channel 2",168.75,"South",447.809957480493
 "Dodger Channel 2",180,"South",430.837814863496
-"Dodger Channel 2",190,"South",454.63989236908
-"Dodger Channel 2",200,"South",452.202633877594
-"Dodger Channel 2",210,"South",317.759567657457
-"Dodger Channel 2",220,"South",293.51802144879
-"Dodger Channel 2",230,"West",301.142570682328
-"Dodger Channel 2",240,"West",307.089590685757
-"Dodger Channel 2",250,"West",1063.89981173818
-"Dodger Channel 2",260,"West",396.06974182176
+"Dodger Channel 2",191.25,"South",455.532842999286
+"Dodger Channel 2",202.5,"South",445.876955180779
+"Dodger Channel 2",213.75,"South",308.971445316816
+"Dodger Channel 2",225,"West",296.589563418488
+"Dodger Channel 2",236.25,"West",303.804205286295
+"Dodger Channel 2",247.5,"West",1055.24215541357
+"Dodger Channel 2",258.75,"West",59999.8816512166
 "Dodger Channel 2",270,"West",360.425918607973
-"Dodger Channel 2",280,"West",458.536104986606
-"Dodger Channel 2",290,"West",606.267161838069
-"Dodger Channel 2",300,"West",8145.26075759239
-"Dodger Channel 2",310,"West",11422.4325538005
-"Dodger Channel 2",320,"North",10243.3567246985
-"Dodger Channel 2",330,"North",242.047171545383
-"Dodger Channel 2",340,"North",182.832748163503
-"Dodger Channel 2",350,"North",128.937153913409
+"Dodger Channel 2",281.25,"West",477.79927933267
+"Dodger Channel 2",292.5,"West",478.728804836372
+"Dodger Channel 2",303.75,"West",11721.0546742484
+"Dodger Channel 2",315,"North",8363.67236515123
+"Dodger Channel 2",326.25,"North",271.857467034847
+"Dodger Channel 2",337.5,"North",191.709284738875
+"Dodger Channel 2",348.75,"North",132.869463608142
 "Ed King East Inside",0,"North",11974.1345429072
-"Ed King East Inside",10,"North",15824.8868812722
-"Ed King East Inside",20,"North",1195.07482110513
-"Ed King East Inside",30,"North",524.027661240342
-"Ed King East Inside",40,"North",504.338696152048
-"Ed King East Inside",50,"East",504.710935201235
-"Ed King East Inside",60,"East",625.356266633203
-"Ed King East Inside",70,"East",668.900727674499
-"Ed King East Inside",80,"East",663.214899247936
+"Ed King East Inside",11.25,"North",60000.0973173378
+"Ed King East Inside",22.5,"North",1184.47622135794
+"Ed King East Inside",33.75,"North",534.759500926095
+"Ed King East Inside",45,"East",483.109169520746
+"Ed King East Inside",56.25,"East",582.357926670515
+"Ed King East Inside",67.5,"East",1069.960777268
+"Ed King East Inside",78.75,"East",674.97716555854
 "Ed King East Inside",90,"East",1289.68316162517
-"Ed King East Inside",100,"East",737.479688908697
-"Ed King East Inside",110,"East",771.673564837073
-"Ed King East Inside",120,"East",474.817534163222
-"Ed King East Inside",130,"East",135.636391964882
-"Ed King East Inside",140,"South",133.333928417949
-"Ed King East Inside",150,"South",149.939183749808
-"Ed King East Inside",160,"South",89.7914328441939
-"Ed King East Inside",170,"South",77.214591480511
+"Ed King East Inside",101.25,"East",737.950158565525
+"Ed King East Inside",112.5,"East",748.162325777413
+"Ed King East Inside",123.75,"East",460.622196526134
+"Ed King East Inside",135,"South",132.976559335795
+"Ed King East Inside",146.25,"South",143.409298048135
+"Ed King East Inside",157.5,"South",95.9305130159947
+"Ed King East Inside",168.75,"South",77.5358255144746
 "Ed King East Inside",180,"South",76.0067874856068
-"Ed King East Inside",190,"South",74.6710261644166
-"Ed King East Inside",200,"South",67.1596079792059
-"Ed King East Inside",210,"South",60.7702426014831
-"Ed King East Inside",220,"South",55.9857192866689
-"Ed King East Inside",230,"West",53.4038461265952
-"Ed King East Inside",240,"West",52.5150253277356
-"Ed King East Inside",250,"West",53.0999559507
-"Ed King East Inside",260,"West",55.4003325233789
+"Ed King East Inside",191.25,"South",74.4759084335233
+"Ed King East Inside",202.5,"South",65.2635519731623
+"Ed King East Inside",213.75,"South",58.671597356717
+"Ed King East Inside",225,"West",54.4562990470957
+"Ed King East Inside",236.25,"West",52.6954082153167
+"Ed King East Inside",247.5,"West",52.8009794271017
+"Ed King East Inside",258.75,"West",55.0090663576477
 "Ed King East Inside",270,"West",60.5890734454151
-"Ed King East Inside",280,"West",69.9623380186695
-"Ed King East Inside",290,"West",7842.49354791053
-"Ed King East Inside",300,"West",6607.07092614402
-"Ed King East Inside",310,"West",14709.6771975174
-"Ed King East Inside",320,"North",8538.72034252163
-"Ed King East Inside",330,"North",9024.31762488116
-"Ed King East Inside",340,"North",8611.22863441386
-"Ed King East Inside",350,"North",9302.79353770023
+"Ed King East Inside",281.25,"West",71.4968720451896
+"Ed King East Inside",292.5,"West",8608.95673248291
+"Ed King East Inside",303.75,"West",7382.20292475195
+"Ed King East Inside",315,"North",7957.93852483613
+"Ed King East Inside",326.25,"North",9996.85658933325
+"Ed King East Inside",337.5,"North",8746.64867315752
+"Ed King East Inside",348.75,"North",9951.85519662694
 "Flemming 112",0,"North",57.1855385751696
-"Flemming 112",10,"North",100.561591732234
-"Flemming 112",20,"North",231.814071660751
-"Flemming 112",30,"North",263.994931696595
-"Flemming 112",40,"North",500.82542225325
-"Flemming 112",50,"East",504.988138986549
-"Flemming 112",60,"East",519.832068148287
-"Flemming 112",70,"East",905.859676040487
-"Flemming 112",80,"East",8371.49755964862
+"Flemming 112",11.25,"North",213.02711691844
+"Flemming 112",22.5,"North",237.605648655034
+"Flemming 112",33.75,"North",281.458412715938
+"Flemming 112",45,"East",497.823691665155
+"Flemming 112",56.25,"East",514.078829275144
+"Flemming 112",67.5,"East",584.584542739463
+"Flemming 112",78.75,"East",8709.99679438333
 "Flemming 112",90,"East",4360.58895209921
-"Flemming 112",100,"East",3714.99769260999
-"Flemming 112",110,"East",3579.09428161743
-"Flemming 112",120,"East",3161.4430366533
-"Flemming 112",130,"East",3575.54841418981
-"Flemming 112",140,"South",3724.94096370288
-"Flemming 112",150,"South",3228.95620294886
-"Flemming 112",160,"South",3553.28666607622
-"Flemming 112",170,"South",4277.15222570152
+"Flemming 112",101.25,"East",3672.9621388045
+"Flemming 112",112.5,"East",3453.62476130313
+"Flemming 112",123.75,"East",3185.22991740255
+"Flemming 112",135,"South",3590.34845209278
+"Flemming 112",146.25,"South",3223.48019272786
+"Flemming 112",157.5,"South",3529.06609653421
+"Flemming 112",168.75,"South",4148.13768575456
 "Flemming 112",180,"South",4849.45145179861
-"Flemming 112",190,"South",6181.73117086
-"Flemming 112",200,"South",7804.05998946687
-"Flemming 112",210,"South",3350.05353028531
-"Flemming 112",220,"South",3519.8414681233
-"Flemming 112",230,"West",1535.14487177475
-"Flemming 112",240,"West",509.850691057619
-"Flemming 112",250,"West",433.999716576404
-"Flemming 112",260,"West",252.564299435606
+"Flemming 112",191.25,"South",6152.15840866674
+"Flemming 112",202.5,"South",3546.85429888773
+"Flemming 112",213.75,"South",3216.84127966549
+"Flemming 112",225,"West",1688.31219681238
+"Flemming 112",236.25,"West",609.010799698834
+"Flemming 112",247.5,"West",446.912717847896
+"Flemming 112",258.75,"West",387.665421578895
 "Flemming 112",270,"West",166.669332406949
-"Flemming 112",280,"West",157.901471934086
-"Flemming 112",290,"West",81.1274887521135
-"Flemming 112",300,"West",40.1730289489074
-"Flemming 112",310,"West",39.3518603814203
-"Flemming 112",320,"North",40.6512684241895
-"Flemming 112",330,"North",43.0036257127204
-"Flemming 112",340,"North",44.623264158639
-"Flemming 112",350,"North",47.8814665831607
+"Flemming 112",281.25,"West",157.123130913087
+"Flemming 112",292.5,"West",58.4181951504599
+"Flemming 112",303.75,"West",39.1727750509584
+"Flemming 112",315,"North",39.838834027136
+"Flemming 112",326.25,"North",42.176793163056
+"Flemming 112",337.5,"North",44.0799719557691
+"Flemming 112",348.75,"North",47.3678549194379
 "Flemming 114",0,"North",101.443203792426
-"Flemming 114",10,"North",409.156532830868
-"Flemming 114",20,"North",303.570986961706
-"Flemming 114",30,"North",294.583499976042
-"Flemming 114",40,"North",314.420926407107
-"Flemming 114",50,"East",379.434891501005
-"Flemming 114",60,"East",524.492772266474
-"Flemming 114",70,"East",1461.90900211721
-"Flemming 114",80,"East",7847.36707592929
+"Flemming 114",11.25,"North",407.043257726154
+"Flemming 114",22.5,"North",296.549044599166
+"Flemming 114",33.75,"North",299.139375216634
+"Flemming 114",45,"East",333.516338919435
+"Flemming 114",56.25,"East",443.416751665599
+"Flemming 114",67.5,"East",732.344379794863
+"Flemming 114",78.75,"East",7923.59404811944
 "Flemming 114",90,"East",6166.7309967475
-"Flemming 114",100,"East",4704.58663278608
-"Flemming 114",110,"East",3274.78587753502
-"Flemming 114",120,"East",2736.03573932386
-"Flemming 114",130,"East",2368.39783263483
-"Flemming 114",140,"South",2620.36167040371
-"Flemming 114",150,"South",2801.17938499058
-"Flemming 114",160,"South",3014.48669128923
-"Flemming 114",170,"South",3272.55849321796
+"Flemming 114",101.25,"East",3234.85028183481
+"Flemming 114",112.5,"East",3165.01504492235
+"Flemming 114",123.75,"East",2701.3690089696
+"Flemming 114",135,"South",2599.46421049049
+"Flemming 114",146.25,"South",2673.92650036138
+"Flemming 114",157.5,"South",2958.2942753204
+"Flemming 114",168.75,"South",3626.42561196159
 "Flemming 114",180,"South",4479.6700083138
-"Flemming 114",190,"South",4850.59526051001
-"Flemming 114",200,"South",6834.26789147022
-"Flemming 114",210,"South",12081.4253332142
-"Flemming 114",220,"South",437.948538016164
-"Flemming 114",230,"West",367.590139112993
-"Flemming 114",240,"West",234.906728847056
-"Flemming 114",250,"West",194.370671611028
-"Flemming 114",260,"West",186.293724465656
+"Flemming 114",191.25,"South",4979.7750234694
+"Flemming 114",202.5,"South",8172.61700904022
+"Flemming 114",213.75,"South",865.771591598319
+"Flemming 114",225,"West",407.35207146451
+"Flemming 114",236.25,"West",274.308762123825
+"Flemming 114",247.5,"West",198.171005946263
+"Flemming 114",258.75,"West",186.897819631591
 "Flemming 114",270,"West",181.921769849723
-"Flemming 114",280,"West",167.415289359293
-"Flemming 114",290,"West",139.321746219511
-"Flemming 114",300,"West",56.0085956680936
-"Flemming 114",310,"West",41.2106239415922
-"Flemming 114",320,"North",34.3945366891328
-"Flemming 114",330,"North",33.7685492665951
-"Flemming 114",340,"North",34.1850662836332
-"Flemming 114",350,"North",89.9760985221861
-"Less Dangerous Bay",0,"North",27.6030150368262
-"Less Dangerous Bay",10,"North",30.5701874661857
-"Less Dangerous Bay",20,"North",34.4490330899318
-"Less Dangerous Bay",30,"North",40.1476004191667
-"Less Dangerous Bay",40,"North",51.5734653458563
-"Less Dangerous Bay",50,"East",81.5800344265039
-"Less Dangerous Bay",60,"East",93.111640689482
-"Less Dangerous Bay",70,"East",96.9804831433274
-"Less Dangerous Bay",80,"East",102.883834302759
-"Less Dangerous Bay",90,"East",109.45333742979
-"Less Dangerous Bay",100,"East",103.805568096851
-"Less Dangerous Bay",110,"East",95.0385987942397
-"Less Dangerous Bay",120,"East",89.8840057505737
-"Less Dangerous Bay",130,"East",87.8079670021229
-"Less Dangerous Bay",140,"South",88.1981959750274
-"Less Dangerous Bay",150,"South",91.1470815923624
-"Less Dangerous Bay",160,"South",103.87795986226
-"Less Dangerous Bay",170,"South",129.046969117536
-"Less Dangerous Bay",180,"South",150.094563586671
-"Less Dangerous Bay",190,"South",176.098667074513
-"Less Dangerous Bay",200,"South",231.28756080437
-"Less Dangerous Bay",210,"South",371.871159907195
-"Less Dangerous Bay",220,"South",1483.92544380354
-"Less Dangerous Bay",230,"West",59999.9002960838
-"Less Dangerous Bay",240,"West",6000.60514185926
-"Less Dangerous Bay",250,"West",8423.23414374452
-"Less Dangerous Bay",260,"West",5138.60828100886
-"Less Dangerous Bay",270,"West",4366.59295391361
-"Less Dangerous Bay",280,"West",3298.25973069756
-"Less Dangerous Bay",290,"West",37.43828719601
-"Less Dangerous Bay",300,"West",30.5308567826394
-"Less Dangerous Bay",310,"West",27.5776627387691
-"Less Dangerous Bay",320,"North",25.8619097700699
-"Less Dangerous Bay",330,"North",25.0641016423997
-"Less Dangerous Bay",340,"North",25.0721679863312
-"Less Dangerous Bay",350,"North",25.8775881895444
+"Flemming 114",281.25,"West",164.444247618767
+"Flemming 114",292.5,"West",132.440481540055
+"Flemming 114",303.75,"West",49.0179610569679
+"Flemming 114",315,"North",37.1497896913479
+"Flemming 114",326.25,"North",33.8794698193257
+"Flemming 114",337.5,"North",33.9824368799579
+"Flemming 114",348.75,"North",88.850828963488
 "Nanat Bay",0,"North",445.423987589605
-"Nanat Bay",10,"North",3246.9745033057
-"Nanat Bay",20,"North",402.368714777724
-"Nanat Bay",30,"North",368.934465351263
-"Nanat Bay",40,"North",359.062021569961
-"Nanat Bay",50,"East",355.678994362537
-"Nanat Bay",60,"East",359.545889496775
-"Nanat Bay",70,"East",347.201268639153
-"Nanat Bay",80,"East",242.978762671347
+"Nanat Bay",11.25,"North",3253.77075413998
+"Nanat Bay",22.5,"North",386.183904000397
+"Nanat Bay",33.75,"North",364.932765424399
+"Nanat Bay",45,"East",355.673408312831
+"Nanat Bay",56.25,"East",358.389382520755
+"Nanat Bay",67.5,"East",355.688296661193
+"Nanat Bay",78.75,"East",257.122219756835
 "Nanat Bay",90,"East",182.553749352694
-"Nanat Bay",100,"East",142.559862867736
-"Nanat Bay",110,"East",110.843987194728
-"Nanat Bay",120,"East",85.0903192791237
-"Nanat Bay",130,"East",68.8458875957682
-"Nanat Bay",140,"South",43.2874902429607
-"Nanat Bay",150,"South",26.3020614448574
-"Nanat Bay",160,"South",17.8688348498287
-"Nanat Bay",170,"South",15.2274725288909
+"Nanat Bay",101.25,"East",137.918587467543
+"Nanat Bay",112.5,"East",100.30166192509
+"Nanat Bay",123.75,"East",77.8892508331464
+"Nanat Bay",135,"South",58.0367298120684
+"Nanat Bay",146.25,"South",32.2970554686933
+"Nanat Bay",157.5,"South",19.373712168655
+"Nanat Bay",168.75,"South",15.3314247358743
 "Nanat Bay",180,"South",14.6857565733142
-"Nanat Bay",190,"South",15.3765338981959
-"Nanat Bay",200,"South",20.1030294710758
-"Nanat Bay",210,"South",69.8764868364732
-"Nanat Bay",220,"South",100.361417834363
-"Nanat Bay",230,"West",116.424073494803
-"Nanat Bay",240,"West",134.868197976704
-"Nanat Bay",250,"West",171.524458676213
-"Nanat Bay",260,"West",6487.25886102593
+"Nanat Bay",191.25,"South",15.8173207808087
+"Nanat Bay",202.5,"South",21.8982809451925
+"Nanat Bay",213.75,"South",81.9360034241149
+"Nanat Bay",225,"West",107.879684161814
+"Nanat Bay",236.25,"West",126.706672576366
+"Nanat Bay",247.5,"West",158.722486143857
+"Nanat Bay",258.75,"West",6291.78409033931
 "Nanat Bay",270,"West",4225.38726629224
-"Nanat Bay",280,"West",3335.41010647443
-"Nanat Bay",290,"West",3196.036330729
-"Nanat Bay",300,"West",2843.76745296955
-"Nanat Bay",310,"West",2501.15656855683
-"Nanat Bay",320,"North",2158.78080200888
-"Nanat Bay",330,"North",2027.57253053587
-"Nanat Bay",340,"North",1958.94631252065
-"Nanat Bay",350,"North",2334.96294067138
+"Nanat Bay",281.25,"West",3418.02200593696
+"Nanat Bay",292.5,"West",3192.13590692188
+"Nanat Bay",303.75,"West",2613.79038796989
+"Nanat Bay",315,"North",2538.14778459583
+"Nanat Bay",326.25,"North",2072.12220411035
+"Nanat Bay",337.5,"North",1962.87141583082
+"Nanat Bay",348.75,"North",2317.76483736888
 "North Helby Rock",0,"North",1115.9288906066
-"North Helby Rock",10,"North",1695.06153567381
-"North Helby Rock",20,"North",2464.46706637408
-"North Helby Rock",30,"North",3108.15271178543
-"North Helby Rock",40,"North",3878.05390856117
-"North Helby Rock",50,"East",528.087203714876
-"North Helby Rock",60,"East",13637.1536444841
-"North Helby Rock",70,"East",5558.05897477816
-"North Helby Rock",80,"East",4574.72384713764
+"North Helby Rock",11.25,"North",1642.47349217027
+"North Helby Rock",22.5,"North",2380.32164259798
+"North Helby Rock",33.75,"North",3612.85541911907
+"North Helby Rock",45,"East",4392.87534128665
+"North Helby Rock",56.25,"East",507.992385214914
+"North Helby Rock",67.5,"East",6084.0273081098
+"North Helby Rock",78.75,"East",4344.87902708328
 "North Helby Rock",90,"East",4143.86024633027
-"North Helby Rock",100,"East",3151.2688010076
-"North Helby Rock",110,"East",2989.24152014781
-"North Helby Rock",120,"East",2835.59049943226
-"North Helby Rock",130,"East",3608.14608726287
-"North Helby Rock",140,"South",2606.64631790852
-"North Helby Rock",150,"South",341.471190696554
-"North Helby Rock",160,"South",302.388024794314
-"North Helby Rock",170,"South",278.429193671948
+"North Helby Rock",101.25,"East",3068.81487086162
+"North Helby Rock",112.5,"East",2924.39074111914
+"North Helby Rock",123.75,"East",2863.71588903326
+"North Helby Rock",135,"South",2535.83294487331
+"North Helby Rock",146.25,"South",341.744523725265
+"North Helby Rock",157.5,"South",313.979491705906
+"North Helby Rock",168.75,"South",278.360978218681
 "North Helby Rock",180,"South",244.683099998734
-"North Helby Rock",190,"South",248.164201976325
-"North Helby Rock",200,"South",219.216694618445
-"North Helby Rock",210,"South",160.914217810331
-"North Helby Rock",220,"South",141.552355015645
-"North Helby Rock",230,"West",129.808001347109
-"North Helby Rock",240,"West",126.269753696981
-"North Helby Rock",250,"West",120.460286490663
-"North Helby Rock",260,"West",128.374840344879
+"North Helby Rock",191.25,"South",246.825298996301
+"North Helby Rock",202.5,"South",204.792486279081
+"North Helby Rock",213.75,"South",153.06088249064
+"North Helby Rock",225,"West",134.702806815837
+"North Helby Rock",236.25,"West",127.616524837614
+"North Helby Rock",247.5,"West",121.485944852984
+"North Helby Rock",258.75,"West",126.661753418683
 "North Helby Rock",270,"West",172.800405881368
-"North Helby Rock",280,"West",196.981423598159
-"North Helby Rock",290,"West",12836.1555063756
-"North Helby Rock",300,"West",27.4042795342968
-"North Helby Rock",310,"West",21.7671104606739
-"North Helby Rock",320,"North",20.729165523937
-"North Helby Rock",330,"North",21.1875319458344
-"North Helby Rock",340,"North",24.1632851106864
-"North Helby Rock",350,"North",29.1417230321731
+"North Helby Rock",281.25,"West",197.445659898736
+"North Helby Rock",292.5,"West",10793.8404274589
+"North Helby Rock",303.75,"West",24.8875768489391
+"North Helby Rock",315,"North",20.7639834618886
+"North Helby Rock",326.25,"North",20.9090331705966
+"North Helby Rock",337.5,"North",23.2754521086956
+"North Helby Rock",348.75,"North",28.3602564586935
 "Ross Islet 2",0,"North",472.374294449929
-"Ross Islet 2",10,"North",218.144396455188
-"Ross Islet 2",20,"North",129.283777364593
-"Ross Islet 2",30,"North",143.177584991129
-"Ross Islet 2",40,"North",149.554456906547
-"Ross Islet 2",50,"East",126.894025368141
-"Ross Islet 2",60,"East",135.054698060761
-"Ross Islet 2",70,"East",234.034657342383
-"Ross Islet 2",80,"East",255.504221824463
+"Ross Islet 2",11.25,"North",216.507246339149
+"Ross Islet 2",22.5,"North",128.172794283058
+"Ross Islet 2",33.75,"North",144.562857266643
+"Ross Islet 2",45,"East",171.730317426458
+"Ross Islet 2",56.25,"East",128.605499778974
+"Ross Islet 2",67.5,"East",185.243674554416
+"Ross Islet 2",78.75,"East",249.76557763831
 "Ross Islet 2",90,"East",21.5246673137881
-"Ross Islet 2",100,"East",17.4028477666307
-"Ross Islet 2",110,"East",15.8300514777383
-"Ross Islet 2",120,"East",15.2338151676152
-"Ross Islet 2",130,"East",15.1237147046176
-"Ross Islet 2",140,"South",16.5694305274203
-"Ross Islet 2",150,"South",19.5199578258932
-"Ross Islet 2",160,"South",29.8588539697052
-"Ross Islet 2",170,"South",53.2050526272692
+"Ross Islet 2",101.25,"East",17.0297299175776
+"Ross Islet 2",112.5,"East",15.631593772246
+"Ross Islet 2",123.75,"East",15.1380987389897
+"Ross Islet 2",135,"South",15.711768296345
+"Ross Islet 2",146.25,"South",17.9884076329372
+"Ross Islet 2",157.5,"South",26.3101210815103
+"Ross Islet 2",168.75,"South",48.3728382031527
 "Ross Islet 2",180,"South",2314.84304043086
-"Ross Islet 2",190,"South",467.212850356189
-"Ross Islet 2",200,"South",234.975816626378
-"Ross Islet 2",210,"South",160.984678946924
-"Ross Islet 2",220,"South",142.081779458228
-"Ross Islet 2",230,"West",137.983124711849
-"Ross Islet 2",240,"West",142.123919840928
-"Ross Islet 2",250,"West",135.777166532245
-"Ross Islet 2",260,"West",124.94652569755
+"Ross Islet 2",191.25,"South",432.491448760528
+"Ross Islet 2",202.5,"South",205.198633903839
+"Ross Islet 2",213.75,"South",150.257493827262
+"Ross Islet 2",225,"West",139.026223421844
+"Ross Islet 2",236.25,"West",139.27451193192
+"Ross Islet 2",247.5,"West",139.867785578292
+"Ross Islet 2",258.75,"West",124.931744032004
 "Ross Islet 2",270,"West",114.371969810687
-"Ross Islet 2",280,"West",106.624776198678
-"Ross Islet 2",290,"West",179.507920184883
-"Ross Islet 2",300,"West",303.286344433096
-"Ross Islet 2",310,"West",345.323046181455
-"Ross Islet 2",320,"North",12563.9753542048
-"Ross Islet 2",330,"North",322.101608208774
-"Ross Islet 2",340,"North",286.060100978221
-"Ross Islet 2",350,"North",11933.9672506063
+"Ross Islet 2",281.25,"West",107.177842019725
+"Ross Islet 2",292.5,"West",306.351439582093
+"Ross Islet 2",303.75,"West",7623.83660009941
+"Ross Islet 2",315,"North",7240.8014131274
+"Ross Islet 2",326.25,"North",9781.06241756381
+"Ross Islet 2",337.5,"North",287.939370282293
+"Ross Islet 2",348.75,"North",10622.7655251609
 "Ross Islet Slug Island",0,"North",290.512091370299
-"Ross Islet Slug Island",10,"North",256.390824372423
-"Ross Islet Slug Island",20,"North",303.903444002975
-"Ross Islet Slug Island",30,"North",632.739148543035
-"Ross Islet Slug Island",40,"North",641.546925908524
-"Ross Islet Slug Island",50,"East",777.084560126577
-"Ross Islet Slug Island",60,"East",2943.35257335973
-"Ross Islet Slug Island",70,"East",11716.3400088439
-"Ross Islet Slug Island",80,"East",5690.95786194617
+"Ross Islet Slug Island",11.25,"North",254.677408108401
+"Ross Islet Slug Island",22.5,"North",326.54407252186
+"Ross Islet Slug Island",33.75,"North",713.968557911397
+"Ross Islet Slug Island",45,"East",677.709927586851
+"Ross Islet Slug Island",56.25,"East",2079.89135605524
+"Ross Islet Slug Island",67.5,"East",11921.7591233328
+"Ross Islet Slug Island",78.75,"East",6478.03511755108
 "Ross Islet Slug Island",90,"East",4734.75112705957
-"Ross Islet Slug Island",100,"East",3959.19352956965
-"Ross Islet Slug Island",110,"East",4070.5079037566
-"Ross Islet Slug Island",120,"East",26.7571526428102
-"Ross Islet Slug Island",130,"East",13.6142172145333
-"Ross Islet Slug Island",140,"South",9.31962264526492
-"Ross Islet Slug Island",150,"South",7.25224799269611
-"Ross Islet Slug Island",160,"South",6.35826841817939
-"Ross Islet Slug Island",170,"South",5.92465751798356
+"Ross Islet Slug Island",101.25,"East",4147.94020645292
+"Ross Islet Slug Island",112.5,"East",4068.28092562754
+"Ross Islet Slug Island",123.75,"East",19.5710016846073
+"Ross Islet Slug Island",135,"South",11.0226841159193
+"Ross Islet Slug Island",146.25,"South",7.882616230904
+"Ross Islet Slug Island",157.5,"South",6.50896631539989
+"Ross Islet Slug Island",168.75,"South",5.96580084645832
 "Ross Islet Slug Island",180,"South",5.70879649103153
-"Ross Islet Slug Island",190,"South",5.67446747163173
-"Ross Islet Slug Island",200,"South",5.81621530824637
-"Ross Islet Slug Island",210,"South",6.21326435675534
-"Ross Islet Slug Island",220,"South",7.09622474079942
-"Ross Islet Slug Island",230,"West",8.57544368797297
-"Ross Islet Slug Island",240,"West",11.2661788519466
-"Ross Islet Slug Island",250,"West",17.178211683577
-"Ross Islet Slug Island",260,"West",88.5035034180644
+"Ross Islet Slug Island",191.25,"South",5.68237192954022
+"Ross Islet Slug Island",202.5,"South",5.88116002807729
+"Ross Islet Slug Island",213.75,"South",6.49436399105014
+"Ross Islet Slug Island",225,"West",7.73646697919881
+"Ross Islet Slug Island",236.25,"West",10.0433032823922
+"Ross Islet Slug Island",247.5,"West",15.1392642706622
+"Ross Islet Slug Island",258.75,"West",79.6754804647924
 "Ross Islet Slug Island",270,"West",286.31243584631
-"Ross Islet Slug Island",280,"West",291.204096115586
-"Ross Islet Slug Island",290,"West",327.072544334405
-"Ross Islet Slug Island",300,"West",383.323345310799
-"Ross Islet Slug Island",310,"West",212.618827584851
-"Ross Islet Slug Island",320,"North",201.786799929278
-"Ross Islet Slug Island",330,"North",9475.95953641754
-"Ross Islet Slug Island",340,"North",298.172925834406
-"Ross Islet Slug Island",350,"North",281.210040323038
+"Ross Islet Slug Island",281.25,"West",292.665730168604
+"Ross Islet Slug Island",292.5,"West",357.408026992473
+"Ross Islet Slug Island",303.75,"West",383.779484987468
+"Ross Islet Slug Island",315,"North",196.667161153237
+"Ross Islet Slug Island",326.25,"North",570.874767022006
+"Ross Islet Slug Island",337.5,"North",359.783713935781
+"Ross Islet Slug Island",348.75,"North",281.059485571265
 "Second Beach",0,"North",3457.72406469836
-"Second Beach",10,"North",3646.30376788392
-"Second Beach",20,"North",7699.72579144411
-"Second Beach",30,"North",10189.1933499873
-"Second Beach",40,"North",15940.8313289565
-"Second Beach",50,"East",1179.70248611204
-"Second Beach",60,"East",364.243973045436
-"Second Beach",70,"East",362.69559850764
-"Second Beach",80,"East",432.034583155229
+"Second Beach",11.25,"North",3702.61719885642
+"Second Beach",22.5,"North",7899.67013688082
+"Second Beach",33.75,"North",10844.5090506347
+"Second Beach",45,"East",1287.05568122388
+"Second Beach",56.25,"East",808.492180953621
+"Second Beach",67.5,"East",351.309035117269
+"Second Beach",78.75,"East",442.717282009252
 "Second Beach",90,"East",457.277534036664
-"Second Beach",100,"East",465.56345656181
-"Second Beach",110,"East",441.646502158739
-"Second Beach",120,"East",405.55576394148
-"Second Beach",130,"East",27.6261280003046
-"Second Beach",140,"South",22.5268183054231
-"Second Beach",150,"South",20.1203885325639
-"Second Beach",160,"South",21.3310496938623
-"Second Beach",170,"South",23.4550187736118
+"Second Beach",101.25,"East",463.807530381592
+"Second Beach",112.5,"East",435.848959995491
+"Second Beach",123.75,"East",394.686565178391
+"Second Beach",135,"South",24.2858221742695
+"Second Beach",146.25,"South",20.8625446208606
+"Second Beach",157.5,"South",20.954312149193
+"Second Beach",168.75,"South",23.1270929296654
 "Second Beach",180,"South",25.5851287810653
-"Second Beach",190,"South",28.574985737026
-"Second Beach",200,"South",37.3925525024099
-"Second Beach",210,"South",54.4257875659319
-"Second Beach",220,"South",87.4854452431343
-"Second Beach",230,"West",373.647422677619
-"Second Beach",240,"West",341.673583034262
-"Second Beach",250,"West",60000.3191412346
-"Second Beach",260,"West",60000.3313545017
+"Second Beach",191.25,"South",29.3967206302613
+"Second Beach",202.5,"South",40.7450941799488
+"Second Beach",213.75,"South",64.8312061812314
+"Second Beach",225,"West",394.818139690033
+"Second Beach",236.25,"West",334.468869010464
+"Second Beach",247.5,"West",60000.3008043293
+"Second Beach",258.75,"West",60000.2739653745
 "Second Beach",270,"West",60000.3
-"Second Beach",280,"West",3391.90944543813
-"Second Beach",290,"West",2976.24139803546
-"Second Beach",300,"West",2788.62798861635
-"Second Beach",310,"West",2277.87704495697
-"Second Beach",320,"North",2628.60925692985
-"Second Beach",330,"North",2141.34622829145
-"Second Beach",340,"North",2775.98278294248
-"Second Beach",350,"North",3954.27063012631
-"Second Beach South",0,"North",3664.6503857246
-"Second Beach South",10,"North",3592.79883293063
-"Second Beach South",20,"North",7880.18549591464
-"Second Beach South",30,"North",10185.0224511773
-"Second Beach South",40,"North",16107.8789585752
-"Second Beach South",50,"East",1346.3954572708
-"Second Beach South",60,"East",520.781997883256
-"Second Beach South",70,"East",65.7311088666369
-"Second Beach South",80,"East",47.0385561458363
-"Second Beach South",90,"East",39.638535200851
-"Second Beach South",100,"East",35.1738050478625
-"Second Beach South",110,"East",35.3074624385699
-"Second Beach South",120,"East",36.7937166789154
-"Second Beach South",130,"East",67.1040893124952
-"Second Beach South",140,"South",94.3495052492949
-"Second Beach South",150,"South",158.537039773837
-"Second Beach South",160,"South",161.768905932404
-"Second Beach South",170,"South",166.636726802791
-"Second Beach South",180,"South",173.011350343267
-"Second Beach South",190,"South",191.050663132703
-"Second Beach South",200,"South",230.076502568315
-"Second Beach South",210,"South",251.184959489941
-"Second Beach South",220,"South",224.681132256029
-"Second Beach South",230,"West",206.603291004408
-"Second Beach South",240,"West",166.529905645868
-"Second Beach South",250,"West",206.599479733261
-"Second Beach South",260,"West",60000.2328737147
-"Second Beach South",270,"West",60000.2
-"Second Beach South",280,"West",3266.84376893742
-"Second Beach South",290,"West",3011.00227677486
-"Second Beach South",300,"West",2745.96990576684
-"Second Beach South",310,"West",2028.86345702291
-"Second Beach South",320,"North",2285.06233163382
-"Second Beach South",330,"North",1947.52530802264
-"Second Beach South",340,"North",2193.24992852422
-"Second Beach South",350,"North",3431.25751120578
+"Second Beach",281.25,"West",3241.24070607438
+"Second Beach",292.5,"West",3004.07389568059
+"Second Beach",303.75,"West",2047.48287134676
+"Second Beach",315,"North",2285.13240260361
+"Second Beach",326.25,"North",2129.13967513751
+"Second Beach",337.5,"North",2465.5417525318
+"Second Beach",348.75,"North",3478.58905373532
 "Swiss Boy",0,"North",1.14408249827261
-"Swiss Boy",10,"North",1.17076310519018
-"Swiss Boy",20,"North",1.23720716519082
-"Swiss Boy",30,"North",1.35530545403583
-"Swiss Boy",40,"North",1.55040865030647
-"Swiss Boy",50,"East",1.87777944601025
-"Swiss Boy",60,"East",2.47577114561278
-"Swiss Boy",70,"East",2095.24102095258
-"Swiss Boy",80,"East",1707.43034212763
+"Swiss Boy",11.25,"North",1.17673638236471
+"Swiss Boy",22.5,"North",1.26120026770555
+"Swiss Boy",33.75,"North",1.41740943621978
+"Swiss Boy",45,"East",1.69199994403824
+"Swiss Boy",56.25,"East",2.20357470352919
+"Swiss Boy",67.5,"East",2062.77635902346
+"Swiss Boy",78.75,"East",1684.78411060708
 "Swiss Boy",90,"East",1478.44482750585
-"Swiss Boy",100,"East",1350.63201344059
-"Swiss Boy",110,"East",1306.75769560001
-"Swiss Boy",120,"East",2001.67939974836
-"Swiss Boy",130,"East",1750.18119360847
-"Swiss Boy",140,"South",1543.55823179483
-"Swiss Boy",150,"South",2332.36289736403
-"Swiss Boy",160,"South",2490.69687625972
-"Swiss Boy",170,"South",2155.18835274532
+"Swiss Boy",101.25,"East",1826.09106081001
+"Swiss Boy",112.5,"East",1341.33462104315
+"Swiss Boy",123.75,"East",2010.20520140705
+"Swiss Boy",135,"South",1711.21474176769
+"Swiss Boy",146.25,"South",1603.09596005859
+"Swiss Boy",157.5,"South",2807.77772800986
+"Swiss Boy",168.75,"South",2162.23869299353
 "Swiss Boy",180,"South",2023.40622952355
-"Swiss Boy",190,"South",2754.23744226269
-"Swiss Boy",200,"South",3759.47711354729
-"Swiss Boy",210,"South",5829.5194224515
-"Swiss Boy",220,"South",12388.801862011
-"Swiss Boy",230,"West",60000.0535048094
-"Swiss Boy",240,"West",44.1535757307425
-"Swiss Boy",250,"West",39.1580614263412
-"Swiss Boy",260,"West",39.3616620978286
+"Swiss Boy",191.25,"South",2760.12602575236
+"Swiss Boy",202.5,"South",3882.25269015855
+"Swiss Boy",213.75,"South",8865.34747730592
+"Swiss Boy",225,"West",60000.0609933856
+"Swiss Boy",236.25,"West",46.7685303015418
+"Swiss Boy",247.5,"West",40.1850160847595
+"Swiss Boy",258.75,"West",39.2650834061332
 "Swiss Boy",270,"West",40.8598342887126
-"Swiss Boy",280,"West",5.27875226640325
-"Swiss Boy",290,"West",2.98613705315858
-"Swiss Boy",300,"West",2.12699018651998
-"Swiss Boy",310,"West",1.69167369462634
-"Swiss Boy",320,"North",1.44060840896284
-"Swiss Boy",330,"North",1.28852693988419
-"Swiss Boy",340,"North",1.19842438097654
-"Swiss Boy",350,"North",1.15283881690571
+"Swiss Boy",281.25,"West",4.80708857328748
+"Swiss Boy",292.5,"West",2.70402932367467
+"Swiss Boy",303.75,"West",1.93274606792697
+"Swiss Boy",315,"North",1.55015944413424
+"Swiss Boy",326.25,"North",1.3368960415522
+"Swiss Boy",337.5,"North",1.21630496927514
+"Swiss Boy",348.75,"North",1.15643298031292
 "Taylor Rock",0,"North",227.579321821379
-"Taylor Rock",10,"North",303.171892832085
-"Taylor Rock",20,"North",919.265898615375
-"Taylor Rock",30,"North",436.523031792274
-"Taylor Rock",40,"North",572.955723804685
-"Taylor Rock",50,"East",534.784587762898
-"Taylor Rock",60,"East",564.338188065575
-"Taylor Rock",70,"East",5026.07868522437
-"Taylor Rock",80,"East",3561.72781699578
+"Taylor Rock",11.25,"North",310.656245464658
+"Taylor Rock",22.5,"North",892.955892779188
+"Taylor Rock",33.75,"North",434.408276263783
+"Taylor Rock",45,"East",546.254941259419
+"Taylor Rock",56.25,"East",528.104832793272
+"Taylor Rock",67.5,"East",5462.73786651992
+"Taylor Rock",78.75,"East",3596.51251186311
 "Taylor Rock",90,"East",3175.22173663881
-"Taylor Rock",100,"East",2653.84728106832
-"Taylor Rock",110,"East",2571.80337689791
-"Taylor Rock",120,"East",2520.18688816798
-"Taylor Rock",130,"East",2109.91924623381
-"Taylor Rock",140,"South",25.9846346864051
-"Taylor Rock",150,"South",18.490285558417
-"Taylor Rock",160,"South",13.5164100629096
-"Taylor Rock",170,"South",10.8730468843804
+"Taylor Rock",101.25,"East",2715.37904694582
+"Taylor Rock",112.5,"East",2691.04659184548
+"Taylor Rock",123.75,"East",2544.00938757591
+"Taylor Rock",135,"South",1993.86094423061
+"Taylor Rock",146.25,"South",20.6606939442058
+"Taylor Rock",157.5,"South",14.468988591243
+"Taylor Rock",168.75,"South",11.1278613900918
 "Taylor Rock",180,"South",9.33163535879521
-"Taylor Rock",190,"South",8.39644654339828
-"Taylor Rock",200,"South",7.84836413024961
-"Taylor Rock",210,"South",7.58376356884827
-"Taylor Rock",220,"South",7.55859631809064
-"Taylor Rock",230,"West",7.76886823755965
-"Taylor Rock",240,"West",8.24899289405081
-"Taylor Rock",250,"West",9.08664095838956
-"Taylor Rock",260,"West",10.4676620521101
+"Taylor Rock",191.25,"South",8.30966019690525
+"Taylor Rock",202.5,"South",7.75814678183209
+"Taylor Rock",213.75,"South",7.54727220760152
+"Taylor Rock",225,"West",7.63313253840515
+"Taylor Rock",236.25,"West",8.033233244039
+"Taylor Rock",247.5,"West",8.83594443412066
+"Taylor Rock",258.75,"West",10.2547260704545
 "Taylor Rock",270,"West",13.4124871620443
-"Taylor Rock",280,"West",22.1999109723568
-"Taylor Rock",290,"West",501.089459064506
-"Taylor Rock",300,"West",207.482902017024
-"Taylor Rock",310,"West",570.5028338467
-"Taylor Rock",320,"North",9492.07702285179
-"Taylor Rock",330,"North",620.490492531848
-"Taylor Rock",340,"North",212.272295457663
-"Taylor Rock",350,"North",224.018988001499
+"Taylor Rock",281.25,"West",24.2478297875323
+"Taylor Rock",292.5,"West",517.270071947018
+"Taylor Rock",303.75,"West",213.747410230487
+"Taylor Rock",315,"North",601.103694132448
+"Taylor Rock",326.25,"North",611.289521164086
+"Taylor Rock",337.5,"North",274.013185266749
+"Taylor Rock",348.75,"North",223.469268501897
 "Turf Island 2",0,"North",60000.00000075
-"Turf Island 2",10,"North",10780.3502477601
-"Turf Island 2",20,"North",4731.69289372817
-"Turf Island 2",30,"North",288.099711925863
-"Turf Island 2",40,"North",600.53903177162
-"Turf Island 2",50,"East",586.285569967285
-"Turf Island 2",60,"East",552.688817073161
-"Turf Island 2",70,"East",499.025508532446
-"Turf Island 2",80,"East",370.65207348908
+"Turf Island 2",11.25,"North",10381.9300525355
+"Turf Island 2",22.5,"North",4956.2032120351
+"Turf Island 2",33.75,"North",802.554776630329
+"Turf Island 2",45,"East",590.287062042249
+"Turf Island 2",56.25,"East",570.425718150956
+"Turf Island 2",67.5,"East",528.458402082406
+"Turf Island 2",78.75,"East",375.726664616743
 "Turf Island 2",90,"East",366.206053739181
-"Turf Island 2",100,"East",370.033639244221
-"Turf Island 2",110,"East",396.393625644461
-"Turf Island 2",120,"East",214.771981023453
-"Turf Island 2",130,"East",320.516022640316
-"Turf Island 2",140,"South",288.253752494766
-"Turf Island 2",150,"South",341.852263832315
-"Turf Island 2",160,"South",314.919684360909
-"Turf Island 2",170,"South",136.768697232899
+"Turf Island 2",101.25,"East",373.443011695685
+"Turf Island 2",112.5,"East",398.884391370526
+"Turf Island 2",123.75,"East",207.355781702498
+"Turf Island 2",135,"South",306.096882400626
+"Turf Island 2",146.25,"South",333.078449584126
+"Turf Island 2",157.5,"South",326.395529329939
+"Turf Island 2",168.75,"South",140.536319055405
 "Turf Island 2",180,"South",119.210554812837
-"Turf Island 2",190,"South",106.285356486503
-"Turf Island 2",200,"South",104.161068150553
-"Turf Island 2",210,"South",112.365478795084
-"Turf Island 2",220,"South",142.107632311258
-"Turf Island 2",230,"West",127.766682190598
-"Turf Island 2",240,"West",116.113373566826
-"Turf Island 2",250,"West",112.647111959591
-"Turf Island 2",260,"West",116.205262229005
+"Turf Island 2",191.25,"South",105.348605442009
+"Turf Island 2",202.5,"South",105.119596129865
+"Turf Island 2",213.75,"South",148.306643017206
+"Turf Island 2",225,"West",134.71801567193
+"Turf Island 2",236.25,"West",120.052154014843
+"Turf Island 2",247.5,"West",112.7038071561
+"Turf Island 2",258.75,"West",115.248387235043
 "Turf Island 2",270,"West",131.157529196935
-"Turf Island 2",280,"West",10750.521407794
-"Turf Island 2",290,"West",8123.92354943161
-"Turf Island 2",300,"West",7494.1350246106
-"Turf Island 2",310,"West",12081.1063809884
-"Turf Island 2",320,"North",8699.53537307901
-"Turf Island 2",330,"North",8172.97802693515
-"Turf Island 2",340,"North",9538.87302574284
-"Turf Island 2",350,"North",59999.9838184145
+"Turf Island 2",281.25,"West",12461.7910421195
+"Turf Island 2",292.5,"West",7746.35304280975
+"Turf Island 2",303.75,"West",7137.57627060463
+"Turf Island 2",315,"North",9474.79662918104
+"Turf Island 2",326.25,"North",8299.29196428231
+"Turf Island 2",337.5,"North",9136.87177014295
+"Turf Island 2",348.75,"North",10364.9171213116
 "Tzartus 116",0,"North",21.186801105272
-"Tzartus 116",10,"North",26.0636587755065
-"Tzartus 116",20,"North",749.508671222994
-"Tzartus 116",30,"North",936.794309576363
-"Tzartus 116",40,"North",549.755460959372
-"Tzartus 116",50,"East",4447.00358634237
-"Tzartus 116",60,"East",4260.38506228284
-"Tzartus 116",70,"East",3594.74530655815
-"Tzartus 116",80,"East",5298.8244167096
+"Tzartus 116",11.25,"North",26.8992915130923
+"Tzartus 116",22.5,"North",724.116220778609
+"Tzartus 116",33.75,"North",510.394495991434
+"Tzartus 116",45,"East",1336.73351813381
+"Tzartus 116",56.25,"East",4316.41522240967
+"Tzartus 116",67.5,"East",5212.8882959677
+"Tzartus 116",78.75,"East",5408.00896369195
 "Tzartus 116",90,"East",1881.93329131091
-"Tzartus 116",100,"East",4151.65277488704
-"Tzartus 116",110,"East",4070.5959037511
-"Tzartus 116",120,"East",3768.06926264518
-"Tzartus 116",130,"East",2910.92488890799
-"Tzartus 116",140,"South",2566.72271084081
-"Tzartus 116",150,"South",2049.4393106094
-"Tzartus 116",160,"South",1869.83144882484
-"Tzartus 116",170,"South",1745.54840555308
+"Tzartus 116",101.25,"East",4102.27708547266
+"Tzartus 116",112.5,"East",4104.67446950146
+"Tzartus 116",123.75,"East",3225.64773637825
+"Tzartus 116",135,"South",2750.63648800718
+"Tzartus 116",146.25,"South",2120.31525683518
+"Tzartus 116",157.5,"South",1909.21984185345
+"Tzartus 116",168.75,"South",1741.18078270265
 "Tzartus 116",180,"South",2373.95640841179
-"Tzartus 116",190,"South",2737.16032548884
-"Tzartus 116",200,"South",4138.75338352788
-"Tzartus 116",210,"South",6855.35927104109
-"Tzartus 116",220,"South",123.022885145705
-"Tzartus 116",230,"West",112.516190867694
-"Tzartus 116",240,"West",109.869608548363
-"Tzartus 116",250,"West",111.586285905574
-"Tzartus 116",260,"West",117.977282920662
+"Tzartus 116",191.25,"South",2612.06347078987
+"Tzartus 116",202.5,"South",4300.28750673685
+"Tzartus 116",213.75,"South",10262.7445949832
+"Tzartus 116",225,"West",116.11345712588
+"Tzartus 116",236.25,"West",110.255221920203
+"Tzartus 116",247.5,"West",110.786349556944
+"Tzartus 116",258.75,"West",117.405431542339
 "Tzartus 116",270,"West",122.655678616138
-"Tzartus 116",280,"West",17.6336151338647
-"Tzartus 116",290,"West",15.1760084071066
-"Tzartus 116",300,"West",13.7625126542653
-"Tzartus 116",310,"West",13.7754255968503
-"Tzartus 116",320,"North",14.2208621155426
-"Tzartus 116",330,"North",15.1724798885758
-"Tzartus 116",340,"North",16.5740665585959
-"Tzartus 116",350,"North",18.316157541621
-"Wizard Islet North",0,"North",1525.53663406023
-"Wizard Islet North",10,"North",1868.15468745549
-"Wizard Islet North",20,"North",2267.94928835571
-"Wizard Islet North",30,"North",2938.14436419709
-"Wizard Islet North",40,"North",3446.0827169636
-"Wizard Islet North",50,"East",6558.55656141965
-"Wizard Islet North",60,"East",12800.3645370995
-"Wizard Islet North",70,"East",5425.64744353433
-"Wizard Islet North",80,"East",4055.42378127149
-"Wizard Islet North",90,"East",38.1433833048213
-"Wizard Islet North",100,"East",32.7441174303655
-"Wizard Islet North",110,"East",28.6251273676996
-"Wizard Islet North",120,"East",26.1319076582828
-"Wizard Islet North",130,"East",24.7293916132789
-"Wizard Islet North",140,"South",24.1666398115051
-"Wizard Islet North",150,"South",24.3524001417635
-"Wizard Islet North",160,"South",26.2419740780063
-"Wizard Islet North",170,"South",29.8951361419706
-"Wizard Islet North",180,"South",36.0006968934822
-"Wizard Islet North",190,"South",38.6773547313058
-"Wizard Islet North",200,"South",43.3550989552881
-"Wizard Islet North",210,"South",75.1152973031483
-"Wizard Islet North",220,"South",158.368773607294
-"Wizard Islet North",230,"West",688.872136768712
-"Wizard Islet North",240,"West",834.904586861754
-"Wizard Islet North",250,"West",1861.13600059062
-"Wizard Islet North",260,"West",59999.9374313841
-"Wizard Islet North",270,"West",11419.5087417164
-"Wizard Islet North",280,"West",10204.086552205
-"Wizard Islet North",290,"West",13778.1343653235
-"Wizard Islet North",300,"West",11122.4952173817
-"Wizard Islet North",310,"West",976.725566170666
-"Wizard Islet North",320,"North",838.461726177365
-"Wizard Islet North",330,"North",880.353480551039
-"Wizard Islet North",340,"North",1019.70046688195
-"Wizard Islet North",350,"North",1145.71299222726
+"Tzartus 116",281.25,"West",17.2537645684997
+"Tzartus 116",292.5,"West",14.7305440628155
+"Tzartus 116",303.75,"West",13.7182316642276
+"Tzartus 116",315,"North",13.941346594554
+"Tzartus 116",326.25,"North",14.7479621217657
+"Tzartus 116",337.5,"North",16.2630601109265
+"Tzartus 116",348.75,"North",18.0476845324179
 "Wizard Islet South",0,"North",65.0305347705625
-"Wizard Islet South",10,"North",81.8385636842982
-"Wizard Islet South",20,"North",103.613263457741
-"Wizard Islet South",30,"North",119.469307786948
-"Wizard Islet South",40,"North",4128.99040402644
-"Wizard Islet South",50,"East",7069.81009224323
-"Wizard Islet South",60,"East",13135.5377855698
-"Wizard Islet South",70,"East",5148.89216146447
-"Wizard Islet South",80,"East",4125.22247582483
+"Wizard Islet South",11.25,"North",84.0104135655179
+"Wizard Islet South",22.5,"North",108.590153245602
+"Wizard Islet South",33.75,"North",120.544682229613
+"Wizard Islet South",45,"East",176.249796580267
+"Wizard Islet South",56.25,"East",10657.139466169
+"Wizard Islet South",67.5,"East",5595.8991011876
+"Wizard Islet South",78.75,"East",3999.77145699047
 "Wizard Islet South",90,"East",3781.02988640638
-"Wizard Islet South",100,"East",2873.22256922232
-"Wizard Islet South",110,"East",2602.10586040167
-"Wizard Islet South",120,"East",2639.58760760771
-"Wizard Islet South",130,"East",2598.14623238797
-"Wizard Islet South",140,"South",2958.71808774062
-"Wizard Islet South",150,"South",2444.17437275212
-"Wizard Islet South",160,"South",2699.07251282872
-"Wizard Islet South",170,"South",3293.91119429619
+"Wizard Islet South",101.25,"East",2890.39728860652
+"Wizard Islet South",112.5,"East",2529.4458636302
+"Wizard Islet South",123.75,"East",2594.962938014
+"Wizard Islet South",135,"South",2697.99586626641
+"Wizard Islet South",146.25,"South",2424.69913048562
+"Wizard Islet South",157.5,"South",2794.67416453399
+"Wizard Islet South",168.75,"South",3215.5308199826
 "Wizard Islet South",180,"South",3602.21860900942
-"Wizard Islet South",190,"South",869.430440219848
-"Wizard Islet South",200,"South",640.961000635004
-"Wizard Islet South",210,"South",602.5552319117
-"Wizard Islet South",220,"South",646.780241322382
-"Wizard Islet South",230,"West",680.731036518133
-"Wizard Islet South",240,"West",630.41209327351
-"Wizard Islet South",250,"West",493.599021901391
-"Wizard Islet South",260,"West",749.853094819553
+"Wizard Islet South",191.25,"South",840.396915200368
+"Wizard Islet South",202.5,"South",578.433430055705
+"Wizard Islet South",213.75,"South",614.104784561721
+"Wizard Islet South",225,"West",663.378381096298
+"Wizard Islet South",236.25,"West",640.711186028099
+"Wizard Islet South",247.5,"West",486.582582110658
+"Wizard Islet South",258.75,"West",727.616353212555
 "Wizard Islet South",270,"West",13410.358787809
-"Wizard Islet South",280,"West",10151.3688840849
-"Wizard Islet South",290,"West",13462.2648820143
-"Wizard Islet South",300,"West",10114.9952613965
-"Wizard Islet South",310,"West",8903.91010108288
-"Wizard Islet South",320,"North",1167.88483933415
-"Wizard Islet South",330,"North",94.3486225816197
-"Wizard Islet South",340,"North",57.7186292021514
-"Wizard Islet South",350,"North",57.3586579964939
+"Wizard Islet South",281.25,"West",10201.2667034393
+"Wizard Islet South",292.5,"West",59999.6540886696
+"Wizard Islet South",303.75,"West",9403.72153687472
+"Wizard Islet South",315,"North",1402.21345212699
+"Wizard Islet South",326.25,"North",1087.16824957865
+"Wizard Islet South",337.5,"North",59.3606562758165
+"Wizard Islet South",348.75,"North",56.7767785272561

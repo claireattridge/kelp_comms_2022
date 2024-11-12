@@ -11,6 +11,7 @@ library(MetBrewer)
 #### Kelp density, height, & biomass cleaning ----
 
 ####### Reading in our kelp density data
+
 dens <- read.csv("./MSc_data/Data_new/kelp_density_2022.csv") %>%
   mutate(Macro = (Macro_5m2/5), Nereo=(Nereo_5m2/5)) %>% # Changing units to /m2 area
   rowwise() %>% # To sum across rows
@@ -27,7 +28,9 @@ densgrp <- dens %>%
   summarise(KelpM = mean(Kelp), KelpSD = sd(Kelp))
 
 
+
 ####### Reading in our kelp height and biomass data
+
 kelp <- read.csv("./MSc_data/Data_new/kelp_morphology_2022.csv") %>%
   as.data.frame()
 
@@ -56,23 +59,23 @@ options(scipen=999) # Turning off scientific notation
 kelp$Biomass_g <- ifelse(is.na(kelp$Biomass_g), ifelse(is.na(kelp$Sub_diam_cm), NA, formula(kelp$Sub_diam_cm)), kelp$Biomass_g)
 
 
-# Averaging to transect from individual samples (i.e., ave individual biomass / transect)
+# Averaging to transect from individual kelp samples (i.e., averages of the 5 sampled individuals / transect)
 kelptrans <- kelp %>%
   mutate(SiteName = as.factor(SiteName), Height_m = as.numeric(Height_m)) %>%
   group_by(SiteName, Transect) %>% # Averaging to transect 
   summarise(HeightT = mean(Height_m, na.rm=T),
-            BiomassTind = mean(Biomass_g, na.rm=T)) # Ave individual biomass (g) / transect
+            BiomassTind_g = mean(Biomass_g, na.rm=T)) # Ave individual biomass (g) / transect
 
 
 # Bringing in the kelp density (transect level) data
-kelptog <- merge(kelptrans, dens, by = c("SiteName", "Transect"), all=TRUE)
+kelpjoin <- merge(kelptrans, dens, by = c("SiteName", "Transect"), all=TRUE)
 
-
-kelptog <- kelptog %>%
+# Getting to the average biomass / m2 area for each transect
+kelptog <- kelpjoin %>%
   rowwise() %>% # To sum across rows
-  mutate(BiomassTkg = ((BiomassTind/1000)*Kelp)) %>% # Convert ave ind biomass (g to kg) and multiply by transect density
-  ungroup() %>% # Stop rowwise 
-  mutate(Biomassm2kg = (BiomassTkg/5)) # From ave transect area biomass (/5m2) to /m2 area
+  mutate(BiomassTind_kg = (BiomassTind/1000)) %>% # Convert ave individual kelp biomass from g to kg 
+  mutate(BiomassTkg = (BiomassTind_kg*Kelp)) %>% # Multiplying this by the transect kelp densities / m2
+  ungroup() # Stop rowwise 
 kelptog[sapply(kelptog, is.nan)] <- 0 # NaNs to 0s for working with
 
 
@@ -80,8 +83,8 @@ kelptog[sapply(kelptog, is.nan)] <- 0 # NaNs to 0s for working with
 kelpgrp <- kelptog %>%
   mutate(SiteName = as.factor(SiteName)) %>%
   group_by(SiteName, Depth_datum_m) %>% # Averaging to site & keeping depth (m)
-  summarise(HeightM = mean(HeightT, na.rm=T), HeightSD = sd(HeightT, na.rm=T), # Ave height (m)
-            BiomassM = mean(Biomassm2kg, na.rm=T), BiomassSD = sd(Biomassm2kg, na.rm=T), # Ave biomass (kg / m2)
+  summarise(HeightM = weighted.mean(HeightT, na.rm=T), HeightSD = sd(HeightT, na.rm=T), # Ave height (m)
+            BiomassM = mean(BiomassTkg, na.rm=T), BiomassSD = sd(BiomassTkg, na.rm=T), # Ave biomass (kg / m2)
             DensityM = mean(Kelp), DensitySD = sd(Kelp, na.rm=T), # Ave density any kelp (m2)
             MacroM = mean(Macro), MacroSD = sd(Macro, na.rm=T), # Ave density Macro (m2)
             NereoM = mean(Nereo), NereoSD = sd(Nereo, na.rm=T)) # Ave density Nereo (m2)
@@ -154,8 +157,8 @@ list2env(allshps, envir=.GlobalEnv) # Bring each unique sf object to the working
 
 ####### Calculating area of each kelp forest shape file
 
-# I know this is terrible, working on code to automate/loop st_area() through the .shp files
-# But, at least it works! Keep an eye out for updates to this code. 
+# I know this is not the most efficient code solution,
+# but it does work to produce the areas from each .shp file
 a <- cbind(st_area(allshps[[1]]), as.character(names(allshps[1])))
 b <- cbind(st_area(allshps[[2]]), as.character(names(allshps[2])))
 c <- cbind(st_area(allshps[[3]]), as.character(names(allshps[3])))
@@ -192,31 +195,6 @@ areagrp <- areagrp %>%
   filter(!str_detect(SiteName, 'REDO'))
 
 
-# ############### TRYING TO FIGURE OUT HOW TO AUTOMATE THIS OVER THE LIST GAHHHHHHH
-# 
-# f2 <- function(polygon){
-#   st_area(polygon) #
-# }
-# 
-# 
-# test <- vector('list', length(allshps))
-# for (i in seq_along(allshps)) {
-#   x <- st_area(allshps[[i]])
-#   test[i] <- x
-# }
-# testdf <- do.call(rbind, test)
-# 
-# 
-# # Empty List for Centroids
-# test <- list()
-# 
-# # For Loop
-# for (i in seq_along(allshps)) {
-#     sf::st_area(allshps[[i]])
-# }
-
-############### Anyways, moving on for now...
-
 #### Final data joining ----
 
 ### Merging density, canopy height, biomass, and area data 
@@ -227,36 +205,46 @@ kelpdat <- kelpdat %>%
   filter(SiteName != "Less Dangerous Bay") %>%
   filter(SiteName != "Wizard Islet North")
 
+# Filtering out the 'redos' of site sampling in the fall
+kelpdat <- kelpdat %>%
+  filter(SiteName != "Ross Islet 2 REDO") %>%
+  filter(SiteName != "Second Beach South REDO") %>%
+  filter(SiteName != "Less Dangerous Bay REDO")
+
 
 # saving a .csv file of the kelp metrics by site
 write.csv(kelpdat, "./MSc_data/Data_new/kelp_metrics_2022.csv", row.names=F)
 
 #
 
-#### Plotting out the data ----
+#### Plot for kelp forest metrics by sites ----
 
-
-### CLEANING FRAMES & ADDING COLUMNS FOR PLOTTING
-
-## Calling the kelp data sheet
+## Calling the averaged and cleaned kelp data sheet
 kelpdat <- read_csv("./MSc_data/Data_new/kelp_metrics_2022.csv")
 
 
 # Filtering out the no kelp sites (Less Dangerous Bay & Wizard I North)
-# from the dataframe retaining all ungrouped data points ('kelptog')
-# the raw data points are needed for the following plots, but these sites need to be excluded
+# from the raw dataframe retaining all ungrouped data points ('kelptog').
+# The other raw data points are needed for the following plots, but 
+# these 'no-kelp' sites need to be excluded from the datasets
 kelptog_clean <- kelptog %>%
   filter(SiteName != "Less Dangerous Bay") %>%
   filter(SiteName != "Wizard Islet North") %>%
   droplevels()
+
+# Filtering out the 'redos' of site sampling in the fall
+kelptog_clean <- kelptog_clean %>%
+  filter(SiteName != "Ross Islet 2 REDO") %>%
+  filter(SiteName != "Second Beach South REDO") %>%
+  filter(SiteName != "Less Dangerous Bay REDO")
 
 
 # saving a .csv file of the clean raw kelp data points
 write.csv(kelptog_clean, "./MSc_data/Data_new/kelp_rawdata_clean_2022.csv", row.names=F)
 
 
-### SUPPLEMENTAL FIGURE OF KELP FOREST ATTRIBUTES
 
+### SUPPLEMENTAL FIGURE OF KELP FOREST ATTRIBUTES
 
 ## Site specific density (summed Macro & Nereo) # Ordered by increasing density
 
@@ -295,15 +283,15 @@ c1
 
 b1 <- ggplot() + 
   geom_pointrange(data=kelpdat, size=0.5, aes(x=reorder(SiteName,DensityM), y=BiomassM, ymin=BiomassM-BiomassSD, ymax=BiomassM+BiomassSD)) +
-  geom_point(data=kelptog_clean, size=2, alpha=0.2, aes(x=reorder(SiteName,Kelp), y=Biomassm2kg)) +
-  scale_y_continuous(limits=c(-0.4,5.5), breaks=c(0,1.5,3,4.5)) +
+  geom_point(data=kelptog_clean, size=2, alpha=0.2, aes(x=reorder(SiteName,Kelp), y=BiomassTkg)) +
+  scale_y_continuous(limits=c(-1,30), breaks=c(0,10,20,30)) +
   theme_classic() +
   theme(
         # axis.text.x = element_text(color="black", size="9.5", angle=45, vjust=0.89, hjust=0.89),
         axis.text.x = element_blank(),
         axis.text.y = element_text(color="black", size="10"),
         axis.title.y = element_text(color="black", size="12", vjust=1)) +
-  xlab("") + ylab(expression("Biomass (kg wet weight /m"^2*")"))
+  xlab("") + ylab(expression("Biomass (kg /m"^2*")"))
 b1
 
 
@@ -323,7 +311,7 @@ a1
 
 ## Grouped multi-panel plot ##
 
-tiff(file="./MSc_plots/KelpMetricsAll.tiff", height = 12, width = 6, units = "in", res=400)
+tiff(file="./MSc_plots/SuppFigs/KelpMetricsAll.tiff", height = 12, width = 6, units = "in", res=400)
 
 ggarrange(d1, c1, b1, a1, ncol=1, align="v", heights=c(1,1,1,1.4)) # Generating the paneled plot
 
@@ -331,45 +319,221 @@ dev.off()
 
 
 
-#### Silly plot for a presentation ----
-# 
-# # fxn to generate sequential exponential values
-# future_value = function(years, x = 1, increase = 0.2) {
-#   x * (1 + increase) ^ (1:length(years))
-# }
-# # test line
-# future_value(1:23)
-# 
-# # adding fake exponential column
-# kelpsilly <- kelpdat %>%
-#   arrange(DensityM, desc=T) %>%
-#   mutate(Frustration = future_value(1:23))
-# 
-# tiff(file="C:/Users/Claire/Desktop/sillykelp.tiff", height = 5, width = 7, units = "in", res=600)
-# 
-# # plotting out exponential curve to density
-# silly <- ggplot(data=kelpsilly, size=2, aes(x=as.numeric(DensityM), y=as.numeric(Frustration))) +
-#   geom_point(data=kelpsilly, size=2, aes(x=as.numeric(DensityM), y=as.numeric(Frustration))) +
-#   geom_smooth(method="lm", formula = (y ~ x + I(x^2)), se=T) +
-#   theme_classic() +
-#   theme(
-#     axis.text.x = element_text(color="black", size="9.5"),
-#     axis.text.y = element_text(color="black", size="10"),
-#     axis.title.y = element_text(color="black", size="12", vjust=1)) +
-#   xlab(expression("Kelp density (stipes /m"^2*")")) + ylab("Frustration (swears /min)")
-# silly
-# 
-# dev.off()
+#### Seasonality plot (2022-2023) ----
 
-#### Test regressions of the data ----
+## Loading the 2022 kelp metrics
+kelp2022 <- read_csv("./MSc_data/Data_new/kelp_metrics_2022.csv")
 
-# Pulling from the 'RLS_species_code.R' sheet
-kelpdat2 <- merge(kelpdat, rls_richness, by="SiteName", all=T)
+## Loading the 2023 raw data sheets
+dens2023 <- read_csv("./MSc_data/Data_new/kelp_density_2023.csv")
+kelp2023 <- read_csv("./MSc_data/Data_new/kelp_morphology_2023.csv")
+# Has already been processed in 'forest_area_processing_2023.R'
+area2023 <- read_csv("./MSc_data/Data_new/forest_areas_2023.csv")
 
-ggplot(kelpdat2, aes(x=DensityM, y=species_richness)) +
-  geom_point() +
-  # geom_smooth(method="lm", formula = y ~ x + I(x^2), se=T) + # Lm quadratic
-  # geom_smooth(method="lm", formula = y ~ x, se=T) + # Lm
-  geom_smooth(method="gam", formula = y ~ s(x, bs="cs", k=3), se=T) + # GAM
+
+
+
+### Cleaning up the kelp density data
+dens2023_select <- dens2023 %>%
+  select(SiteName, Transect, Depth_datum_m, Macro_5m2, Nereo_5m2)
+
+## New columns for Macro & Nereo density / m2
+dens2023_m2 <- dens2023_select %>%
+  mutate(Macro = (Macro_5m2/5), Nereo=(Nereo_5m2/5)) %>%
+  rowwise() %>% # To sum across rows
+  mutate(Kelp = sum(Macro,Nereo)) %>% # Sum macro and nereo to get total kelp dens / transect
+  ungroup() # Stop rowwise 
+
+## Grouping to site-specific density averages 
+dens2023_group <- dens2023_m2 %>%
+  group_by(SiteName) %>% # Averaging to site
+  summarise(Depth_datum_m = mean(Depth_datum_m), KelpM = mean(Kelp), KelpSD = sd(Kelp))
+
+
+
+
+
+### Cleaning up the kelp morphology data
+
+## Converting sub-bulb circumference to diameter for Nereo
+kelp_subbulb <- kelp2023 %>%
+  rowwise() %>%
+  mutate(Sub_diam_cm = (Sub_circ_cm/3.14159)) %>%
+  ungroup()
+
+# Equation for converting from sub-bulb diamater (cm) to biomass (g) as per our Nereo sub-bulb model (using equation for all 3 sample sites combined)
+# See 'nereo_biomass.R' for the origin relationship
+formula <- function(x){
+  (150.7966*(x)^2 -216.2721*(x) + 315.0124)
+}
+
+options(scipen=999) # Turning off scientific notation
+
+## Statement for applying sub-bulb equation when biomass is absent (i.e., when it needs to happen)
+kelp_subbulb$Biomass_g <- ifelse(is.na(kelp_subbulb$Biomass_g), 
+                                 ifelse(is.na(kelp_subbulb$Sub_diam_cm), NA, 
+                                        formula(kelp_subbulb$Sub_diam_cm)), kelp_subbulb$Biomass_g)
+
+
+## Averaging to transect from individual samples (i.e., ave individual biomass / transect)
+kelp_transect_biomass <- kelp_subbulb %>%
+  mutate(SiteName = as.factor(SiteName), Height_m = as.numeric(Height_m)) %>%
+  group_by(SiteName, Transect) %>% # Averaging to transect 
+  summarise(Depth_datum_m = mean(Depth_datum_m, na.rm=TRUE),
+            HeightT = mean(Height_m, na.rm=TRUE),
+            BiomassTind = mean(Biomass_g, na.rm=TRUE)) # Ave individual biomass (g) / transect
+
+
+
+### Adding together the kelp morphology and density data
+
+## Removing the depth column from density to merge with the 
+## kelp morphology data 
+dens2023_m2 <- dens2023_m2 %>%
+  select(-Depth_datum_m)
+
+## Bringing in the kelp density (transect level) data
+kelptog <- merge(kelp_transect_biomass, dens2023_m2, by = c("SiteName", "Transect"), all=TRUE)
+
+
+## Using kelp densities to estimate biomass at transect level
+kelptog_cleaned <- kelptog %>%
+  rowwise() %>% # To sum across rows
+  mutate(BiomassTkg = ((BiomassTind/1000)*Kelp)) %>% # Convert ave ind biomass (g to kg) and multiply by transect density
+  ungroup() %>% # Stop rowwise 
+  mutate(Biomassm2kg = (BiomassTkg/5)) # From ave transect area biomass (/5m2) to /m2 area
+kelptog_cleaned[sapply(kelptog_cleaned, is.nan)] <- NA # NaNs to NAs for working with
+
+
+# Grouping/averaging from transect to site level
+kelptog_grouped <- kelptog_cleaned %>%
+  mutate(SiteName = as.factor(SiteName)) %>%
+  group_by(SiteName) %>% # Averaging to site
+  summarise(Depth_datum_m = mean (Depth_datum_m, na.rm=T),
+            HeightM = mean(HeightT, na.rm=T), HeightSD = sd(HeightT, na.rm=T), # Ave height (m)
+            BiomassM = mean(Biomassm2kg, na.rm=T), BiomassSD = sd(Biomassm2kg, na.rm=T), # Ave biomass (kg / m2)
+            DensityM = mean(Kelp), DensitySD = sd(Kelp, na.rm=T), # Ave density any kelp (m2)
+            MacroM = mean(Macro), MacroSD = sd(Macro, na.rm=T), # Ave density Macro (m2)
+            NereoM = mean(Nereo), NereoSD = sd(Nereo, na.rm=T)) # Ave density Nereo (m2)
+kelptog_grouped[sapply(kelptog_grouped, is.nan)] <- NA # NaNs to NAs for working with
+
+# Adding composition identity column for each site
+kelptog_grouped <- kelptog_grouped %>%
+  mutate(Composition = case_when(NereoM != 0 & MacroM != 0 ~ "Mixed",
+                                 MacroM != 0 ~ "Macro",
+                                 NereoM != 0 ~ "Nereo",
+                                 TRUE ~ as.character("None")))
+
+
+### Joining with the kelp area data
+
+## Bringing in the kelp density (transect level) data
+kelptog_grouped_all <- merge(kelptog_grouped, area2023, by = c("SiteName"), all=TRUE)
+
+## saving a .csv file of the kelp metrics by site
+write.csv(kelptog_grouped_all, "./MSc_data/Data_new/kelp_metrics_2023.csv", row.names=F)
+
+
+
+
+### MAKING THE KELP SEASONALITY PLOT (2022 vs. 2023)
+
+## Filtering out sites without all metrics examined
+## Adding column to identify year
+kelpdat2023 <- read_csv("./MSc_data/Data_new/kelp_metrics_2023.csv") %>%
+  filter(SiteName != "Less Dangerous Bay" &
+           SiteName != "Wizard Islet North" &
+           SiteName != "Flemming 112" &
+           SiteName != "Ross Islet Slug Island") %>%
+  mutate(Year = "2023") %>%
+  mutate(SiteName = as.factor(SiteName), Composition = as.factor(Composition))
+  
+
+# extracting the site names from those surveyed in 2023
+sites2023 <- levels(as.factor(kelpdat2023$SiteName))
+
+
+## Adding in the 2022 kelp metric data
+kelpdat2022 <- read_csv("./MSc_data/Data_new/kelp_metrics_2022.csv") %>%
+  mutate(SiteName = as.factor(SiteName)) %>%
+  filter(SiteName %in% sites2023) %>%
+  droplevels() %>%
+  mutate(Year = as.factor("2022"))
+
+# extracting the site names from those surveyed in both 2022 & 2023
+sites_shared <- levels(as.factor(kelpdat2022$SiteName))
+
+## Back-filtering the 2023 frame again for only the shared sites with 2022
+kelpdat2023 <- kelpdat2023 %>%
+  filter(SiteName %in% sites_shared) %>%
+  droplevels()
+
+
+## joining the 2022 & 2023 kelp data together
+## Site averages
+kelpdat_biannual <- rbind(kelpdat2022, kelpdat2023)
+
+
+
+
+# Kelp density plot
+densplot2023 <- ggplot() +
+  geom_pointrange(data=kelpdat_biannual, size=0.3, 
+                  aes(x=SiteName, y=DensityM, 
+                      ymin=(DensityM-DensitySD), ymax=(DensityM+DensitySD),
+                      group=Year, shape=Year), position=position_dodge(width=0.4)) +
+  # geom_point(data=dens2023_m2, size=2, alpha=0.2, aes(x=SiteName, y=Kelp, group=Year)) +
+  scale_y_continuous(breaks=c(0,5,10,15,20, 25), limits=c(-2,25)) +
+  scale_shape_manual(values=c(15,16)) +
   theme_classic() +
-  xlab("Kelp Density") + ylab("Spp richness")
+  theme(legend.position = "top",
+        legend.title = element_blank(),
+    # axis.text.x = element_text(color="white", size="9.5", angle=45, vjust=0.89, hjust=0.89),
+    axis.text.x = element_blank(),
+    axis.text.y = element_text(color="black", size="8.5"),
+    axis.title.y = element_text(color="black", size="10", vjust=1)) +
+  xlab("") + ylab(expression("Density (stipes /m"^2*")"))
+
+
+# Forest biomass plot
+biomassplot2023 <- ggplot() +
+  geom_pointrange(data=kelpdat_biannual, size=0.3, 
+                  aes(x=SiteName, y=BiomassM, 
+                      ymin=(BiomassM-BiomassSD), ymax=(BiomassM+BiomassSD),
+                      group=Year, shape=Year), position=position_dodge(width=0.4)) +
+  # geom_point(data=kelptog_clean, size=2, alpha=0.2, aes(x=SiteName, y=Kelp)) +
+  # scale_y_continuous(limits=c(-2,25)) +
+  scale_shape_manual(values=c(15,16)) +
+  theme_classic() +
+  theme(legend.position = "none",
+    # axis.text.x = element_text(color="white", size="9.5", angle=45, vjust=0.89, hjust=0.89),
+    axis.text.x = element_blank(),
+    axis.text.y = element_text(color="black", size="8.5"),
+    axis.title.y = element_text(color="black", size="10", vjust=1)) +
+  xlab("") + ylab(expression("Biomass (kg wet weight /m"^2*")"))
+
+
+# Forest biomass plot
+areaplot2023 <- ggplot() +
+  geom_point(data=kelpdat_biannual, size=1.7, 
+                  aes(x=SiteName, y=Area_m2, 
+                      group=Year, shape=Year), position=position_dodge(width=0.4)) +
+  # geom_point(data=kelptog_clean, size=2, alpha=0.2, aes(x=SiteName, y=Kelp)) +
+  scale_y_continuous(breaks=c(0,3000,6000,9000,12000)) +
+  scale_shape_manual(values=c(15,16)) +
+  theme_classic() +
+  theme(legend.position = "none",
+    axis.text.x = element_text(color="black", size="8.5", angle=45, vjust=0.89, hjust=0.89),
+    axis.text.y = element_text(color="black", size="8.5"),
+    axis.title.y = element_text(color="black", size="10", vjust=1)) +
+  xlab("") + ylab(expression("Forest area (/m"^2*")"))
+
+
+## Grouped multi-panel plot for 2022 vs. 2023 kelp forest metrics
+
+tiff(file="./MSc_plots/SuppFigs/Kelp_2022_2023.tiff", height = 7.5, width = 5, units = "in", res=400)
+
+ggarrange(densplot2023, biomassplot2023, areaplot2023, 
+          ncol=1, align="v", heights=c(1.2,1,1.4)) 
+
+dev.off() 
