@@ -210,8 +210,7 @@ wind_36 <- wind_36 %>%
 
 # data manipulations to prepare for wind rose plots
 wavey_deg <- wavey %>% 
-  mutate(windspd = windspd*(0.51444), # knots to m/s
-         winddir_r = winddir_r*10) #to full degree units
+  mutate(winddir_r = winddir_r*10) #to full degree units
 
 ## making the wind rose
 library(openair)
