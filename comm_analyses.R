@@ -17,10 +17,9 @@ library(ggrepel)
 library(ecodist)
 library(magick)
 
-
 #
 
-#### Loading all data sheets (kelp forest structure & environmental) ----
+#### Loading & saving str & env data sheets ----
 
 # Wave exp
 rei <- read_csv("./MSc_data/Data_new/REI_2022.csv") %>%
@@ -160,7 +159,7 @@ comms_cleaned <- comms %>%
 
 
 
-## Exploring some general questions first:
+## Exploring some general questions:
 
 # Which site has the most species?
 richness <- comms_cleaned %>%
@@ -174,16 +173,34 @@ abun <- comms_cleaned %>%
   summarize(totalab = sum(abundance)) %>%
   arrange(desc(totalab))
 
+# Which species were most abundant on average per site?
+abun_ave <- comms_cleaned %>%
+  group_by(Species) %>%
+  summarize(siteab = mean(abundance)) %>%
+  arrange(desc(siteab))
+
 # Which species were observed at the most sites?
 obvs <- comms_cleaned %>%
   group_by(Species) %>%
   summarise(observs = n_distinct(SiteName)) %>%
   arrange(desc(observs))# Arranging in descending order
 
+# Which species were observed at the most sites by forest type?
+obvs_canopy <- comms_cleaned %>%
+  mutate(SiteName = as.factor(SiteName)) %>%
+  mutate(canopy = case_when(SiteName == "Swiss Boy" ~ "Nereo", 
+                              SiteName == "Second Beach" ~ "Nereo", 
+                              SiteName == "Cable Beach (Blow Hole)" ~ "Nereo",
+                              SiteName == "Bordelais Island" ~ "Nereo",
+                            .default = "Macro")) %>%
+  mutate(canopy = factor(canopy, levels=c("Nereo", "Macro"))) %>%
+  group_by(Species, canopy) %>%
+  summarise(observs = n_distinct(SiteName))
+
 
 
 # Plot for species observations - Supp Fig
-tiff(file="./MSc_plots/SuppFigs/SpeciesAbCutoff.tiff", height = 7, width = 6, units="in", res=400)
+tiff(file="./MSc_plots/SuppFigs/SpeciesObvsCutoff.tiff", height = 7, width = 6, units="in", res=400)
 
 obvsplot <- ggplot(data=obvs, aes(x=observs, y=(fct_reorder(Species, desc(-observs))), fill=observs)) + 
   geom_bar(stat="identity", position="dodge", width=0.4) +
@@ -195,20 +212,70 @@ obvsplot <- ggplot(data=obvs, aes(x=observs, y=(fct_reorder(Species, desc(-obser
     axis.title.y = element_text(color="black", size="9", vjust=0.5),
     plot.margin = unit(c(0.5,1,0.5,0), "cm"), 
     ) +
-  xlab("Observations") + ylab("") +
-  geom_hline(yintercept = 44.5, linetype=2) # Adding cutoff line for spp present at < 5 sites
+  xlab("Site observations") + ylab("") +
+  geom_hline(yintercept = 27.5, linetype=2) # Adding cutoff line for spp present at >= 3 sites
 obvsplot
 
 dev.off()
 
 
 
-## We remove the rarely sighted species (present at < 5 sites) from the analysis frame 
-# (n = 44 removed)
-sppkeep <- obvs %>%
-  filter(observs >= 5)
+# Plot for species observations by canopy type - Supp Fig
+tiff(file="./MSc_plots/SuppFigs/SpeciesObvsCutoff_canopy.tiff", height = 7, width = 6, units="in", res=400)
 
-# Filtering the main frame for the retained species (n = 44)
+obvsplot_canopy <- ggplot(data=obvs_canopy, aes(x=observs, y=(reorder(Species, desc(-observs), sum)), fill=canopy)) + 
+  geom_bar(stat="identity", position="stack", width=0.4) +
+  scale_fill_manual(values=met.brewer("Kandinsky"), name=NULL,
+    labels=c(expression(italic("N. luetkeana")), expression(italic("M. pyrifera")))) +
+  theme_classic() +
+  theme(legend.position="top",
+        legend.key.size = unit(0.3, "cm"),
+        legend.text = element_text(color="black", size="7"),
+        axis.text.x = element_text(color="black", size="8"),
+        axis.text.y = element_text(color="black", size="6", face="italic"),
+        axis.title.x = element_text(color="black", size="8.5", vjust=0.5),
+        plot.margin = unit(c(0.5,1,0.5,0), "cm"), 
+  ) +
+  xlab("Site observations") + ylab("") +
+  geom_hline(yintercept = 27.5, linetype=2) + # Adding cutoff line for spp present at >= 4 sites
+  geom_hline(yintercept = 44.5, linetype=2, color="grey75") # Showing cutoff line for spp present at >= 5 sites
+obvsplot_canopy
+
+dev.off()
+
+
+
+# Plot for species abundances by observation - Supp Fig
+tiff(file="./MSc_plots/SuppFigs/SpeciesAbunCutoff.tiff", height = 7, width = 6, units="in", res=400)
+
+# Joining the abundance and observation frames
+abunobvs <- obvs %>%
+  left_join(abun_ave, by="Species")
+
+abun_obvsplot <- ggplot(data=abunobvs, aes(x=siteab, y=(fct_reorder(Species, desc(-observs))), fill=siteab)) + 
+  geom_bar(stat="identity", position="dodge", width=0.4) +
+  scale_fill_gradientn(colors=met.brewer("VanGogh3")) +
+  theme_classic() +
+  theme(legend.position="none",
+        axis.text.x = element_text(color="black", size="8.6"),
+        axis.text.y = element_text(color="black", size="6", face="italic"),
+        axis.title.y = element_text(color="black", size="9", vjust=0.5),
+        plot.margin = unit(c(0.5,1,0.5,0), "cm"), 
+  ) +
+  xlab("Average site abundance") + ylab("") +
+  geom_hline(yintercept = 27.5, linetype=2) # Adding cutoff line for spp present at < 5 sites
+abun_obvsplot
+
+dev.off()
+
+
+
+## We remove the rarely sighted species (present at >= 3 sites) from the analysis frame
+# 88 species total, 27 species excluded
+sppkeep <- obvs %>%
+  filter(observs >= 3)
+
+# Filtering the main frame for the retained species (n = 61)
 commsclean <- comms %>%
   filter(Species %in% sppkeep$Species)
 
@@ -244,15 +311,16 @@ taxa <- read_csv("./MSc_data/Data_new/RLS_2022.csv") %>%
 ### Isolating fishes that utilize the water column (RLS Method 1 obvs)
 taxap <- taxa %>%
   filter(Method == 1) %>%
-  filter(CommonName != "Blackeye goby") %>% # Removing mislabelled obvs
-  filter(CommonName != "Longfin sculpin") %>% # Removing mislabelled obvs
+  filter(CommonName != "Blackeye goby") %>% # Removing mislabelled obvs of benthic fish
+  filter(CommonName != "Longfin sculpin") %>% # Removing mislabelled obvs of benthic fish
+  filter(CommonName != "Red Irish lord") %>% # Removing mislabelled obvs of benthic fish
   droplevels() %>%
   select(-Method)
-# 12 species 
+# 14 species 
 
 
 ### Isolating invertebrates (RLS Method 2 obvs - any demersal fishes)
-M2benthicfish <- c("Blackeye goby", "Crescent gunnel", "Penpoint gunnel", "Longfin sculpin", "Scalyhead sculpin", "Smoothhead sculpin", "Red Irish lord", "Buffalo sculpin")
+M2benthicfish <- c("Snubnose sculpin", "Blackeye goby", "Crescent gunnel", "Penpoint gunnel", "Longfin sculpin", "Scalyhead sculpin", "Smoothhead sculpin", "Red Irish lord", "Buffalo sculpin")
 
 taxab_inv <- taxa %>%
   filter(Method == 2) %>%
@@ -260,10 +328,12 @@ taxab_inv <- taxa %>%
   droplevels()
 # Removing mislabelled M1 fishes
 taxab_inv <- taxab_inv %>%
-  filter(CommonName != "Whitespotted greenling" & CommonName != "Kelp greenling" & CommonName != "Painted greenling") %>%
+  filter(CommonName != "Whitespotted greenling" & 
+           CommonName != "Kelp greenling" & 
+              CommonName != "Painted greenling") %>%
   droplevels() %>%
   select(-Method)
-# 26 species
+# 38 species
 
 
 ### Isolating fishes that remain on benthos (RLS Method 2)
@@ -272,7 +342,7 @@ taxab_fish <- taxa %>%
   filter(CommonName %in% M2benthicfish) %>%
   droplevels() %>%
   select(-Method)
-# 6 species
+# 9 species
 
 
 #### Community data: Relative abundance tables & transformations ----
@@ -303,7 +373,7 @@ bfish_wide[is.na(bfish_wide)] <- 0 # NAs to zeros for calculations
 bfish_mat <- as.matrix(bfish_wide) # As matrix
 
 # bfish_rel <- make_relative(bfish_mat) # Relative abundance matrix of community data
-bfish_hel <- decostand(bfish_mat, method = "hellinger") # Hellinger transformation of square root
+bfish_hel <- decostand(bfish_mat, method = "hellinger") # Hellinger transformation of
 
 
 ## BENTHIC INVERT SPP
@@ -324,30 +394,41 @@ binv_hel <- decostand(binv_mat, method = "hellinger") # Hellinger transformation
 
 #### Community data: Abundance & rel abundance plots ----
 
-## Grouping the table for pelagic fish
+## Cleaning raw table for pelagic fish
 taxap_fish_frame <- taxap %>%
   ungroup() %>%
   as.data.frame()
-# group_by(Species, CommonName) %>%
-# summarise(TaxaAb_av = mean(TaxaAb), SD = sd(TaxaAb), Sites = n())
+## Grouping raw table for pelagic fish
+taxap_fish_grp <- taxap %>%
+  group_by(Species, CommonName) %>%
+  summarise(TaxaAb_av = mean(TaxaAb), SD = sd(TaxaAb), Sites = n())
+
 
 colourCount = length(unique(taxap_fish_frame$Species))
-getPalette = colorRampPalette(met.brewer(name="Thomas", n=8))
+getPalette = colorRampPalette(met.brewer(name="Thomas", n=14))
+
 
 # Making the regional abundance plot for pelagic fish
-abPfish <- ggplot(taxap_fish_frame, 
-       aes(y=as.factor(reorder(Species, TaxaAb, FUN=median)), x=TaxaAb, fill=as.factor(Species))) + 
-  geom_jitter(position=position_jitter(width=0.3, height=0.2),
-              aes(fill=as.factor(Species), alpha=0.9), color="grey55", show.legend=FALSE, shape=21) +
-  geom_boxplot(alpha = 0.7, show.legend = FALSE, outlier.shape=NA, fatten=1) + # hiding outlier points since already showing with the jittered raw data
+abPfish <- ggplot() +
+  geom_jitter(data=taxap_fish_frame, position=position_jitter(width=0.3, height=0.2),
+              aes(x=TaxaAb, y=as.factor(reorder(Species, TaxaAb, FUN=mean)), 
+                  fill=as.factor(Species), alpha=0.2), color="grey55",
+                  show.legend=FALSE, shape=21, size=1) +
+  geom_pointrange(data=taxap_fish_grp, size=0.3, shape=22,
+                  aes(y=as.factor(reorder(Species, TaxaAb_av)), x=TaxaAb_av, 
+                  xmin=TaxaAb_av-SD, xmax=TaxaAb_av+SD,
+                  color=as.factor(Species), fill=as.factor(Species))) +
   scale_fill_manual(values=getPalette(colourCount)) +
+  scale_colour_manual(values=getPalette(colourCount)) +
   theme_classic() +
-  theme(strip.text.x = element_text(size=9, color="black", face="bold"),
+  theme(legend.position = "NA",
+        strip.text.x = element_text(size=9, color="black", face="bold"),
         axis.text.x = element_text(size=10, color="black"),
         axis.text.y = element_text(size=9, color="black", face="italic"),
         axis.title.y = element_blank(),
         plot.margin = margin (5.5,20,5.5,5.5, unit="pt")
-  )
+  ) +
+  annotate("text", label="a", x=-50, y=14.2, fontface="bold", size=4.5)
 
 
 ## Grouping for number of site occurrences for each species
@@ -356,7 +437,7 @@ taxap_fish_occ <- taxap_fish_frame %>%
   group_by(Species) %>%
   summarise(Mean=mean(TaxaAb), SiteNum=n()) %>%
   ungroup() %>%
-  mutate(Prop = round((SiteNum/22)*100, digits=1))
+  mutate(Prop = round((SiteNum/20)*100, digits=1))
 
 # Making the prop. of occurrence plot for pelagic fish
 ocPfish <- ggplot(taxap_fish_occ, aes(x=Species, y=Prop)) +
@@ -372,34 +453,44 @@ ocPfish <- ggplot(taxap_fish_occ, aes(x=Species, y=Prop)) +
     axis.text.y = element_text(color="black", size=9),
     axis.title = element_blank()
   ) +
-  annotate("text", label="A", x=1, y=100, fontface="bold", size=6)
+  annotate("text", label="a", x=1, y=100, fontface="bold", size=6)
 
 
 
-## Grouping the table for demersal fish
+
+## Cleaning raw table for benthic fish
 taxab_fish_frame <- taxab_fish %>%
   ungroup() %>%
   as.data.frame()
-  # group_by(Species, CommonName) %>%
-  # summarise(TaxaAb_av = mean(TaxaAb), SD = sd(TaxaAb), Sites = n())
+## Grouping raw table for benthic fish
+taxab_fish_grp <- taxab_fish %>%
+  group_by(Species, CommonName) %>%
+  summarise(TaxaAb_av = mean(TaxaAb), SD = sd(TaxaAb), Sites = n())
 
 colourCount = length(unique(taxab_fish_frame$Species))
-getPalette = colorRampPalette(met.brewer(name="Nattier", n=8))
+getPalette = colorRampPalette(met.brewer(name="Nattier", n=9))
 
 # Making the regional abundance plot for demersal fish
-abBfish <- ggplot(taxab_fish_frame, 
-       aes(y=as.factor(reorder(Species, TaxaAb, FUN=median)), x=TaxaAb, fill=as.factor(Species))) + 
-  geom_jitter(position=position_jitter(width=0.3, height=0.2),
-              aes(fill=as.factor(Species), alpha=0.9), color="grey55", show.legend=FALSE, shape=21) +
-  geom_boxplot(alpha = 0.7, show.legend = FALSE, outlier.shape=NA, fatten=1) + # hiding outlier points since already showing with the jittered raw data
+abBfish <- ggplot() +
+  geom_jitter(data=taxab_fish_frame, position=position_jitter(width=0.3, height=0.2),
+              aes(x=TaxaAb, y=as.factor(reorder(Species, TaxaAb, FUN=mean)), 
+                  fill=as.factor(Species), alpha=0.2), color="grey55",
+              show.legend=FALSE, shape=21, size=1) +
+  geom_pointrange(data=taxab_fish_grp, size=0.3, shape=22,
+                  aes(y=as.factor(reorder(Species, TaxaAb_av)), x=TaxaAb_av, 
+                      xmin=TaxaAb_av-SD, xmax=TaxaAb_av+SD,
+                      color=as.factor(Species), fill=as.factor(Species))) +
   scale_fill_manual(values=getPalette(colourCount)) +
+  scale_colour_manual(values=getPalette(colourCount)) +
   theme_classic() +
-  theme(strip.text.x = element_text(size=9, color="black", face="bold"),
+  theme(legend.position = "NA",
+        strip.text.x = element_text(size=9, color="black", face="bold"),
         axis.text.x = element_text(size=10, color="black"),
         axis.text.y = element_text(size=9, color="black", face="italic"),
         axis.title.y = element_blank(),
         plot.margin = margin (5.5,20,5.5,5.5, unit="pt")
-  )
+  ) +
+  annotate("text", label="b", x=-9, y=9.15, fontface="bold", size=4.5)
 
 
 ## Grouping for number of site occurrences for each species
@@ -408,7 +499,8 @@ taxab_fish_occ <- taxab_fish_frame %>%
   group_by(Species) %>%
   summarise(Mean=mean(TaxaAb), SiteNum=n()) %>%
   ungroup() %>%
-  mutate(Prop = round((SiteNum/22)*100, digits=1))
+  mutate(Prop = round((SiteNum/20)*100, digits=1))
+
 
 # Making the prop. of occurrence plot for demersal fish
 ocBfish <- ggplot(taxab_fish_occ, aes(x=Species, y=Prop)) +
@@ -424,39 +516,62 @@ ocBfish <- ggplot(taxab_fish_occ, aes(x=Species, y=Prop)) +
     axis.text.y = element_text(color="black", size=9),
     axis.title = element_blank()
   ) +
-  annotate("text", label="B", x=1, y=100, fontface="bold", size=6)
+  annotate("text", label="b", x=1, y=100, fontface="bold", size=6)
 
 
 
-## Grouping the table for benthic inverts
+## Grouping raw table for benthic inverts
 taxab_inv_frame <- taxab_inv %>%
   ungroup() %>%
   as.data.frame() %>%
-  mutate(split = factor(ifelse(Species == "Strongylocentrotus purpuratus" | Species == "Nucella lamellosa" | Species == "Patiria miniata" | Species == "Pomaulax gibberosus" | Species == "Mesocentrotus franciscanus", "large", "small")))
+  mutate(split = factor(ifelse(Species == "Strongylocentrotus purpuratus" | 
+                               Species == "Nucella lamellosa" | 
+                               Species == "Patiria miniata" | 
+                               Species == "Pomaulax gibberosus" | 
+                               Species == "Mesocentrotus franciscanus", "large", "small")))
+## Grouping raw table for benthic inverts
+taxab_inv_grp <- taxab_inv %>%
+  mutate(split = factor(ifelse(Species == "Strongylocentrotus purpuratus" | 
+                                 Species == "Nucella lamellosa" | 
+                                 Species == "Patiria miniata" | 
+                                 Species == "Pomaulax gibberosus" | 
+                                 Species == "Mesocentrotus franciscanus", "large", "small"))) %>%
+  group_by(Species, CommonName, split) %>%
+  summarise(TaxaAb_av = mean(TaxaAb), SD = sd(TaxaAb), Sites = n())
+  
+
 
 colourCount = length(unique(taxab_inv_frame$Species))
-getPalette = colorRampPalette(met.brewer(name="Redon", n=12))
+getPalette = colorRampPalette(met.brewer(name="Redon", n=38))
 
 
 # Making the regional abundance plot for benthic inverts
 # Setting the highly abundant spp on separate axis to visualize the data more clearly
-abBinv <- ggplot(taxab_inv_frame, 
-       aes(y=as.factor(reorder(Species, TaxaAb, FUN=median)), x=TaxaAb, fill=as.factor(Species))) + 
-  geom_jitter(position=position_jitter(width=0.3, height=0.2),
-              aes(fill=as.factor(Species), alpha=0.9), color="grey55", show.legend=FALSE, shape=21) +
-  geom_boxplot(alpha = 0.7, show.legend = FALSE, outlier.shape=NA, fatten=1) + # hiding outlier points since already showing with the jittered raw data
-  scale_x_continuous()+
-  scale_fill_manual(values=getPalette(colourCount)) +
+abBinv <- ggplot()+
+geom_jitter(data=taxab_inv_frame, position=position_jitter(width=0.3, height=0.2),
+            aes(x=TaxaAb, y=as.factor(reorder(Species, TaxaAb, FUN=mean)), 
+            fill=as.factor(Species), alpha=0.2), color="grey55",
+            show.legend=FALSE, shape=21, size=1) +
+geom_pointrange(data=taxab_inv_grp, size=0.3, shape=22,
+                aes(y=as.factor(reorder(Species, TaxaAb_av)), x=TaxaAb_av, 
+                xmin=TaxaAb_av-SD, xmax=TaxaAb_av+SD,
+                color=as.factor(Species), fill=as.factor(Species))) +
+scale_fill_manual(values=getPalette(colourCount)) +
+scale_colour_manual(values=getPalette(colourCount)) +
   theme_classic() +
-  theme(axis.text.x = element_text(size=10, color="black"),
+  theme(legend.position="NA",
+        axis.text.x = element_text(size=10, color="black"),
         axis.text.y = element_text(size=9, color="black", face="italic"),
         axis.title.y = element_blank(),
-        plot.margin = margin(r = 10),
+        # plot.margin = margin(r = 10),
         axis.title.x = element_blank(),
         strip.background = element_blank(), # removing the facet boxes
         strip.text = element_blank(), # removing the facet text
+        plot.margin = margin (5.5,10,5.5,5.5, unit="pt")
   ) + 
-  facet_col(~split, scales="free", space="free")
+  facet_col(~split, scales="free", space="free") +
+  geom_text(data = data.frame(x = -130, y = 4.2, split = "large", label = "c"), 
+            aes(x = x, y = y, label = label), fontface="bold", size = 4.5)
 
 
 ## Grouping for number of site occurrences for each species
@@ -465,7 +580,7 @@ taxab_inv_occ <- taxab_inv_frame %>%
   group_by(Species) %>%
   summarise(Mean=mean(TaxaAb), SiteNum=n()) %>%
   ungroup() %>%
-  mutate(Prop = round((SiteNum/22)*100, digits=1))
+  mutate(Prop = round((SiteNum/20)*100, digits=1))
 
 # Making the prop. of occurrence plot for demersal fish
 ocBinv <- ggplot(taxab_inv_occ, aes(x=Species, y=Prop)) +
@@ -476,14 +591,14 @@ ocBinv <- ggplot(taxab_inv_occ, aes(x=Species, y=Prop)) +
   theme(
     panel.grid.major.x = element_blank(),
     panel.border = element_blank(),
-    plot.margin = margin(l = 30),
+    plot.margin = margin(l = 14),
     axis.ticks.x = element_blank(),
     axis.text.x = element_text(color="black", angle=65, hjust=1, size=9, face="italic"),
     axis.text.y = element_text(color="black", size=9),
     axis.title = element_blank(),
     # plot.margin = margin (5.5,5.5,5.5,, unit="pt")
   ) +
-  annotate("text", label="C", x=1.5, y=100, fontface="bold", size=6)
+  annotate("text", label="c", x=1.5, y=100, fontface="bold", size=6)
 
 
 
@@ -502,7 +617,7 @@ grid.arrange(grobs=gs,
 
 
 # Saving as an image object
-tiff(file="./MSc_plots/SuppFigs/Ab_plots.tiff", height=8, width=10.5, units="in", res=300)
+tiff(file="./MSc_plots/SuppFigs/Ab_plots.tiff", height=7.5, width=10.5, units="in", res=300)
 
 # End ggplot arrangement
 grid <- grid.arrange(abfish, abBinv,
@@ -513,7 +628,7 @@ dev.off()
 
 # Arranging the smaller plots together (OCCURRENCE)
 ocfish <- ggarrange(ocPfish, ocBfish, ncol=2, align="hv") +
-                      theme(plot.margin = margin(l = 30))
+                      theme(plot.margin = margin(l = 10))
 ocfish
 
 
@@ -536,7 +651,8 @@ tiff(file="./MSc_plots/SuppFigs/Occurr_plots.tiff", height=9, width=10, units="i
 
 # End ggplot arrangement
 grid <- grid.arrange(ocfish, ocBinv, 
-                     layout_matrix = lay, left=textGrob("Occurrence (% of 20 sites)", rot=90, vjust=1, hjust=0.02))
+                     layout_matrix = lay, left=textGrob("Occurrence (% of 20 sites)", 
+                                                        rot=90, vjust=1, hjust=0.02))
 
 dev.off()
 
@@ -552,7 +668,7 @@ preds_ord <- read_csv("./MSc_data/Data_new/AllPredictors_scaled_2022.csv") %>%
 pfish_1 <- capscale(pfish_hel ~ Kelpdom, data=preds_ord, comm=pfish_wide, add=FALSE, distance="bray")
 anova.cca(pfish_1) # Model is sig
 RsquareAdj(pfish_1)
-# Adjusted R squared of this model is: 9.8%
+# Adjusted R squared of this model is: 7.9%
 
 
 
@@ -562,12 +678,12 @@ pfish_simp <- with(preds_ord, simper(pfish_hel, group=Kelpdom, permutations=999)
 
 # Making table of the SIMPER output
 pfish_simp_df <- as.data.frame(pfish_simp$Giant_Bull)
-sum(pfish_simp_df$average) # Total dissimilarity b/w kelp spp groups = 0.5312388
-# Partitioned among the 13 pelagic fish spp = 0.0442699 (assuming all contribute equally)
+sum(pfish_simp_df$average) # Total dissimilarity b/w kelp spp groups = 0.562663
+# Partitioned among the 14 pelagic fish spp = 0.0442699 (assuming all contribute equally)
 
 # Filter for spp that contribute >= 2x their expected dissimilarity among groups
 pfish_simp_filt <- pfish_simp_df %>%
-  filter(average > (2*0.0442699))
+  filter(average > (2*0.04019021))
 pfish_simp_filt
 
 pfish_simpSPP <- "Embiotoca lateralis"
@@ -580,8 +696,8 @@ write.csv(pfish_simp_df, "C:/Users/clair/Desktop/pelagicfishsimper.csv")
 # Generating the kelp forest structure model
 pfish_2 <- capscale(pfish_hel ~ Kelpdom+DensityM+Area_m2+BiomassM+HeightM, data=preds_ord, comm=pfish_wide, add=FALSE, distance="bray") 
 RsquareAdj(pfish_2)
-## The structural and environmental variables explain 36.7% of variation (constrained axes)
-# Adjusted R squared of this model is: 14.0%
+## The structural and environmental variables explain 36.6% of variation (constrained axes)
+# Adjusted R squared of this model is: 13.9%
 vif.cca(pfish_2) # low vif scores
 
 # Exploring outcomes
@@ -596,8 +712,8 @@ anova.cca(pfish_2, by = "axis", permutations=999) # significance by model axes
 # Generating the environmental model
 pfish_3 <- capscale(pfish_hel ~ Kelpdom+Tempave+Depth_datum_m+exp_36+Phardbottom+Psoftbottom+Punderstory+Pturf, data=preds_ord, comm=pfish_wide, add=FALSE, distance="bray")
 RsquareAdj(pfish_3)
-## Only the environmental variables explain explain 47.3% of variation (constrained axes)
-# Adjusted R squared of this model is: 0.09%
+## Only the environmental variables explain explain 46.9% of variation (constrained axes)
+# Adjusted R squared of this model is: 8.3%
 vif.cca(pfish_2)
 
 # Exploring significance
@@ -643,8 +759,8 @@ hull_cyl <- pfish1_sites.long %>%
 pfish1_ordplot <- ggplot(pfish1_sites.long) + 
   geom_vline(xintercept = c(0), color = "grey70", linetype = 5, linewidth=0.3) +
   geom_hline(yintercept = c(0), color = "grey70", linetype = 5, linewidth=0.3) +  
-  xlab("CAP 1 (14.6%)") +
-  ylab("MDS 1 (25.1%)") +  
+  xlab("CAP 1 (12.8%)") +
+  ylab("MDS 1 (23.5%)") +  
   scale_y_continuous(limits=c(-2.2,2.2)) + 
   scale_x_continuous(limits=c(-2.2,2.2)) + 
   geom_point(data=pfish1_sites.long, # Adding in the main site data points
@@ -1083,7 +1199,7 @@ preds_ord <- read_csv("./MSc_data/Data_new/AllPredictors_scaled_2022.csv") %>%
 bfish_1 <- capscale(bfish_hel ~ Kelpdom, data=preds_ord, comm=bfish_wide, add=FALSE, distance="bray")
 anova.cca(bfish_1) # model is sig
 RsquareAdj(bfish_1)
-# Adjusted R squared of this model is: 30.0%
+# Adjusted R squared of this model is: 27.4%
 
 
 
@@ -1093,12 +1209,12 @@ bfish_simp <- with(preds_ord, simper(bfish_hel, group=Kelpdom, permutations=999)
 
 # Making table of the SIMPER output
 bfish_simp_df <- as.data.frame(bfish_simp$Giant_Bull)
-sum(bfish_simp_df$average) # Total dissimilarity b/w kelp spp groups = 0.6532748
-# Partitioned among the 6 demersal fish spp = 0.1088791 (assuming all contribute equally)
+sum(bfish_simp_df$average) # Total dissimilarity b/w kelp spp groups = 0.6741229
+# Partitioned among the 9 demersal fish spp = 0.07490254 (assuming all contribute equally)
 
 # Filter for spp that contribute >= 2x their expected dissimilarity among groups
 bfish_simp_filt <- bfish_simp_df %>%
-  filter(average > (2*0.1088791))
+  filter(average > (2*0.07490254))
 bfish_simp_filt
 
 bfish_simpSPP <- c("Rhinogobiops nicholsii")
@@ -1112,8 +1228,8 @@ write.csv(bfish_simp_df, "C:/Users/clair/Desktop/demersalfishsimper.csv")
 # Generating the kelp forest structure model
 bfish_2 <- capscale(bfish_hel ~ Kelpdom+DensityM+Area_m2+BiomassM+HeightM, data=preds_ord, comm=bfish_wide, add=FALSE, distance="bray") 
 RsquareAdj(bfish_2)
-## Only the environmental variables explain 45.4% of variation (constrained axes)
-# Adjusted R squared of this model is: 25.9%
+## Only the environmental variables explain 45.9% of variation (constrained axes)
+# Adjusted R squared of this model is: 26.6%
 vif.cca(bfish_2) # low vif scores
 
 # Exploring outcomes
@@ -1128,8 +1244,8 @@ anova.cca(bfish_2, permutations = 999, by = "axis") # significance by model axes
 # Generating the environmental model
 bfish_3 <- capscale(bfish_hel ~ Kelpdom+Tempave+Depth_datum_m+exp_36+Phardbottom+Psoftbottom+Punderstory+Pturf, data=preds_ord, comm=bfish_wide, add=FALSE, distance="bray")
 RsquareAdj(bfish_3)
-## The structural and environmental variables explain explain 58.22% of variation (constrained axes)
-# Adjusted R squared of this model is: 27.8%
+## The structural and environmental variables explain explain 56.6% of variation (constrained axes)
+# Adjusted R squared of this model is: 25.0%
 vif.cca(bfish_3) # low vif scores
 
 # Exploring model significance
@@ -1195,8 +1311,8 @@ hull_cyl <- bfish1_sites.long %>%
 bfish1_ordplot <- ggplot(bfish1_sites.long) + 
   geom_vline(xintercept = c(0), color = "grey70", linetype = 5, linewidth=0.3) +
   geom_hline(yintercept = c(0), color = "grey70", linetype = 5, linewidth=0.3) +  
-  xlab("CAP 1 (19.9%)") +
-  ylab("MDS 1 (4.4%)") +  
+  xlab("CAP 1 (31.2%)") +
+  ylab("MDS 1 (36.4%)") +  
   scale_y_continuous(limits=c(-2.2,2.2)) + 
   scale_x_continuous(limits=c(-2.2,2.2)) + 
   geom_point(data=bfish1_sites.long, # Adding in the main site data points
@@ -1640,7 +1756,7 @@ preds_ord <- read_csv("./MSc_data/Data_new/AllPredictors_scaled_2022.csv") %>%
 binv_1 <- capscale(binv_hel ~ Kelpdom, data=preds_ord, comm=binv_wide, add=FALSE, distance="bray") 
 anova.cca(binv_1) # model is sig
 RsquareAdj(binv_1)
-# Adjusted R squared of this model is: 6.5%
+# Adjusted R squared of this model is: 6.7%
 
 
 
@@ -1650,18 +1766,20 @@ binv_simp <- with(preds_ord, simper(binv_hel, group=Kelpdom, permutations=999))
 
 # Making table of the SIMPER output
 binv_simp_df <- as.data.frame(binv_simp$Giant_Bull)
-sum(binv_simp_df$average) # Total dissimilarity b/w kelp spp groups = 0.4450878
-# Partitioned among the 26 invertebrate spp = 0.01711876 (assuming all contribute equally)
+sum(binv_simp_df$average) # Total dissimilarity b/w kelp spp groups = 0.4679515
+# Partitioned among the 38 invertebrate spp = 0.01231451 (assuming all contribute equally)
 
 # Filter for spp that contribute >= 2x their expected dissimilarity among groups
 binv_simp_filt <- binv_simp_df %>%
-  filter(average > (2*0.01711876))
+  filter(average > (2*0.01231451))
 binv_simp_filt
 
-binv_simpSPP <- c("Pomaulax gibberosus", "Strongylocentrotus purpuratus", "Mesocentrotus franciscanus")
+binv_simpSPP <- c("Pomaulax gibberosus", "Strongylocentrotus purpuratus",
+                  "Mesocentrotus franciscanus", "Patiria miniata")
 
 
 write.csv(binv_simp_df, "C:/Users/clair/Desktop/invertsimper.csv")
+
 
 
 ### RDA (kelp forest structure)
@@ -1670,14 +1788,13 @@ write.csv(binv_simp_df, "C:/Users/clair/Desktop/invertsimper.csv")
 binv_2 <- capscale(binv_hel ~ Kelpdom+DensityM+Area_m2+BiomassM+HeightM, data=preds_ord, comm=binv_wide, add=FALSE, distance="bray") 
 RsquareAdj(binv_2)
 ## Only the structural variables explain 44.7% of variation (constrained axes)
-# Adjusted R squared of this model is: 25.0%
+# Adjusted R squared of this model is: 24.9%
 vif.cca(binv_2) # low vif scores
 
 # Exploring model significance
 anova.cca(binv_2) # significance of model
 anova.cca(binv_2, step = 1000, by = "margin") # significance of predictor terms
 anova.cca(binv_2, step = 1000, by = "axis") # significance by model axes
-
 
 
 
@@ -1736,8 +1853,8 @@ hull_cyl <- binv1_sites.long %>%
 binv1_ordplot <- ggplot(binv1_sites.long) + 
   geom_vline(xintercept = c(0), color = "grey70", linetype = 5, linewidth=0.3) +
   geom_hline(yintercept = c(0), color = "grey70", linetype = 5, linewidth=0.3) +  
-  xlab("CAP 1 (11.2%)") +
-  ylab("MDS 1 (2.6%)") +  
+  xlab("CAP 1 (11.7%)") +
+  ylab("MDS 1 (27.9%)") +  
   scale_y_continuous(limits=c(-2.2,2.2)) + 
   scale_x_continuous(limits=c(-2.2,2.2)) + 
   geom_point(data=binv1_sites.long, # Adding in the main site data points
@@ -2422,7 +2539,7 @@ simp_arr <- simp_all %>%
   mutate(average_plot = ifelse(ava > avb, average*(-1), average)) %>% 
   ungroup() %>%
   as.data.frame() %>%
-  mutate(species = factor(species, levels=c("Embiotoca lateralis", "Artedius harringtoni", "Mesocentrotus franciscanus", "Strongylocentrotus purpuratus",  "Rhinogobiops nicholsii", "Pomaulax gibberosus"), order=TRUE))
+  mutate(species = factor(species, levels=c("Embiotoca lateralis", "Rhinogobiops nicholsii", "Mesocentrotus franciscanus", "Patiria miniata", "Pomaulax gibberosus", "Strongylocentrotus purpuratus"), order=TRUE))
 
 
 
@@ -2432,16 +2549,17 @@ simp_arr <- simp_all %>%
 simp_arr <- simp_arr %>%
   mutate(species_common = fct_recode(species,
                              "Striped surfperch" = "Embiotoca lateralis",
-                             "Scalyhead sculpin" = "Artedius harringtoni",
                              "Blackeye goby" = "Rhinogobiops nicholsii",
                              "Red sea urchin" = "Mesocentrotus franciscanus",
+                             "Bat star" = "Patiria miniata",
                              "Red turban snail" = "Pomaulax gibberosus",
                              "Purple sea urchin" = "Strongylocentrotus purpuratus")) %>%
-  mutate(faunalgroup = case_when(species == "Striped surfperch" ~ "Pelagic fish",
-                                 species == "Scalyhead sculpin" | species == "Blackeye goby" ~ "Demersal fish",
-                                 species == "Red sea urchin" | species == "Red turban snail" | species == "Purple sea urchin" ~ "Benthic invert")) %>%
+  mutate(faunalgroup = case_when(species_common == "Striped surfperch" ~ "Pelagic fish",
+                                 species_common == "Blackeye goby" ~ "Demersal fish",
+                                 species_common == "Red sea urchin" | species_common == "Bat star" | 
+                                 species_common == "Red turban snail" | species_common == "Purple sea urchin" ~ "Benthic invert")) %>%
   mutate(faunalgroup = factor(faunalgroup, levels=c("Pelagic fish", "Demersal fish", "Benthic invert"), ordered=TRUE)) %>%
-  mutate(species_common = factor(species_common, levels=c("Striped surfperch", "Scalyhead sculpin", "Purple sea urchin", "Red sea urchin", "Red turban snail", "Blackeye goby"), ordered=TRUE)) %>%
+  mutate(species_common = factor(species_common, levels=c("Striped surfperch", "Purple sea urchin", "Red sea urchin", "Bat star", "Red turban snail", "Blackeye goby"), ordered=TRUE)) %>%
   mutate(kelpgroup = ifelse(ava > avb, "Giant kelp", "Bull kelp"))
 
 
@@ -2452,7 +2570,7 @@ macroicon <- readPNG('./Phylopic/EladTrace/macrokelp.png')
 bullicon <- readPNG('./Phylopic/EladTrace/bullkelp.png')
 
 
-tiff(file="./MSc_plots/PaperFigs/simper.tiff", height=4, width=8, units="in", res=500)
+tiff(file="./MSc_plots/PaperFigs/simper.tiff", height=4, width=6, units="in", res=500)
 
 # Making the plot of average SIMPER dissimilarities
 # Only the spp that contribute > 2x their expected dissimilarity
@@ -2468,7 +2586,7 @@ simpplot <- ggplot(data=simp_arr, aes(y=species_common, x=average_plot, color=ke
   geom_point(size=3) +
   geom_errorbarh(aes(xmin=average_plot-sd, xmax=average_plot+sd), height=0.1, linewidth=1) +
   scale_y_discrete(limits=rev) +
-  scale_x_continuous(limits=c(-0.25, 0.25)) +
+  scale_x_continuous(limits=c(-0.35, 0.35)) +
   theme_classic() +
   theme(axis.title.y = element_blank(),
         axis.text.y = element_text(color="black", size=9, angle=25),
@@ -2479,7 +2597,7 @@ simpplot <- ggplot(data=simp_arr, aes(y=species_common, x=average_plot, color=ke
   scale_color_manual(values=met.brewer("Kandinsky", n=2)) +
   geom_vline(xintercept=0, linetype="dashed") +
   xlab("Average dissimilarity") +
-  annotate("text", x = -0.25, y = 6.3, label = "d", size=7, fontface=2)
+  annotate("text", x = -0.35, y = 6.5, label = "d", size=6, fontface=2)
 simpplot
 
 dev.off()
@@ -2487,8 +2605,8 @@ dev.off()
 
 # Adding in the kelp icons
 simpplot_draw <- simpplot + 
-  annotation_raster(macroicon, ymin = 1.5, ymax= 2.5, xmin = -0.24, xmax = -0.16) +
-  annotation_raster(bullicon, ymin = 1.5, ymax= 2.5, xmin = 0.19, xmax = 0.27)
+  annotation_raster(macroicon, ymin = 1.5, ymax= 2.3, xmin = -0.26, xmax = -0.18) +
+  annotation_raster(bullicon, ymin = 4.5, ymax= 5.3, xmin = 0.21, xmax = 0.29)
 simpplot_draw
 
 
@@ -2527,6 +2645,23 @@ dev.off()
 
 
 #
+
+
+
+
+#### Testing correlations ----
+
+testdata <- read_csv("./MSc_data/Data_new/AllPredictors_2022.csv") %>%
+  mutate(Kelpdom = as.factor(Kelpdom))
+
+plot(x=testdata$Psoftbottom, y=testdata$Area_m2)
+
+testmod <- glmmTMB(Area_m2 ~ Psoftbottom, data=testdata)
+testmod <- glmmTMB(MacroM ~ Psoftbottom, data=testdata)
+testmod <- glmmTMB(BiomassM ~ Psoftbottom, data=testdata)
+testmod <- glmmTMB(HeightM ~ Psoftbottom, data=testdata)
+summary(testmod)
+
 
 
 
