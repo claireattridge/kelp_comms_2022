@@ -34,7 +34,7 @@ densgrp <- dens %>%
 kelp <- read.csv("./MSc_data/Data_new/kelp_morphology_2022.csv") %>%
   as.data.frame()
 
-kelp <- kelp[-266,] # Removing the outlier point at Second Beach South!
+kelp <- kelp[-266,] # Removing the outlier point at Second Beach South
 
 # Removing the site 'redos' for current purposes
 kelp <- kelp %>%
@@ -59,30 +59,48 @@ options(scipen=999) # Turning off scientific notation
 kelp$Biomass_g <- ifelse(is.na(kelp$Biomass_g), ifelse(is.na(kelp$Sub_diam_cm), NA, formula(kelp$Sub_diam_cm)), kelp$Biomass_g)
 
 
-# Averaging to transect from individual kelp samples (i.e., averages of the 5 sampled individuals / transect)
+# Averaging to transect with respect to kelp species
+# Average of n=5 samples per species
 kelptrans <- kelp %>%
   mutate(SiteName = as.factor(SiteName), Height_m = as.numeric(Height_m)) %>%
-  group_by(SiteName, Transect) %>% # Averaging to transect 
+  group_by(SiteName, Transect, Species) %>% # Averaging to transect 
   summarise(HeightT = mean(Height_m, na.rm=T),
             BiomassTind_g = mean(Biomass_g, na.rm=T)) # Ave individual biomass (g) / transect
 
 
-# Bringing in the kelp density (transect level) data
+# Bringing in the kelp density data
+# Everything exists here at the transect level average
 kelpjoin <- merge(kelptrans, dens, by = c("SiteName", "Transect"), all=TRUE)
 
-# Getting to the average biomass / m2 area for each transect
+
+# i) Converting transect level ave individual kelp biomass from g to kg
+# ii) Multiplying each ave individual kelp biomass by the species' density / transect
+# Leaves the total biomass / species / transect
 kelptog <- kelpjoin %>%
-  rowwise() %>% # To sum across rows
-  mutate(BiomassTind_kg = (BiomassTind/1000)) %>% # Convert ave individual kelp biomass from g to kg 
-  mutate(BiomassTkg = (BiomassTind_kg*Kelp)) %>% # Multiplying this by the transect kelp densities / m2
-  ungroup() # Stop rowwise 
+  rowwise() %>% 
+  mutate(BiomassTind_kg = (BiomassTind_g/1000)) %>%
+  mutate(BiomassTkg = case_when(Species == "Macro" ~ BiomassTind_kg*Macro_5m2,
+                                Species == "Nereo" ~ BiomassTind_kg*Nereo_5m2))
 kelptog[sapply(kelptog, is.nan)] <- 0 # NaNs to 0s for working with
 
 
-# Grouping/averaging from transect to site level
-kelpgrp <- kelptog %>%
+# Adding the kelp species biomass / transect together 
+# Averaging other kelp metrics (height, density) across both species
+kelptog_joined <- kelptog %>%
+  group_by(SiteName, Transect, Depth_datum_m) %>%
+  summarise(BiomassTkg_all = sum(BiomassTkg),
+            HeightM = mean(HeightT),
+            HeightSD = sd(HeightT),
+            DensityM = mean(Kelp),
+            DensitySD = sd(Kelp)) 
+
+###############LEAVING OFF HERE REMEMBER TO CARRY THE SD FORWARD FOR AVE OF AVES!!!
+
+# Averaging across transects to the forest level
+# Converting to / m2 from the transect / 5m2
+kelpgrp <- kelptog_joined %>%
   mutate(SiteName = as.factor(SiteName)) %>%
-  group_by(SiteName, Depth_datum_m) %>% # Averaging to site & keeping depth (m)
+  group_by(SiteName, Depth_datum_m) %>% 
   summarise(HeightM = weighted.mean(HeightT, na.rm=T), HeightSD = sd(HeightT, na.rm=T), # Ave height (m)
             BiomassM = mean(BiomassTkg, na.rm=T), BiomassSD = sd(BiomassTkg, na.rm=T), # Ave biomass (kg / m2)
             DensityM = mean(Kelp), DensitySD = sd(Kelp, na.rm=T), # Ave density any kelp (m2)
