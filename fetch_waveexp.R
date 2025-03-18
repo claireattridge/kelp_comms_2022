@@ -99,13 +99,11 @@ sitessf <- sitessf %>%
 
 
 ### Filtering out the 'no kelp' sites (Less Dangerous Bay, Wizard Islet N)
-### And the outlier site 'Second Beach South'
 ### Should go from 23 to 20 sites
 sitessf <- sitessf %>%
   mutate(SiteName = as.factor(SiteName)) %>%
   filter(SiteName != "Less Dangerous Bay") %>%
-  filter(SiteName != "Wizard Islet North") %>%
-  filter(SiteName != "Second Beach South")
+  filter(SiteName != "Wizard Islet North")
 
 
 
@@ -143,7 +141,7 @@ write.csv(fetchtab, "./MSc_data/Data_new/fetch_2022.csv", row.names=F)
 #### Wave & wind processing ----
  
 ## uploading wind and wave data from offshore buoy (La Perouse Bank)
-weather <- read.csv("./MSc_data/Data_sourced/Wind_wave/c46206.csv") %>%
+weather <- read.csv("./MSc_data/Data_new/Wind_wave/c46206.csv") %>%
                 mutate(DATE = as.POSIXct(DATE, format="%m/%d/%Y %H:%M")) %>% # makes date format
   dplyr::select(-c("WSS.","VWH.","VTP.","WSS..1","ATMS.1", "X")) %>% # removing unnecessary columns 
   dplyr::rename(swh = 'VCAR', # changing to column name that's more intuitive 
@@ -277,11 +275,11 @@ tiff(file="./MSc_plots/SuppFigs/SiteREI.tiff", height = 6, width = 9, units = "i
 ggplot() +
   geom_point(data=exp_summary, size=3, alpha=0.9, aes(x=reorder(SiteName,exp_36), y=exp_36)) +
   theme_classic() +
-  # scale_y_continuous(breaks=c(1,2,3,4,5,6)) +
+  scale_y_continuous(breaks=c(0, 5000,10000, 15000, 20000, 25000)) +
   theme(
     axis.text.x = element_text(color="black", size="9", angle=45, vjust=0.89, hjust=0.85),
     axis.text.y = element_text(color="black", size="10"),
     axis.title.y = element_text(color="black", size="11", vjust=3)) +
-  ylab("REI") + xlab("Site")
+  ylab("REI") + xlab("")
 
 dev.off()
