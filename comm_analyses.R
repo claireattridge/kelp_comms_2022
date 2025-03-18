@@ -2,7 +2,7 @@
 ## Author: Claire Attridge
 ## Origin date: Feb 2023
 
-# Loading necessary base packages
+# Loading necessary packages
 library(tidyverse)
 library(ggpubr)
 library(cowplot)
@@ -19,7 +19,7 @@ library(magick)
 
 #
 
-#### Loading & saving str & env data sheets ----
+#### Loading structural & environmental predictors ----
 
 # Wave exp
 rei <- read_csv("./MSc_data/Data_new/REI_2022.csv") %>%
@@ -237,8 +237,8 @@ obvsplot_canopy <- ggplot(data=obvs_canopy, aes(x=observs, y=(reorder(Species, d
         plot.margin = unit(c(0.5,1,0.5,0), "cm"), 
   ) +
   xlab("Site observations") + ylab("") +
-  geom_hline(yintercept = 27.5, linetype=2) + # Adding cutoff line for spp present at >= 4 sites
-  geom_hline(yintercept = 44.5, linetype=2, color="grey75") # Showing cutoff line for spp present at >= 5 sites
+  geom_hline(yintercept = 27.5, linetype=2) # Adding cutoff line for spp present at >= 4 sites
+
 obvsplot_canopy
 
 dev.off()
@@ -431,6 +431,7 @@ abPfish <- ggplot() +
   annotate("text", label="a", x=-50, y=14.2, fontface="bold", size=4.5)
 
 
+
 ## Grouping for number of site occurrences for each species
 taxap_fish_occ <- taxap_fish_frame %>%
   dplyr::select(SiteName, Species, TaxaAb) %>%
@@ -439,21 +440,21 @@ taxap_fish_occ <- taxap_fish_frame %>%
   ungroup() %>%
   mutate(Prop = round((SiteNum/20)*100, digits=1))
 
+
 # Making the prop. of occurrence plot for pelagic fish
-ocPfish <- ggplot(taxap_fish_occ, aes(x=Species, y=Prop)) +
-  geom_segment( aes(x=reorder(Species, Prop), xend=Species, y=0, yend=Prop), color="#453781FF", linewidth=1) +
+ocPfish <- ggplot(taxap_fish_occ, aes(x=Prop, y=Species)) +
+  geom_segment( aes(y=reorder(Species, Prop), yend=Species, x=0, xend=Prop), color="#453781FF", linewidth=1) +
   geom_point(color="#453781FF", size=3) +
   theme_classic() +
   scale_size_continuous("Mean Ab", breaks = c(100,200,400,600)) +
   theme(
-    panel.grid.major.x = element_blank(),
+    panel.grid.major.y = element_blank(),
     panel.border = element_blank(),
-    axis.ticks.x = element_blank(),
-    axis.text.x = element_text(color="black", angle=65, hjust=1, size=9, face="italic"),
-    axis.text.y = element_text(color="black", size=9),
+    axis.text.y = element_text(color="black", size=9, face="italic"),
+    axis.text.x = element_text(color="black", size=9),
     axis.title = element_blank()
   ) +
-  annotate("text", label="a", x=1, y=100, fontface="bold", size=6)
+  annotate("text", label="a", y=1.3, x=100, fontface="bold", size=6)
 
 
 
@@ -462,6 +463,7 @@ ocPfish <- ggplot(taxap_fish_occ, aes(x=Species, y=Prop)) +
 taxab_fish_frame <- taxab_fish %>%
   ungroup() %>%
   as.data.frame()
+
 ## Grouping raw table for benthic fish
 taxab_fish_grp <- taxab_fish %>%
   group_by(Species, CommonName) %>%
@@ -493,6 +495,7 @@ abBfish <- ggplot() +
   annotate("text", label="b", x=-9, y=9.15, fontface="bold", size=4.5)
 
 
+
 ## Grouping for number of site occurrences for each species
 taxab_fish_occ <- taxab_fish_frame %>%
   dplyr::select(SiteName, Species, TaxaAb) %>%
@@ -503,20 +506,20 @@ taxab_fish_occ <- taxab_fish_frame %>%
 
 
 # Making the prop. of occurrence plot for demersal fish
-ocBfish <- ggplot(taxab_fish_occ, aes(x=Species, y=Prop)) +
-  geom_segment( aes(x=reorder(Species, Prop), xend=Species, y=0, yend=Prop), color="#1F9A8AFF", linewidth=1) +
+ocBfish <- ggplot(taxab_fish_occ, aes(x=Prop, y=Species)) +
+  geom_segment( aes(y=reorder(Species, Prop), yend=Species, x=0, xend=Prop), color="#1F9A8AFF", linewidth=1) +
   geom_point(color="#1F9A8AFF", size=3) +
   theme_classic() +
   scale_size_continuous("Mean Ab", breaks = c(100,200,400,600), ) +
   theme(
     panel.grid.major.x = element_blank(),
     panel.border = element_blank(),
-    axis.ticks.x = element_blank(),
-    axis.text.x = element_text(color="black", angle=65, hjust=1, size=9, face="italic"),
-    axis.text.y = element_text(color="black", size=9),
+    axis.text.x = element_text(color="black", size=9),
+    axis.text.y = element_text(color="black", size=9, face="italic"),
     axis.title = element_blank()
   ) +
-  annotate("text", label="b", x=1, y=100, fontface="bold", size=6)
+  annotate("text", label="b", y=1, x=100, fontface="bold", size=6)
+
 
 
 
@@ -574,6 +577,7 @@ scale_colour_manual(values=getPalette(colourCount)) +
             aes(x = x, y = y, label = label), fontface="bold", size = 4.5)
 
 
+
 ## Grouping for number of site occurrences for each species
 taxab_inv_occ <- taxab_inv_frame %>%
   dplyr::select(SiteName, Species, TaxaAb) %>%
@@ -582,23 +586,23 @@ taxab_inv_occ <- taxab_inv_frame %>%
   ungroup() %>%
   mutate(Prop = round((SiteNum/20)*100, digits=1))
 
+
 # Making the prop. of occurrence plot for demersal fish
-ocBinv <- ggplot(taxab_inv_occ, aes(x=Species, y=Prop)) +
-  geom_segment( aes(x=reorder(Species, Prop), xend=Species, y=0, yend=Prop), color="#31688EFF", linewidth=1) +
+ocBinv <- ggplot(taxab_inv_occ, aes(x=Prop, y=Species)) +
+  geom_segment( aes(y=reorder(Species, Prop), yend=Species, x=0, xend=Prop), color="#31688EFF", linewidth=1) +
   geom_point(color="#31688EFF", size=3) +
   theme_classic() +
   scale_size_continuous("Mean Ab", breaks = c(100,200,400,600)) +
   theme(
-    panel.grid.major.x = element_blank(),
+    panel.grid.major.y = element_blank(),
     panel.border = element_blank(),
     plot.margin = margin(l = 14),
-    axis.ticks.x = element_blank(),
-    axis.text.x = element_text(color="black", angle=65, hjust=1, size=9, face="italic"),
-    axis.text.y = element_text(color="black", size=9),
+    axis.text.y = element_text(color="black", size=9, face="italic"),
+    axis.text.x = element_text(color="black", size=9),
     axis.title = element_blank(),
     # plot.margin = margin (5.5,5.5,5.5,, unit="pt")
   ) +
-  annotate("text", label="c", x=1.5, y=100, fontface="bold", size=6)
+  annotate("text", label="c", y=1.5, x=100, fontface="bold", size=6.5)
 
 
 
@@ -626,20 +630,16 @@ dev.off()
 
 
 
+
 # Arranging the smaller plots together (OCCURRENCE)
-ocfish <- ggarrange(ocPfish, ocBfish, ncol=2, align="hv") +
-                      theme(plot.margin = margin(l = 10))
+ocfish <- ggarrange(ocPfish + rremove("axis.title"), 
+                    ocBfish + rremove("axis.title"), ncol=1, align="hv")
 ocfish
 
 
 # Setting up the layout
-lay <- rbind(c(1,1),
-             c(1,1),
-             c(1,1),
-             c(2,2),
-             c(2,2),
-             c(2,2),
-             c(2,2))
+lay <- rbind(c(1,1,1,2,2,2,2),
+             c(1,1,1,2,2,2,2))
 # Rectangles to help visualize
 gs <- lapply(1:2, function(ii) 
   grobTree(rectGrob(gp=gpar(fill=ii, alpha=0.5)), textGrob(ii)))
@@ -647,21 +647,26 @@ grid.arrange(grobs=gs,
              layout_matrix = lay)
 
 # Saving as an image object
-tiff(file="./MSc_plots/SuppFigs/Occurr_plots.tiff", height=9, width=10, units="in", res=400)
+tiff(file="./MSc_plots/SuppFigs/Occurr_plots.tiff", height=8.5, width=9.5, units="in", res=400)
 
 # End ggplot arrangement
 grid <- grid.arrange(ocfish, ocBinv, 
-                     layout_matrix = lay, left=textGrob("Occurrence (% of 20 sites)", 
-                                                        rot=90, vjust=1, hjust=0.02))
+                     layout_matrix = lay, bottom=textGrob("Occurrence (% of 20 sites)",
+                                                          vjust=0.7))
 
 dev.off()
 
 
+#
+
+
 #### Pelagic fish: Generating models, stats ----
+
 
 ## Calling the predictor variables sheet
 preds_ord <- read_csv("./MSc_data/Data_new/AllPredictors_scaled_2022.csv") %>%
   mutate(Kelpdom = as.factor(Kelpdom))
+
 
 
 ### CAP (kelp spp)
@@ -679,7 +684,7 @@ pfish_simp <- with(preds_ord, simper(pfish_hel, group=Kelpdom, permutations=999)
 # Making table of the SIMPER output
 pfish_simp_df <- as.data.frame(pfish_simp$Giant_Bull)
 sum(pfish_simp_df$average) # Total dissimilarity b/w kelp spp groups = 0.562663
-# Partitioned among the 14 pelagic fish spp = 0.0442699 (assuming all contribute equally)
+# Partitioned among the 14 pelagic fish spp = 0.04019021 (assuming all contribute equally)
 
 # Filter for spp that contribute >= 2x their expected dissimilarity among groups
 pfish_simp_filt <- pfish_simp_df %>%
@@ -688,7 +693,6 @@ pfish_simp_filt
 
 pfish_simpSPP <- "Embiotoca lateralis"
 
-write.csv(pfish_simp_df, "C:/Users/clair/Desktop/pelagicfishsimper.csv")
 
 
 ### RDA (kelp forest structure)
@@ -696,9 +700,9 @@ write.csv(pfish_simp_df, "C:/Users/clair/Desktop/pelagicfishsimper.csv")
 # Generating the kelp forest structure model
 pfish_2 <- capscale(pfish_hel ~ Kelpdom+DensityM+Area_m2+BiomassM+HeightM, data=preds_ord, comm=pfish_wide, add=FALSE, distance="bray") 
 RsquareAdj(pfish_2)
-## The structural and environmental variables explain 36.6% of variation (constrained axes)
+## The structural variables explain 36.6% of variation (constrained axes)
 # Adjusted R squared of this model is: 13.9%
-vif.cca(pfish_2) # low vif scores
+vif.cca(pfish_2) # ~ < 5 vif scores
 
 # Exploring outcomes
 anova.cca(pfish_2, permutations=999) # significance of model
@@ -714,7 +718,7 @@ pfish_3 <- capscale(pfish_hel ~ Kelpdom+Tempave+Depth_datum_m+exp_36+Phardbottom
 RsquareAdj(pfish_3)
 ## Only the environmental variables explain explain 46.9% of variation (constrained axes)
 # Adjusted R squared of this model is: 8.3%
-vif.cca(pfish_2)
+vif.cca(pfish_2) # ~ < 5 vif scores
 
 # Exploring significance
 anova.cca(pfish_3, permutations = 999) # significance of model
@@ -767,7 +771,8 @@ pfish1_ordplot <- ggplot(pfish1_sites.long) +
              aes(x=axis1, y=axis2, fill=Kelpdom),
              size=2.5, shape=23, stroke=0.2) +
   stat_chull(data=hull_cyl, geom="polygon", aes(x=axis1, y=axis2, fill=Kelpdom), alpha=0.5) +
-  scale_fill_manual(values=met.brewer("Kandinsky"), name=NULL, labels=c(expression(italic("N. luetkeana")), expression(italic("M. pyrifera")))) +
+  scale_fill_manual(values=met.brewer("Kandinsky"), name=NULL, 
+                    labels=c(expression(italic("N. luetkeana")), expression(italic("M. pyrifera")))) +
   guides(fill=guide_legend(override.aes = list(shape=23))) +
   theme_classic() +
   theme(legend.position=c(0.25,0.14),
@@ -777,7 +782,7 @@ pfish1_ordplot <- ggplot(pfish1_sites.long) +
         axis.text=element_text(size=9, color="black"),
         axis.title=element_text(size=9.5, color="black"),
         axis.line=element_line(linewidth=0.5),
-        axis.ticks=element_line(size=0.5)) +
+        axis.ticks=element_line(linewidth=0.5)) +
   annotate("text", x = -2.1, y = 2.2, label = "a", size=5, fontface=2)
 pfish1_ordplot
 
@@ -849,7 +854,6 @@ pfish2_species.long.vargrt
 # Recoding spp fct levels to be shorthand scientific names
 pfish2_species.long.vargrt <- pfish2_species.long.vargrt %>%
   mutate(labels = fct_recode(labels,
-                             "Shiner perch" = "Cymatogaster aggregata",
                              "Striped surfperch" = "Embiotoca lateralis",
                              "Rockfish spp." = "Sebastes spp."))
 
@@ -857,7 +861,7 @@ pfish2_species.long.vargrt <- pfish2_species.long.vargrt %>%
 ## The biplot for structure vars
 
 # Radial shift function for arrow text
-rshift = function(r, theta, a=0.02, b=0.08) {
+rshift = function(r, theta, a=0.03, b=0.08) {
   r + a + b*abs(cos(theta))
 }
 
@@ -875,18 +879,18 @@ env.arrows = pfish2_scrs %>%
 pfish2_ordplot_str <- ggplot() + 
   geom_vline(xintercept = c(0), color = "grey70", linetype = 5, linewidth=0.3) +
   geom_hline(yintercept = c(0), color = "grey70", linetype = 5, linewidth=0.3) +  
-  xlab("CAP 1 (15.5%)") +
-  ylab("CAP 2 (12.8%)") +  
-  scale_y_continuous(limits=c(-2.2,2.2)) + 
-  scale_x_continuous(limits=c(-2.2,2.2)) + 
+  xlab("CAP 1 (14.9%)") +
+  ylab("CAP 2 (11.8%)") +  
+  scale_y_continuous(limits=c(-2.5,2.5)) + 
+  scale_x_continuous(limits=c(-2.5,2.5)) + 
   geom_point(data=pfish2_sites.long, # Adding in the main site data points
              aes(x=axis1, y=axis2, fill=Kelpdom),
              size=2.5, shape=23, stroke=0.2, alpha=0.8) +
   geom_segment(data=pfish2_scrs, # Adding in the biplot correlation arrows
-               aes(x=0, y=0, xend=CAP1*2.1, yend=CAP2*2.1),
+               aes(x=0, y=0, xend=CAP1*2.9, yend=CAP2*2.9),
                colour="grey20", linewidth=0.3, arrow=arrow(length = unit(0.1, "cm"), type="closed")) +
   geom_text(data=env.arrows, # Adding in the biplot correlation labels
-            aes(x=xnew*2.1, y=ynew*2.1, label=vector),
+            aes(x=xnew*2.9, y=ynew*2.9, label=vector),
             colour="black", size=2) +
   scale_fill_manual(values=met.brewer("Kandinsky"), name=NULL, labels=c(expression(italic("N. luetkeana")), expression(italic("M. pyrifera")))) +
   guides(fill = guide_legend(override.aes = list(shape=23))) +
@@ -900,7 +904,7 @@ pfish2_ordplot_str <- ggplot() +
         axis.title=element_text(size=9.5, color="black"),
         axis.line=element_line(linewidth=0.3),
         axis.ticks=element_line(linewidth=0.3)) +
-  annotate("text", x = -2.2, y = 2.2, label = "a", size=5, fontface=2)
+  annotate("text", x = -2.5, y = 2.5, label = "a", size=5, fontface=2)
 pfish2_ordplot_str
 
 
@@ -926,19 +930,19 @@ spp.arrows = pfish2_species.long.vargrt %>%
 pfish2_ordplot_spp <- ggplot() + 
   geom_vline(xintercept = c(0), color = "grey70", linetype = 5, linewidth=0.3) +
   geom_hline(yintercept = c(0), color = "grey70", linetype = 5, linewidth=0.3) +  
-  xlab("CAP 1 (15.5%)") +
-  ylab("CAP 2 (12.8%)") +  
-  scale_y_continuous(limits=c(-2.2,2.2)) + 
-  scale_x_continuous(limits=c(-2.2,2.2)) + 
+  xlab("CAP 1 (14.9%)") +
+  ylab("CAP 2 (11.8%)") +  
+  scale_y_continuous(limits=c(-2.5,2.5)) + 
+  scale_x_continuous(limits=c(-2.5,2.5)) + 
   geom_point(data=pfish2_sites.long, # Adding in the main site data points
              aes(x=axis1, y=axis2, fill=Kelpdom),
              size=2.5, shape=23, stroke=0.2, alpha=0.8) +
   geom_segment(data=pfish2_species.long.vargrt, # Adding in the SIMPER arrows
-               aes(x=0, y=0, xend=axis1*2.4, yend=axis2*2.4),
+               aes(x=0, y=0, xend=axis1*2.9, yend=axis2*2.9),
                colour="grey20", linewidth=0.3, arrow = arrow(length = unit(0.1, "cm"), type="closed")) +
   geom_text(data=spp.arrows, # Adding in the SIMPER species labels
-                  aes(x=xnew*2.4, y=ynew*2.4, label=labels),
-                  colour="black", size=2, nudge_y = 0.09, nudge_x = -0.3) +
+                  aes(x=xnew*2.9, y=ynew*2.9, label=labels),
+                  colour="black", size=2, nudge_y = 0.15, nudge_x = -0.2) +
   scale_fill_manual(values=met.brewer("Kandinsky"), name=NULL, labels=c(expression(italic("N. luetkeana")), expression(italic("M. pyrifera")))) +
   guides(fill = guide_legend(override.aes = list(shape=21))) +
   theme_classic() +
@@ -948,9 +952,9 @@ pfish2_ordplot_spp <- ggplot() +
         legend.spacing.y = unit(0, "lines"),
         axis.text=element_text(size=9, color="black"),
         axis.title=element_text(size=9.5, color="black"),
-        axis.line=element_line(size=0.3),
+        axis.line=element_line(linewidth=0.3),
         axis.ticks=element_line(size=0.3)) +
-  annotate("text", x = -2.2, y = 2.2, label = "b", size=5, fontface=2)
+  annotate("text", x = -2.5, y = 2.5, label = "b", size=5, fontface=2)
 pfish2_ordplot_spp
 
 
@@ -1026,9 +1030,9 @@ pfish3_species.long.vargrt
 # Recoding spp fct levels to be shorthand scientific names
 pfish3_species.long.vargrt <- pfish3_species.long.vargrt %>%
   mutate(labels = fct_recode(labels,
-                             "Shiner perch" = "Cymatogaster aggregata",
+                             "Pacific herring" = "Clupea pallasii",
                              "Striped surfperch" = "Embiotoca lateralis",
-                             "Rockfish spp." = "Sebastes spp."
+                             "Shiner perch" = "Cymatogaster aggregata"
                              ))
 
 
@@ -1054,7 +1058,7 @@ pfish3_ordplot_env <- ggplot() +
   geom_vline(xintercept = c(0), color = "grey70", linetype = 5, linewidth=0.3) +
   geom_hline(yintercept = c(0), color = "grey70", linetype = 5, linewidth=0.3) +  
   xlab("CAP 1 (18.8%)") +
-  ylab("CAP 2 (10.0%)") +   
+  ylab("CAP 2 (8.6%)") +   
   scale_y_continuous(limits=c(-2.5,2.5)) + 
   scale_x_continuous(limits=c(-2.5,2.5)) + 
   geom_point(data=pfish3_sites.long, # Adding in the main site data points
@@ -1078,12 +1082,18 @@ pfish3_ordplot_env <- ggplot() +
         axis.title=element_text(size=9.5, color="black"),
         axis.line=element_line(size=0.3),
         axis.ticks=element_line(size=0.3)) +
-  annotate("text", x = -2.2, y = 2.2, label = "c", size=5, fontface=2)
+  annotate("text", x = -2.5, y = 2.5, label = "c", size=5, fontface=2)
 pfish3_ordplot_env
 
 
 
 ## The biplot for influential spp
+
+
+# Radial shift function for arrow text
+rshift = function(r, theta, a=0.02, b=0.04) {
+  r + a + b*abs(cos(theta))
+}
 
 # Calculate shift of text from arrows
 spp.arrows = pfish3_species.long.vargrt %>% 
@@ -1098,18 +1108,18 @@ pfish3_ordplot_spp <- ggplot() +
   geom_vline(xintercept = c(0), color = "grey70", linetype = 5, linewidth=0.3) +
   geom_hline(yintercept = c(0), color = "grey70", linetype = 5, linewidth=0.3) +  
   xlab("CAP 1 (18.8%)") +
-  ylab("CAP 2 (10.0%)") +   
+  ylab("CAP 2 (8.6%)") +   
   scale_y_continuous(limits=c(-2.5,2.5)) + 
   scale_x_continuous(limits=c(-2.5,2.5)) + 
   geom_point(data=pfish3_sites.long, # Adding in the main site data points
              aes(x=axis1, y=axis2, shape=Cluster, fill=Kelpdom),
              size=2.5, shape=23, stroke=0.2, alpha=0.8) +
   geom_segment(data=pfish3_species.long.vargrt, # Adding in the SIMPER arrows
-               aes(x=0, y=0, xend=axis1*1.2, yend=axis2*1.2),
+               aes(x=0, y=0, xend=axis1*2.9, yend=axis2*2.9),
                colour="grey20", linewidth=0.3, arrow = arrow(length = unit(0.1, "cm"), type="closed")) +
-  geom_text(data=pfish3_species.long.vargrt, # Adding in the SIMPER species labels
-                  aes(x=axis1*1.8, y=axis2*1.4, label=labels),
-                  colour="black", size=2, angle=0, nudge_y=-0.08)+
+  geom_text(data=spp.arrows, # Adding in the SIMPER species labels
+                  aes(x=xnew*2.9, y=ynew*2.9, label=labels),
+                  colour="black", size=2, angle=0, nudge_x=-0.4, nudge_y=0.2)+
   scale_fill_manual(values=met.brewer("Kandinsky"), name=NULL, labels=c(expression(italic("N. luetkeana")), expression(italic("M. pyrifera")))) +
   guides(fill = guide_legend(override.aes = list(shape=21))) +
   theme_classic() +
@@ -1121,7 +1131,7 @@ pfish3_ordplot_spp <- ggplot() +
         axis.title=element_text(size=9.5, color="black"),
         axis.line=element_line(size=0.3),
         axis.ticks=element_line(size=0.3)) +
-  annotate("text", x = -2.2, y = 2.2, label = "d", size=5, fontface=2)
+  annotate("text", x = -2.5, y = 2.5, label = "d", size=5, fontface=2)
 pfish3_ordplot_spp
 
 
@@ -1171,8 +1181,8 @@ dev.off()
 # Drawing in the animal outlines
 
 # Loading spp image outlines
-rfish <- image_read('./Phylopic/Fish/rockfish.png')
-sperch <- image_read('./Phylopic/Fish/surfperch.png')
+rfish <- image_read('./Icon_images/rockfish.png')
+sperch <- image_read('./Icon_images/surfperch.png')
 
 # Calling map plot as magick image
 mplot <- image_read("./MSc_plots/PaperFigs/Pfish/Pfish_ords_combined.tiff") 
@@ -1186,13 +1196,12 @@ image_write(mmap, path = "./MSc_plots/PaperFigs/Pfish/Pfish_ords_combined_outlin
 
 #
 
-#### Benthic fish: Generating ordination models, stats ----
+#### Benthic fish: Generating models, stats ----
 
 
 ## Calling the predictor variables sheet
 preds_ord <- read_csv("./MSc_data/Data_new/AllPredictors_scaled_2022.csv") %>%
   mutate(Kelpdom = as.factor(Kelpdom))
-
 
 
 ### CAP (kelp spp)
@@ -1220,17 +1229,15 @@ bfish_simp_filt
 bfish_simpSPP <- c("Rhinogobiops nicholsii")
 
 
-write.csv(bfish_simp_df, "C:/Users/clair/Desktop/demersalfishsimper.csv")
-
 
 ### RDA (kelp forest structure)
 
 # Generating the kelp forest structure model
 bfish_2 <- capscale(bfish_hel ~ Kelpdom+DensityM+Area_m2+BiomassM+HeightM, data=preds_ord, comm=bfish_wide, add=FALSE, distance="bray") 
 RsquareAdj(bfish_2)
-## Only the environmental variables explain 45.9% of variation (constrained axes)
+## Only the structural variables explain 45.9% of variation (constrained axes)
 # Adjusted R squared of this model is: 26.6%
-vif.cca(bfish_2) # low vif scores
+vif.cca(bfish_2) # ~ < 5 vif scores
 
 # Exploring outcomes
 anova.cca(bfish_2) # significance of model
@@ -1244,9 +1251,9 @@ anova.cca(bfish_2, permutations = 999, by = "axis") # significance by model axes
 # Generating the environmental model
 bfish_3 <- capscale(bfish_hel ~ Kelpdom+Tempave+Depth_datum_m+exp_36+Phardbottom+Psoftbottom+Punderstory+Pturf, data=preds_ord, comm=bfish_wide, add=FALSE, distance="bray")
 RsquareAdj(bfish_3)
-## The structural and environmental variables explain explain 56.6% of variation (constrained axes)
+## The environmental variables explain explain 56.6% of variation (constrained axes)
 # Adjusted R squared of this model is: 25.0%
-vif.cca(bfish_3) # low vif scores
+vif.cca(bfish_3) # ~ < 5 vif scores
 
 # Exploring model significance
 anova.cca(bfish_3) # significance of model
@@ -1276,10 +1283,9 @@ anova.cca(bfish_3, permutations = 999, by = "axis") # significance by model axes
 
 #### Benthic fish: Plots ----
 
-
-# Pelagic Fish 1 = CAP model (by kelp spp)
-# Pelagic Fish 2 = RDA model (by kelp forest structure)
-# Pelagic Fish 3 = RDA model (by environmental vars)
+# Benthic Fish 1 = CAP model (by kelp spp)
+# Benthic Fish 2 = RDA model (by kelp forest structure)
+# Benthic Fish 3 = RDA model (by environmental vars)
 
 
 ### PLOT 1: CAP (kelp spp)
@@ -1401,15 +1407,15 @@ bfish2_species.long.vargrt
 bfish2_species.long.vargrt <- bfish2_species.long.vargrt %>%
   mutate(labels = fct_recode(labels,
                              "Scalyhead sculpin" = "Artedius harringtoni",
-                             "Smoothhead sculpin" = "Artedius lateralis",
-                             "Longfin sculpin" = "Jordania zonope",
+                             "Smoothhead sculpin" = "Hemilepidotus hemilepidotus",
+                             "Crescent gunnel" = "Pholis laeta",
                              "Blackeye goby" = "Rhinogobiops nicholsii"))
 
 
 ## The biplot for structure vars
 
 # Radial shift function for arrow text
-rshift = function(r, theta, a=0.08, b=0.1) {
+rshift = function(r, theta, a=0.06, b=0.1) {
   r + a + b*abs(cos(theta))
 }
 
@@ -1427,7 +1433,7 @@ env.arrows = bfish2_scrs %>%
 bfish2_ordplot_str <- ggplot() + 
   geom_vline(xintercept = c(0), color = "grey70", linetype = 5, linewidth=0.3) +
   geom_hline(yintercept = c(0), color = "grey70", linetype = 5, linewidth=0.3) +  
-  xlab("CAP 1 (36.6%)") + # CAP 1
+  xlab("CAP 1 (38.1%)") + # CAP 1
   ylab("CAP 2 (2.9%)") + # CAP 2
   scale_y_continuous(limits=c(-3.5,3.5)) + 
   scale_x_continuous(limits=c(-3.5,3.5)) + 
@@ -1435,11 +1441,11 @@ bfish2_ordplot_str <- ggplot() +
              aes(x=axis1, y=axis2, fill=Kelpdom),
              size=2.5, shape=23, stroke=0.2, alpha=0.8) +
   geom_segment(data=bfish2_scrs, # Adding in the biplot correlation arrows
-               aes(x=0, y=0, xend=CAP1*2.8, yend=CAP2*2.8),
+               aes(x=0, y=0, xend=CAP1*2.5, yend=CAP2*2.5),
                colour="grey20", linewidth=0.3, arrow=arrow(length = unit(0.1, "cm"), type="closed")) +
   geom_text(data=env.arrows, # Adding in the biplot correlation labels
-            aes(x=xnew*2.8, y=ynew*2.8, label=vector),
-            colour="black", size=2) +
+            aes(x=xnew*2.5, y=ynew*2.5, label=vector,),
+            colour="black", size=2, nudge_y=0.12, nudge_x=0.15) +
   scale_fill_manual(values=met.brewer("Kandinsky"), name=NULL, labels=c(expression(italic("N. luetkeana")), expression(italic("M. pyrifera")))) +
   guides(fill = guide_legend(override.aes = list(shape=23))) +
   theme_classic() +
@@ -1452,8 +1458,7 @@ bfish2_ordplot_str <- ggplot() +
         axis.title=element_text(size=9.5, color="black"),
         axis.line=element_line(size=0.3),
         axis.ticks=element_line(size=0.3)) +
-  annotate("text", x = -3, y = 3, label = "a", size=5, fontface=2)
-
+  annotate("text", x = -3.5, y = 3.5, label = "a", size=5, fontface=2)
 bfish2_ordplot_str
 
 
@@ -1461,7 +1466,7 @@ bfish2_ordplot_str
 ## The biplot for influential spp
 
 # Radial shift function for arrow text
-rshift = function(r, theta, a=0.08, b=0.04) {
+rshift = function(r, theta, a=0.02, b=0.01) {
   r + a + b*abs(cos(theta))
 }
 
@@ -1479,7 +1484,7 @@ spp.arrows = bfish2_species.long.vargrt %>%
 bfish2_ordplot_spp <- ggplot() + 
   geom_vline(xintercept = c(0), color = "grey70", linetype = 5, linewidth=0.3) +
   geom_hline(yintercept = c(0), color = "grey70", linetype = 5, linewidth=0.3) +  
-  xlab("CAP 1 (36.6%)") + # CAP 1
+  xlab("CAP 1 (38.1%)") + # CAP 1
   ylab("CAP 2 (2.9%)") + # CAP 2
   scale_y_continuous(limits=c(-3.5,3.5)) + 
   scale_x_continuous(limits=c(-3.5,3.5)) + 
@@ -1487,11 +1492,11 @@ bfish2_ordplot_spp <- ggplot() +
              aes(x=axis1, y=axis2, fill=Kelpdom),
              size=2.5, shape=23, stroke=0.2, alpha=0.8) +
   geom_segment(data=bfish2_species.long.vargrt, # Adding in the SIMPER arrows
-               aes(x=0, y=0, xend=axis1*2, yend=axis2*2),
+               aes(x=0, y=0, xend=axis1*2.5, yend=axis2*2.5),
                colour="grey20", linewidth=0.3, arrow = arrow(length = unit(0.1, "cm"), type="closed")) +
-  geom_text(data=spp.arrows, # Adding in the SIMPER species labels
-            aes(x=xnew*2.3, y=ynew*2.1, label=labels),
-            colour="black", size=2, nudge_x=0.36, nudge_y=-0.18) +
+  geom_text_repel(data=spp.arrows, # Adding in the SIMPER species labels
+            aes(x=xnew*2.5, y=ynew*2.5, label=labels),
+            colour="black", size=2, nudge_x=0.6, nudge_y=0.2) +
   scale_fill_manual(values=met.brewer("Kandinsky"), name=NULL, labels=c(expression(italic("N. luetkeana")), expression(italic("M. pyrifera")))) +
   guides(fill = guide_legend(override.aes = list(shape=21))) +
   theme_classic() +
@@ -1503,7 +1508,7 @@ bfish2_ordplot_spp <- ggplot() +
         axis.title=element_text(size=9.5, color="black"),
         axis.line=element_line(size=0.3),
         axis.ticks=element_line(size=0.3)) +
-  annotate("text", x = -3, y = 3, label = "b", size=5, fontface=2)
+  annotate("text", x = -3.5, y = 3.5, label = "b", size=5, fontface=2)
 bfish2_ordplot_spp
 
 
@@ -1587,7 +1592,7 @@ bfish3_species.long.vargrt <- bfish3_species.long.vargrt %>%
 ## The biplot for structure vars
 
 # Radial shift function for arrow text
-rshift = function(r, theta, a=0.26, b=0.28) {
+rshift = function(r, theta, a=0.0, b=0.5) {
   r + a + b*abs(cos(theta))
 }
 
@@ -1606,17 +1611,17 @@ bfish3_ordplot_env <- ggplot() +
   geom_hline(yintercept = c(0), color = "grey70", linetype = 5, linewidth=0.3) +  
   xlab("CAP 1 (39.6%)") + # CAP 1
   ylab("CAP 2 (6.7%)") + # CAP 2
-  scale_y_continuous(limits=c(-3,3)) + 
-  scale_x_continuous(limits=c(-3,3)) + 
+  scale_y_continuous(limits=c(-3.5,3.5)) + 
+  scale_x_continuous(limits=c(-3.5,3.5)) + 
   geom_point(data=bfish3_sites.long, # Adding in the main site data points
              aes(x=axis1, y=axis2, fill=Kelpdom),
              size=2.5, shape=23, stroke=0.2, alpha=0.8) +
   geom_segment(data=bfish3_env, # Adding in the biplot correlation arrows
-               aes(x=0, y=0, xend=CAP1*2.8, yend=CAP2*2.8),
+               aes(x=0, y=0, xend=CAP1*2.5, yend=CAP2*2.5),
                colour="grey20", linewidth=0.3, arrow=arrow(length = unit(0.1, "cm"), type="closed")) +
   geom_text_repel(data=env.arrows, # Adding in the biplot correlation labels
             aes(x=xnew*2, y=ynew*2, label=vector),
-            colour="black", size=2, hjust=0, vjust=0, box.padding=0.0415, nudge_x=-0.02, nudge_y=0.026) +
+            colour="black", size=2, box.padding=0.2, nudge_x=-0.05, nudge_y=0) +
   scale_fill_manual(values=met.brewer("Kandinsky"), name=NULL, labels=c(expression(italic("N. luetkeana")), expression(italic("M. pyrifera")))) +
   guides(fill = guide_legend(override.aes = list(shape=23))) +
   theme_classic() +
@@ -1629,7 +1634,7 @@ bfish3_ordplot_env <- ggplot() +
         axis.title=element_text(size=9.5, color="black"),
         axis.line=element_line(size=0.3),
         axis.ticks=element_line(size=0.3)) +
-  annotate("text", x = -3, y = 3, label = "c", size=5, fontface=2)
+  annotate("text", x = -3.5, y = 3.5, label = "c", size=5, fontface=2)
 bfish3_ordplot_env
 
 
@@ -1638,7 +1643,7 @@ bfish3_ordplot_env
 
 
 # Radial shift function for arrow text
-rshift = function(r, theta, a=0.13, b=0.13) {
+rshift = function(r, theta, a=0.2, b=0.17) {
   r + a + b*abs(cos(theta))
 }
 
@@ -1656,17 +1661,17 @@ bfish3_ordplot_spp <- ggplot() +
   geom_hline(yintercept = c(0), color = "grey70", linetype = 5, linewidth=0.3) +  
   xlab("CAP 1 (39.6%)") + # CAP 1
   ylab("CAP 2 (6.7%)") + # CAP 2  
-  scale_y_continuous(limits=c(-3,3)) + 
-  scale_x_continuous(limits=c(-3,3)) + 
+  scale_y_continuous(limits=c(-3.5,3.5)) + 
+  scale_x_continuous(limits=c(-3.5,3.5)) + 
   geom_point(data=bfish3_sites.long, # Adding in the main site data points
              aes(x=axis1, y=axis2, shape=Cluster, fill=Kelpdom),
              size=2.5, shape=23, stroke=0.2, alpha=0.8) +
   geom_segment(data=bfish3_species.long.vargrt, # Adding in the SIMPER arrows
                aes(x=0, y=0, xend=axis1*1.6, yend=axis2*1.6),
                colour="grey20", linewidth=0.3, arrow = arrow(length = unit(0.1, "cm"), type="closed")) +
-  geom_text(data=spp.arrows, # Adding in the SIMPER species labels
-            aes(x=xnew*1.7, y=ynew*1.8, label=labels),
-            colour="black", size=2, nudge_x=0.2) +
+  geom_text_repel(data=spp.arrows, # Adding in the SIMPER species labels
+            aes(x=axis1*1.7, y=axis2*1.8, label=labels),
+            colour="black", size=2, nudge_y=0) +
   scale_fill_manual(values=met.brewer("Kandinsky"), name=NULL, labels=c(expression(italic("N. luetkeana")), expression(italic("M. pyrifera")))) +
   guides(fill = guide_legend(override.aes = list(shape=21))) +
   theme_classic() +
@@ -1678,7 +1683,7 @@ bfish3_ordplot_spp <- ggplot() +
         axis.title=element_text(size=9.5, color="black"),
         axis.line=element_line(size=0.3),
         axis.ticks=element_line(size=0.3)) +
-  annotate("text", x = -3, y = 3, label = "d", size=5, fontface=2)
+  annotate("text", x = -3.5, y = 3.5, label = "d", size=5, fontface=2)
 bfish3_ordplot_spp
 
 
@@ -1728,14 +1733,14 @@ dev.off()
 # Drawing in the animal outlines
 
 # Loading spp image outlines
-bgoby <- image_read('./Phylopic/Fish/blackeyegoby.png')
-sculp <- image_read('./Phylopic/Fish/sculpin.png')
+bgoby <- image_read('./Icon_images/goby.png')
+sculp <- image_read('./Icon_images/gunnel.png')
 
 # Calling map plot as magick image
 mplot <- image_read("./MSc_plots/PaperFigs/Bfish/Bfish_ords_combined.tiff") 
 
 # Adding in the animal outlines (scaling & location)
-mmap <- image_composite(mplot, image_scale(bgoby, "x70"), offset="+780+60")
+mmap <- image_composite(mplot, image_scale(bgoby, "x60"), offset="+800+60")
 mmap <- image_composite(mmap, image_rotate(image_scale(sculp, "x70"), 340), offset="+1070+05")
 
 # Saving the final fig
@@ -1744,7 +1749,7 @@ image_write(mmap, path = "./MSc_plots/PaperFigs/Bfish/Bfish_ords_combined_outlin
 #
 
 
-#### Benthic inverts: Generating ordination models, stats ----
+#### Benthic inverts: Generating models, stats ----
 
 
 ## Calling the predictor variables sheet
@@ -1778,10 +1783,6 @@ binv_simpSPP <- c("Pomaulax gibberosus", "Strongylocentrotus purpuratus",
                   "Mesocentrotus franciscanus", "Patiria miniata")
 
 
-write.csv(binv_simp_df, "C:/Users/clair/Desktop/invertsimper.csv")
-
-
-
 ### RDA (kelp forest structure)
 
 # Generating the kelp forest structure model
@@ -1789,7 +1790,7 @@ binv_2 <- capscale(binv_hel ~ Kelpdom+DensityM+Area_m2+BiomassM+HeightM, data=pr
 RsquareAdj(binv_2)
 ## Only the structural variables explain 44.7% of variation (constrained axes)
 # Adjusted R squared of this model is: 24.9%
-vif.cca(binv_2) # low vif scores
+vif.cca(binv_2) # ~ < 5 vif scores
 
 # Exploring model significance
 anova.cca(binv_2) # significance of model
@@ -1805,7 +1806,7 @@ binv_3 <- capscale(binv_hel ~ Kelpdom+Tempave+Depth_datum_m+exp_36+Phardbottom+P
 RsquareAdj(binv_3)
 ## The environmental variables explain explain 58.6% of variation (constrained axes)
 # Adjusted R squared of this model is: 28.4%
-vif.cca(binv_3)
+vif.cca(binv_3) # ~ < 5 vif scores
 
 # Exploring model significance
 anova.cca(binv_3) # significance of model
@@ -1818,10 +1819,9 @@ anova.cca(binv_3, permutations = 999, by = "axis") # significance by model axes
 
 #### Benthic inverts: Plots ----
 
-
-# Benthic Invert 1 = CAP model (by kelp spp)
-# Benthic Invert 2 = RDA model (by kelp forest structure)
-# Benthic Invert 3 = RDA model (by environmental vars)
+# Benthic Invertebrates 1 = CAP model (by kelp spp)
+# Benthic Invertebrates 2 = RDA model (by kelp forest structure)
+# Benthic Invertebrates 3 = RDA model (by environmental vars)
 
 
 ### PLOT 1: CAP (kelp spp)
@@ -1871,7 +1871,7 @@ binv1_ordplot <- ggplot(binv1_sites.long) +
         axis.text=element_text(size=9, color="black"),
         axis.title=element_text(size=9.5, color="black"),
         axis.line=element_line(linewidth=0.5),
-        axis.ticks=element_line(size=0.5)) +
+        axis.ticks=element_line(linewidth=0.5)) +
   annotate("text", x = -2.1, y = 2.2, label = "c", size=5, fontface=2)
 binv1_ordplot
 
@@ -1947,6 +1947,7 @@ binv2_species.long.vargrt <- binv2_species.long.vargrt %>%
                              "Leather star" = "Dermasterias imbricata",
                              "Leopard dorid" = "Diaulula odonoghuei",
                              "Mottled star" = "Evasterias troschelii",
+                             "Stiletto shrimp" = "Heptacarpus stylus",
                              "Red sea urchin" = "Mesocentrotus franciscanus",
                              "Graceful crab" = "Oregonia gracilis",
                              "Red turban snail" = "Pomaulax gibberosus",
@@ -1973,10 +1974,10 @@ env.arrows = binv2_scrs %>%
 binv2_ordplot_str <- ggplot() + 
   geom_vline(xintercept = c(0), color = "grey70", linetype = 5, linewidth=0.3) +
   geom_hline(yintercept = c(0), color = "grey70", linetype = 5, linewidth=0.3) +  
-  xlab("CAP 1 (21.3%)") +
-  ylab("CAP 2 (13.5%)") +  
-  scale_y_continuous(limits=c(-2.2,2.2)) + 
-  scale_x_continuous(limits=c(-2.2,2.2)) + 
+  xlab("CAP 1 (20.8%)") +
+  ylab("CAP 2 (13.3%)") +  
+  scale_y_continuous(limits=c(-2.5,2.5)) + 
+  scale_x_continuous(limits=c(-2.5,2.5)) + 
   geom_point(data=binv2_sites.long, # Adding in the main site data points
              aes(x=axis1, y=axis2, fill=Kelpdom),
              size=2.5, shape=23, stroke=0.2, alpha=0.8) +
@@ -1998,12 +1999,17 @@ binv2_ordplot_str <- ggplot() +
         axis.title=element_text(size=9.5, color="black"),
         axis.line=element_line(size=0.3),
         axis.ticks=element_line(size=0.3)) +
-  annotate("text", x = -2.2, y = 2.2, label = "a", size=5, fontface=2)
+  annotate("text", x = -2.5, y = 2.5, label = "a", size=5, fontface=2)
 binv2_ordplot_str
 
 
 
 ## The biplot for influential spp
+
+# Radial shift function for arrow text
+rshift = function(r, theta, a=0.04, b=0.08) {
+  r + a + b*abs(cos(theta))
+}
 
 # Calculate shift of text from arrows
 spp.arrows = binv2_species.long.vargrt %>% 
@@ -2018,20 +2024,20 @@ spp.arrows = binv2_species.long.vargrt %>%
 binv2_ordplot_spp <- ggplot() + 
   geom_vline(xintercept = c(0), color = "grey70", linetype = 5, linewidth=0.3) +
   geom_hline(yintercept = c(0), color = "grey70", linetype = 5, linewidth=0.3) +  
-  xlab("CAP 1 (21.3%)") +
-  ylab("CAP 2 (13.5%)") +  
-  scale_y_continuous(limits=c(-2.2,2.2)) + 
-  scale_x_continuous(limits=c(-2.2,2.2)) + 
+  xlab("CAP 1 (20.8%)") +
+  ylab("CAP 2 (13.3%)") +  
+  scale_y_continuous(limits=c(-2.5,2.5)) + 
+  scale_x_continuous(limits=c(-2.5,2.5)) + 
   geom_point(data=binv2_sites.long, # Adding in the main site data points
              aes(x=axis1, y=axis2, fill=Kelpdom),
              size=2.5, shape=23, stroke=0.2, alpha=0.8) +
   geom_segment(data=binv2_species.long.vargrt, # Adding in the SIMPER arrows
-               aes(x=0, y=0, xend=axis1*2.2, yend=axis2*2.2),
+               aes(x=0, y=0, xend=axis1*2, yend=axis2*2),
                colour="grey20", linewidth=0.3, arrow = arrow(length = unit(0.1, "cm"), type="closed")) +
   geom_text_repel(data=binv2_species.long.vargrt, # Adding in the SIMPER species labels
-                  aes(x=axis1*2.2, y=axis2*2.2, label=labels),
+                  aes(x=axis1*2, y=axis2*2, label=labels),
                   colour="black",size=2, angle=0, hjust=0, vjust=0,
-                  box.padding=0.44, nudge_y=0.84, nudge_x=0.42, segment.linetype=2,
+                  box.padding=0.3, nudge_y=0.9, nudge_x=0.55, segment.linetype=2,
                   segment.size=0.3, segment.color="grey40") +
   scale_fill_manual(values=met.brewer("Kandinsky"), name=NULL, labels=c(expression(italic("N. luetkeana")), expression(italic("M. pyrifera")))) +
   guides(fill = guide_legend(override.aes = list(shape=21))) +
@@ -2044,8 +2050,7 @@ binv2_ordplot_spp <- ggplot() +
         axis.title=element_text(size=9.5, color="black"),
         axis.line=element_line(size=0.3),
         axis.ticks=element_line(size=0.3)) +
-  annotate("text", x = -2.2, y = 2.2, label = "b", size=5, fontface=2)
-
+  annotate("text", x = -2.5, y = 2.5, label = "b", size=5, fontface=2)
 binv2_ordplot_spp
 
 
@@ -2122,9 +2127,9 @@ binv3_species.long.vargrt <- binv3_species.long.vargrt %>%
   mutate(labels = fct_recode(labels,
                              "Red rock crab" = "Cancer productus",
                              "Leafy hornmouth" = "Ceratostoma foliatum",
-                             "Leather star" = "Dermasterias imbricata",
                              "Leopard dorid" = "Diaulula odonoghuei",
                              "Mottled star" = "Evasterias troschelii",
+                             "Stiletto shrimp" = "Heptacarpus stylus",
                              "Red sea urchin" = "Mesocentrotus franciscanus",
                              "Graceful crab" = "Oregonia gracilis",
                              "Red turban snail" = "Pomaulax gibberosus",
@@ -2135,7 +2140,7 @@ binv3_species.long.vargrt <- binv3_species.long.vargrt %>%
 ## The biplot for structure vars
 
 # Radial shift function for arrow text
-rshift = function(r, theta, a=0.08, b=0.1) {
+rshift = function(r, theta, a=0.12, b=0.1) {
   r + a + b*abs(cos(theta))
 }
 
@@ -2152,10 +2157,10 @@ env.arrows = binv3_env %>%
 binv3_ordplot_env <- ggplot() + 
   geom_vline(xintercept = c(0), color = "grey70", linetype = 5, linewidth=0.3) +
   geom_hline(yintercept = c(0), color = "grey70", linetype = 5, linewidth=0.3) +  
-  xlab("CAP 1 (21.2%)") +
-  ylab("CAP 2 (19.9%)") +  
-  scale_y_continuous(limits=c(-2.2,2.2)) + 
-  scale_x_continuous(limits=c(-2.2,2.2)) + 
+  xlab("CAP 1 (20.1%)") +
+  ylab("CAP 2 (17.3%)") +  
+  scale_y_continuous(limits=c(-2.5,2.5)) + 
+  scale_x_continuous(limits=c(-2.5,2.5)) + 
   geom_point(data=binv3_sites.long, # Adding in the main site data points
              aes(x=axis1, y=axis2, fill=Kelpdom),
              size=2.5, shape=23, stroke=0.2, alpha=0.8) +
@@ -2164,7 +2169,7 @@ binv3_ordplot_env <- ggplot() +
                colour="grey20", linewidth=0.3, arrow=arrow(length = unit(0.1, "cm"), type="closed")) +
   geom_text(data=env.arrows, # Adding in the biplot correlation labels
             aes(x=xnew*2, y=ynew*2, label=vector),
-            colour="black", size=2, nudge_y=-0.05) +
+            colour="black", size=2, nudge_y=-0.07) +
   scale_fill_manual(values=met.brewer("Kandinsky"), name=NULL, labels=c(expression(italic("N. luetkeana")), expression(italic("M. pyrifera")))) +
   guides(fill = guide_legend(override.aes = list(shape=23))) +
   theme_classic() +
@@ -2177,12 +2182,19 @@ binv3_ordplot_env <- ggplot() +
         axis.title=element_text(size=9.5, color="black"),
         axis.line=element_line(size=0.3),
         axis.ticks=element_line(size=0.3)) +
-  annotate("text", x = -2.2, y = 2.2, label = "c", size=5, fontface=2)
+  annotate("text", x = -2.5, y = 2.5, label = "c", size=5, fontface=2)
 binv3_ordplot_env
 
 
 
+
 ## The biplot for influential spp
+
+# Radial shift function for arrow text
+rshift = function(r, theta, a=0.08, b=0.1) {
+  r + a + b*abs(cos(theta))
+}
+
 
 # Calculate shift of text from arrows
 spp.arrows = binv3_species.long.vargrt %>% 
@@ -2192,24 +2204,25 @@ spp.arrows = binv3_species.long.vargrt %>%
          xnew = rnew*cos(theta),
          ynew = rnew*sin(theta))
 
+
 # The full species plot
 binv3_ordplot_spp <- ggplot() + 
   geom_vline(xintercept = c(0), color = "grey70", linetype = 5, linewidth=0.3) +
   geom_hline(yintercept = c(0), color = "grey70", linetype = 5, linewidth=0.3) +  
-  xlab("CAP 1 (21.2%)") +
-  ylab("CAP 2 (19.9%)") +  
-  scale_y_continuous(limits=c(-3.5,3.5)) + 
-  scale_x_continuous(limits=c(-3.5,3.5)) + 
+  xlab("CAP 1 (20.1%)") +
+  ylab("CAP 2 (17.3%)") +  
+  scale_y_continuous(limits=c(-2.5,2.5)) + 
+  scale_x_continuous(limits=c(-2.5,2.5)) + 
   geom_point(data=binv3_sites.long, # Adding in the main site data points
              aes(x=axis1, y=axis2, shape=Cluster, fill=Kelpdom),
              size=2.5, shape=23, stroke=0.2, alpha=0.8) +
   geom_segment(data=binv3_species.long.vargrt, # Adding in the SIMPER arrows
-               aes(x=0, y=0, xend=axis1*3.5, yend=axis2*3.5),
+               aes(x=0, y=0, xend=axis1*2, yend=axis2*2),
                colour="grey20", linewidth=0.3, arrow = arrow(length = unit(0.1, "cm"), type="closed")) +
   geom_text_repel(data=binv3_species.long.vargrt, # Adding in the SIMPER species labels
-                  aes(x=axis1*3.5, y=axis2*3.5, label=labels),
-                  colour="black", fontface="italic", size=2,
-                  box.padding=0.31, nudge_y=-1.2, nudge_x=1.55, segment.linetype=2, segment.size=0.3, segment.color="grey40") +
+                  aes(x=axis1*2, y=axis2*2, label=labels),
+                  colour="black", size=2,
+                  box.padding=0.4, nudge_y=-0.8, nudge_x=0.8, segment.linetype=2, segment.size=0.3, segment.color="grey40") +
   scale_fill_manual(values=met.brewer("Kandinsky"), name=NULL, labels=c(expression(italic("N. luetkeana")), expression(italic("M. pyrifera")))) +
   guides(fill = guide_legend(override.aes = list(shape=21))) +
   theme_classic() +
@@ -2221,8 +2234,7 @@ binv3_ordplot_spp <- ggplot() +
         axis.title=element_text(size=9.5, color="black"),
         axis.line=element_line(size=0.3),
         axis.ticks=element_line(size=0.3)) +
-  annotate("text", x = -3.5, y = 3.5, label = "d", size=5, fontface=2)
-
+  annotate("text", x = -2.5, y = 2.5, label = "d", size=5, fontface=2)
 binv3_ordplot_spp
 
 
@@ -2273,9 +2285,9 @@ dev.off()
 # Drawing in the animal outlines
 
 # Loading spp image outlines
-purchin <- image_read('./Phylopic/EladTrace/purpleurchin.png')
-turban <- image_read('./Phylopic/EladTrace/turbansnail.png')
-bstar <- image_read('./Phylopic/EladTrace/bloodstar.png')
+purchin <- image_read('./Icon_images/purpleurchin.png')
+turban <- image_read('./Icon_images/turbansnail.png')
+bstar <- image_read('./Icon_images/bloodstar.png')
 
 # Calling map plot as magick image
 mplot <- image_read("./MSc_plots/PaperFigs/Invert/Invert_ords_combined.tiff") 
@@ -2524,12 +2536,13 @@ dev.off()
 
 #### SIMPER plots ----
 
-### SIMPER PLOT (to go with CAP plots)
+### SIMPER PLOT (to go with the 
+
+CAP plots)
 
 
 # Joining all spp identified as influential by SIMPER
 simp_all <- rbind(pfish_simp_filt, bfish_simp_filt, binv_simp_filt)
-
 
 
 # Arranging by descending order of average dissimilarity 
@@ -2566,8 +2579,9 @@ simp_arr <- simp_arr %>%
 
 
 # Loading the kelp icon .png files
-macroicon <- readPNG('./Phylopic/EladTrace/macrokelp.png')
-bullicon <- readPNG('./Phylopic/EladTrace/bullkelp.png')
+macroicon <- readPNG('./Icon_images/macrokelp.png')
+bullicon <- readPNG('./Icon_images/bullkelp.png')
+
 
 
 tiff(file="./MSc_plots/PaperFigs/simper.tiff", height=4, width=6, units="in", res=500)
@@ -2575,14 +2589,6 @@ tiff(file="./MSc_plots/PaperFigs/simper.tiff", height=4, width=6, units="in", re
 # Making the plot of average SIMPER dissimilarities
 # Only the spp that contribute > 2x their expected dissimilarity
 simpplot <- ggplot(data=simp_arr, aes(y=species_common, x=average_plot, color=kelpgroup)) +
-  # geom_rect(aes(xmin = 0.008,
-  #               xmax = 0.25,
-  #               ymin = 2.9,
-  #               ymax = 6.4), fill = '#3b7c70', alpha = 0.03, color=NA) +
-  # geom_rect(aes(xmin = -0.24,
-  #               xmax = -0.008,
-  #               ymin = 0.5,
-  #               ymax = 2.8), fill = '#ce9642', alpha = 0.03, color=NA) +
   geom_point(size=3) +
   geom_errorbarh(aes(xmin=average_plot-sd, xmax=average_plot+sd), height=0.1, linewidth=1) +
   scale_y_discrete(limits=rev) +
@@ -2597,16 +2603,18 @@ simpplot <- ggplot(data=simp_arr, aes(y=species_common, x=average_plot, color=ke
   scale_color_manual(values=met.brewer("Kandinsky", n=2)) +
   geom_vline(xintercept=0, linetype="dashed") +
   xlab("Average dissimilarity") +
-  annotate("text", x = -0.35, y = 6.5, label = "d", size=6, fontface=2)
+  annotate("text", x = -0.35, y = 6.5, label = "d", size=5, fontface=2)
+
 simpplot
+
 
 dev.off()
 
 
 # Adding in the kelp icons
 simpplot_draw <- simpplot + 
-  annotation_raster(macroicon, ymin = 1.5, ymax= 2.3, xmin = -0.26, xmax = -0.18) +
-  annotation_raster(bullicon, ymin = 4.5, ymax= 5.3, xmin = 0.21, xmax = 0.29)
+  annotation_raster(macroicon, ymin = 1.5, ymax= 2.2, xmin = -0.26, xmax = -0.18) +
+  annotation_raster(bullicon, ymin = 4.5, ymax= 5.2, xmin = 0.21, xmax = 0.29)
 simpplot_draw
 
 
@@ -2629,39 +2637,13 @@ grid.arrange(grobs=gs,
 
 
 # Saving as an image object
-tiff(file="./MSc_plots/PaperFigs/cap_ords.tiff", height=6.5, width=8.5, units="in", res=400)
+tiff(file="./MSc_plots/PaperFigs/cap_ords.tiff", height=6.5, width=8, units="in", res=400)
 
 # End ggplot arrangement
 grid <- grid.arrange(capplots, simpplot_draw,
                      layout_matrix = lay)
+
 dev.off()
 
 
 #
-
-
-#
-
-
-
-#
-
-
-
-
-#### Testing correlations ----
-
-testdata <- read_csv("./MSc_data/Data_new/AllPredictors_2022.csv") %>%
-  mutate(Kelpdom = as.factor(Kelpdom))
-
-plot(x=testdata$Psoftbottom, y=testdata$Area_m2)
-
-testmod <- glmmTMB(Area_m2 ~ Psoftbottom, data=testdata)
-testmod <- glmmTMB(MacroM ~ Psoftbottom, data=testdata)
-testmod <- glmmTMB(BiomassM ~ Psoftbottom, data=testdata)
-testmod <- glmmTMB(HeightM ~ Psoftbottom, data=testdata)
-summary(testmod)
-
-
-
-
