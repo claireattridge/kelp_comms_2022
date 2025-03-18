@@ -18,11 +18,10 @@ library(magick)
 
 #
 
-#### Spatial package prep work *Only need to do this the 1st time ----
+#### Spatial package prep work ----
 
 ## Have to do this section because maptools and gssn were retired/archived
-## There currently (2023) isn't a better replacement package for the tools
-## Used for map features such as scale bars and north arrows
+## and they were used for the map features such as scale bars and north arrows
 
 ## Installing map tools & ggsn & rgeos (from archived versions bc they've been retired as of 2023)
 ## Maptools is a dependency that needs to be loaded prior to ggsn
@@ -39,13 +38,12 @@ install.packages(url3, type="source", repos=NULL)
 #
 
 
-#### Map prep work *Only need to do this the 1st time ----
+#### Base map prep work ----
 
 
 ## setting projections at outset
 proj <- st_crs(3005) # ESPG code for BC Albers projection
 latlong <- st_crs(4326) # for baseline/existing WGS84 ("+proj=longlat +datum=WGS84 +no_defs")
-
 
 
 ### Barkley Sound processing
@@ -173,54 +171,14 @@ land_usa <- land_usa %>%
 write_sf(land_usa, "./Maps_BC/ne_10m_land/ne_10m_land_VanIsland.shp", overwrite=T)
 
 
-#### Data prep work ----
-
-# ##                             ##
-# ## Joanne Lessard survey sites ##
-# ##                             ##
-# 
-# library(foreign) # Package for reading in .dbf files
-# 
-# #reading in site location data
-# jl <- read.dbf("./MSc_data/Data_sourced/Lessard_sites/2021SITE.DBF")
-# 
-# #converting location data to sf object
-# jlsf <- jl %>%
-#   dplyr::select(c(TRANSECT, LATEND, LONEND)) %>%
-#   st_as_sf(coords = c(3,2))
-# 
-# st_crs(jlsf) = latlong
-# jlsf <- st_transform(jlsf,proj) #make sure you assign this, otherwise it does not save the as the transformed version
-# 
-# #cropping to only points within map limits
-# jlsf <- jlsf %>%
-#   st_crop(st_bbox(corners))
+#
 
 
-# ##                                         ##
-# ## Chris Neufeld & Sam Starko survey sites ##
-# ##                                         ## 
-# 
-# rec <- read.csv("./MSc_data/Data_sourced/Fieldedits_Kelp_site_suggestions_2022.csv") %>%
-#   mutate(Lat = as.numeric(Lat), Lon = as.numeric(Lon))
-# 
-# #converting location data to sf object
-# recsf <- rec %>%
-#   drop_na(Lat) %>%
-#   dplyr::select(c(SiteName, Lat, Lon)) %>%
-#   st_as_sf(coords = c(3,2))
-# 
-# st_crs(recsf) = latlong
-# recsf <- st_transform(recsf,proj) #make sure you assign this, otherwise it does not save the as the transformed version
-# 
-# #cropping to only points within map limits
-# recsf <- recsf %>%
-#   st_crop(st_bbox(corners))
+#### Dataset prep work ----
 
-
-##                            ##
-## Our finalized survey sites ##
-##                            ##
+##                        ##
+## Finalized survey sites ##
+##                        ##
 
 # Loading site list and filtering for only those surveyed
 sites <- read.csv("./MSc_data/Data_new/Final_site_list_2022.csv") %>%
@@ -245,15 +203,11 @@ sitessf <- sites %>%
 st_crs(sitessf) <- latlong
 sitessf <- st_transform(sitessf,proj) # make sure you assign this, otherwise it won't use the transformed project crs
 
-#cropping to only points within map limits
-sitessf <- sitessf %>%
-  st_crop(st_bbox(corners))
 
 
-
-##                       ##
-## Our kelp metric data  ##
-##                       ##
+##                   ##
+## Kelp metric data  ##
+##                   ##
 
 # Loading the kelp data file first
 kelpdata <- read_csv("./MSc_data/Data_new/kelp_metrics_2022.csv")
@@ -285,6 +239,8 @@ plotdata <- plotdata %>%
 topframe <- plotdata[15,]
 
 
+
+
 ## Barkley Sound map
 
 tiff(file="./MSc_plots/MapForests.tiff", height = 5.5, width = 8.5, units = "in", res=400)
@@ -302,7 +258,8 @@ BSdata_map <- ggplot(land_bs)+
   theme(panel.grid.major = element_line(colour = "transparent"), # Hiding graticules
         axis.title.x = element_blank(),
         axis.title.y = element_blank(),
-        legend.position = c(1.215,0.18),
+        legend.position = "inside",
+        legend.position.inside = c(1.215,0.18),
         axis.text = element_text(color="black", size=10),
         legend.title = element_text(color="black", size=11),
         legend.text = element_text(color="black", size=10),
@@ -323,87 +280,11 @@ BSdata_map <- ggplot(land_bs)+
                height = 0.01,
                dist = 1.5,
                dist_unit = "km",
-               model = 'NAD83') +
-  annotate("text", x = 1069400, y = 433958, label = "(b)", size=3, fontface=2)
+               model = 'NAD83')
   
 BSdata_map
 
 dev.off()
-
-
-
-# tiff(file="./MSc_plots/MapDepth.tiff", height = 7, width = 10, units = "in", res=600)
-# 
-# ## plotting the kelp density map (continuous fill)
-# data_map <- ggplot(land)+
-#   geom_sf(fill = "grey53", color = NA) + # color = NA will remove country border
-#   theme_minimal(base_size = 16) +
-#   geom_sf(data = plotdata, size=3, shape=21, color="black", aes(fill=Depth_datum_m)) +
-#   # geom_sf_text(mapping=aes(), data=sitessf, label=sitessf$SiteName, stat="sf_coordinates", inherit.aes=T, size=2.5, nudge_y=100, nudge_x=-1200) +
-#   scale_fill_gradientn(colors=met.brewer("VanGogh3"), name=expression("Depth (m below datum)"), limits=c(0,5)) +
-#   theme(panel.grid.major = element_line(colour = "transparent"), # hiding graticules
-#         axis.title.x = element_blank(),
-#         axis.title.y = element_blank(),
-#         axis.text = element_text(color="black", size=12),
-#         legend.position = "top",
-#         legend.title = element_text(color="black", size=11),
-#         legend.text = element_text(color="black", size=10),
-#         plot.margin = unit(c(0,0,0.5,0), "cm"), # Selecting margins
-#         panel.border = element_rect(colour="black", fill=NA, linewidth=1)) + # Adding in outer border
-#   north(land, symbol=12, location="topleft") +
-#   ggsn::scalebar(land,
-#                  location = "bottomright",
-#                  transform = F,
-#                  st.bottom = F,
-#                  st.size = 3.5,
-#                  height = 0.01,
-#                  dist = 1,
-#                  dist_unit = "km",
-#                  model = 'NAD83')
-# data_map
-# 
-# dev.off()
-# 
-# 
-# 
-# # List of relevant sites with 2022 data collection 
-# studysites <- as.vector(c("Between Scotts and Bradys","Bordelais Island","Cable Beach (Blow Hole)","Danvers Danger Rock","Dixon Island Back (Bay)","Dodger Channel 1","Dodger Channel 2","Ed King East Inside","Flemming 112","Flemming 114","Less Dangerous Bay","Nanat Bay","North Helby Rock","Ross Islet 2","Ross Islet Slug Island","Second Beach","Second Beach South","Swiss Boy","Taylor Rock","Turf Island 2","Tzartus 116","Wizard Islet North","Wizard Islet South"))
-#   
-# plotdataclust <- plotdata %>%
-#   filter(SiteName %in% studysites)
-# 
-# colsmap <- c("#225555", "#4477aa", "#997700", "#e4632d")
-# 
-# tiff(file="./MSc_plots/MapClust4.tiff", height = 6, width = 8, units = "in", res=400)
-# 
-# ## plotting the kelp cluster groups map (discrete fill)
-# data_map <- ggplot(land)+
-#   geom_sf(fill = "grey70", color = NA) + # color = NA will remove country border
-#   theme_minimal(base_size = 16) +
-#   geom_sf(data = plotdataclust, size=4, shape=21, color="black", aes(fill=Cluster)) + 
-#   scale_fill_manual(values=c(colsmap, "grey45"), name="") +
-#   theme(panel.grid.major = element_line(colour = "transparent"), # hiding graticules
-#         axis.title.x = element_blank(),
-#         axis.title.y = element_blank(),
-#         axis.text = element_text(color="black", size=12),
-#         legend.position = "top",
-#         legend.title = element_text(color="black", size=12),
-#         legend.text = element_text(color="black", size=14, face="bold"),
-#         panel.border = element_rect(colour="black", fill=NA, linewidth=1), # border
-#         plot.margin = unit(c(0,0.5,0.5,-4), "cm")) + # shrinking margins
-#   north(land, symbol=12, location="topleft") +
-#   ggsn::scalebar(land,
-#                  location = "bottomright",
-#                  transform = F,
-#                  st.bottom = F,
-#                  st.size = 3.5,
-#                  height = 0.01,
-#                  dist = 1,
-#                  dist_unit = "km",
-#                  model = 'NAD83')
-# data_map
-# 
-# dev.off()
 
 
 
@@ -415,6 +296,8 @@ sea_vi <- sf::st_read("./Maps_BC/Hakai_BC/sea_Hakai_VanIsland.shp")
 
 # Calling the new cropped land map for Vancouver Island + USA coast
 land_vi_usa <- sf::st_read("./Maps_BC/ne_10m_land/ne_10m_land_VanIsland.shp") 
+
+
 
 
 ## Vancouver Island map
@@ -432,18 +315,7 @@ VIdata_map <- ggplot(land_vi_usa)+
         legend.title = element_text(color="black", size=12),
         legend.text = element_text(color="black", size=14, face="bold"),
         panel.border = element_rect_round(colour="black", fill=NA), # border
-        plot.margin = unit(c(0,0.5,0.5,0), "cm"),) +  # shrinking margins
-  # north(land, symbol=12, location="topleft") +
-  # ggsn::scalebar(land,
-  #                location = "bottomright",
-  #                transform = F,
-  #                st.bottom = F,
-  #                st.size = 3,
-  #                height = 0.02,
-  #                dist = 50,
-  #                dist_unit = "km",
-  #                model = 'NAD83') +
-  annotate("text", x = 1372000 , y = 760000, label = "(a)", size=3, fontface=2)
+        plot.margin = unit(c(0,0.5,0.5,0), "cm"),) # shrinking margins
   
 VIdata_map
 
@@ -501,6 +373,7 @@ dev.off()
 
 #### Putting together the Fig. 1 map (+ kelp forest photos and kelp density plot) ----
 
+## Directory for the 'magick' package for image processing
 # https://cran.r-project.org/web/packages/magick/vignettes/intro.html
 
 
@@ -556,6 +429,7 @@ image_write(mplot, path = "./MSc_plots/PaperFigs/uppermap.tiff", format = "tiff"
 ## Calling the kelp data sheet
 kelpdat <- read_csv("./MSc_data/Data_new/kelp_metrics_2022.csv")
 
+
 # Adding the longitude column to the kelpdat sheet
 # Adding the site number column
 kelpdat <- kelpdat %>%
@@ -584,6 +458,7 @@ kelptog_clean <- kelptog_clean %>%
 
 
 
+
 tiff(file="./MSc_plots/Kelpdens_bylon.tiff", height = 2, width = 6.1, units = "in", res=400)
 
 # The density plot
@@ -603,6 +478,7 @@ sitedens <- ggplot() +
     axis.title.y = element_text(color="black", size="9", vjust=3),
     panel.border = element_rect_round(colour="black", fill=NA)) + # Adding in the outer border
   xlab("") + ylab(expression("Kelp density (stipes /m"^2*")"))
+
 sitedens
 
 dev.off()
@@ -716,7 +592,6 @@ mfinal <- image_append(c(mmap, mclust), stack=TRUE)
 
 # Saving the final fig
 image_write(mfinal, path = "./MSc_plots/PaperFigs/Fig1b.tiff", format = "tiff", density=600)
-
 
 
 #
